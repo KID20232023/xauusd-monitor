@@ -2,35 +2,50 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>XAUUSD WAR ROOM</title>
+<title>XAUUSD WAR ROOM REALTIME</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 *{box-sizing:border-box}
 body{
   margin:0;
   background:#05070a;
-  color:#e6e6e6;
+  color:#e8e8e8;
   font-family:Arial,"Hiragino Sans",sans-serif;
   overflow:hidden;
 }
 .top{
-  height:48px;
+  height:58px;
   display:grid;
-  grid-template-columns:220px 1fr 160px 160px 220px;
-  align-items:center;
+  grid-template-columns:270px 1fr 180px 260px 220px;
   gap:10px;
-  padding:6px 12px;
-  background:#090d12;
-  border-bottom:1px solid #1f2a35;
+  align-items:center;
+  padding:8px 14px;
+  background:#080b10;
+  border-bottom:1px solid #26313d;
 }
-.logo{color:#d4af37;font-weight:bold;font-size:20px}
-.badge{background:#0e1d16;color:#00ff88;padding:6px 12px;border-radius:20px;text-align:center}
-.time{color:#9aa4b2;font-size:13px}
+.logo{font-size:22px;font-weight:bold;color:#d4af37}
+.sub{font-size:12px;color:#9aa4b2}
+.badge{
+  background:#0b2a1a;
+  color:#00ff88;
+  padding:8px 14px;
+  border-radius:18px;
+  text-align:center;
+  font-weight:bold;
+}
+.alert{
+  border:1px solid #d4af37;
+  color:#ffd166;
+  border-radius:8px;
+  padding:8px;
+  text-align:center;
+}
 .main{
-  height:calc(100vh - 48px);
+  height:calc(100vh - 58px);
   display:grid;
-  grid-template-columns:190px 1.25fr 1fr 280px;
-  grid-template-rows:1fr 230px;
+  grid-template-columns:190px 1.35fr 1fr 310px;
+  grid-template-rows:1fr 245px;
   gap:8px;
   padding:8px;
 }
@@ -47,6 +62,7 @@ body{
   border-bottom:1px solid #1f2a35;
   background:#0d131b;
 }
+.inner{padding:10px}
 .menu{grid-row:1/3}
 .menu div{
   padding:10px 12px;
@@ -55,56 +71,87 @@ body{
 }
 .menu .active{background:#2a230d;color:#ffd66b}
 .chart{grid-column:2/3}
-.map{grid-column:3/4}
-.right{grid-column:4/5;grid-row:1/3;display:grid;grid-template-rows:190px 190px 1fr;gap:8px}
+.riskmap{grid-column:3/4}
+.right{
+  grid-column:4/5;
+  grid-row:1/3;
+  display:grid;
+  grid-template-rows:170px 380px 1fr;
+  gap:8px;
+}
 .bottom{
   grid-column:2/4;
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
   gap:8px;
 }
-.inner{padding:10px}
 .green{color:#00d67a}
 .red{color:#ff4d4d}
 .gold{color:#d4af37}
 .yellow{color:#ffd166}
 .big{font-size:34px;font-weight:bold}
-.row{display:flex;justify-content:space-between;border-bottom:1px solid #1a232e;padding:7px 0;font-size:14px}
+.row{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #1a232e;
+  padding:7px 0;
+  font-size:14px;
+}
 .news{
   height:100%;
   overflow:auto;
   font-size:13px;
   line-height:1.45;
 }
-.news a{color:#e6e6e6;text-decoration:none}
-.news p{border-bottom:1px solid #1a232e;padding-bottom:8px}
-.riskCircle{
-  width:120px;height:120px;border-radius:50%;
-  border:12px solid #d4af37;
-  display:flex;align-items:center;justify-content:center;
-  margin:12px auto;
-  font-size:34px;font-weight:bold;color:#ffd166;
+.news a{
+  color:#e8e8e8;
+  text-decoration:none;
 }
-.alert{
-  padding:8px;
-  border:1px solid #d4af37;
+.news p{
+  border-bottom:1px solid #1a232e;
+  padding-bottom:7px;
+}
+.riskCircle{
+  width:112px;
+  height:112px;
+  border-radius:50%;
+  border:12px solid #d4af37;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:8px auto;
+  font-size:32px;
+  font-weight:bold;
   color:#ffd166;
-  border-radius:8px;
-  margin-top:8px;
 }
 .flash{animation:flash 1s infinite}
-@keyframes flash{0%{background:#251000}50%{background:#7a0000}100%{background:#251000}}
+@keyframes flash{
+  0%{background:#2a1200}
+  50%{background:#7a0000}
+  100%{background:#2a1200}
+}
+.small{font-size:12px;color:#9aa4b2}
 iframe{width:100%;height:100%;border:0}
+.tvbox{height:100%}
 </style>
 </head>
 
 <body>
 
 <div class="top">
-  <div class="logo">XAUUSD WAR ROOM</div>
-  <div class="gold">GOLD INTELLIGENCE MONITOR</div>
+  <div>
+    <div class="logo">XAUUSD WAR ROOM</div>
+    <div class="sub">REALTIME GOLD INTELLIGENCE</div>
+  </div>
+
+  <div class="gold">
+    XAUUSD / USDJPY / DXY / US YIELD / VIX / WTI / NEWS / RISK
+  </div>
+
   <div id="session" class="badge">LOADING</div>
-  <div id="tokyo" class="time"></div>
+
+  <div id="clock" class="sub"></div>
+
   <div id="alertBox" class="alert">SESSION ALERT READY</div>
 </div>
 
@@ -114,13 +161,13 @@ iframe{width:100%;height:100%;border:0}
     <div class="title">メインメニュー</div>
     <div class="active">📊 ダッシュボード</div>
     <div>📈 XAUUSDチャート</div>
-    <div>🌍 地政学リスク</div>
-    <div>📰 GOLDニュース</div>
-    <div>📅 経済指標</div>
-    <div>💵 DXY / 金利</div>
-    <div>⚠️ セッションアラート</div>
+    <div>💱 USDJPY監視</div>
+    <div>🌍 世界情勢リスク</div>
+    <div>📅 経済指標リスク</div>
+    <div>💵 DXY / 米金利</div>
+    <div>🛢 WTI / VIX</div>
+    <div>🚨 セッションアラート</div>
     <div>🎯 重要価格帯</div>
-    <div>📌 シナリオ</div>
   </div>
 
   <div class="panel chart">
@@ -128,67 +175,91 @@ iframe{width:100%;height:100%;border:0}
     <iframe src="https://www.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=15&theme=dark&style=1"></iframe>
   </div>
 
-  <div class="panel map">
-    <div class="title">地政学リスクマップ / GOLD影響</div>
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=TVC%3AGOLD&interval=60&theme=dark&style=3"></iframe>
+  <div class="panel riskmap">
+    <div class="title">GOLD RISK MAP / 世界情勢</div>
+    <div id="geoNews" class="inner news">世界情勢を取得中...</div>
   </div>
 
   <div class="right">
+
     <div class="panel">
       <div class="title">GOLD RISK INDEX</div>
-      <div class="riskCircle">68</div>
-      <div class="inner">
-        <div class="row"><span>地政学リスク</span><span class="red">HIGH</span></div>
-        <div class="row"><span>金利リスク</span><span class="yellow">MID</span></div>
-        <div class="row"><span>DXY影響</span><span class="green">BUY優勢</span></div>
+      <div class="riskCircle" id="riskScore">--</div>
+      <div class="inner small">GDELTニュース量から自動判定</div>
+    </div>
+
+    <div class="panel">
+      <div class="title">REALTIME MARKET DRIVER</div>
+      <div class="tvbox">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+          {
+            "width":"100%",
+            "height":360,
+            "symbolsGroups":[{
+              "name":"XAUUSD DRIVER",
+              "symbols":[
+                {"name":"OANDA:XAUUSD","displayName":"XAUUSD"},
+                {"name":"FX_IDC:USDJPY","displayName":"USDJPY"},
+                {"name":"TVC:DXY","displayName":"DXY"},
+                {"name":"TVC:US10Y","displayName":"US10Y"},
+                {"name":"TVC:US02Y","displayName":"US02Y"},
+                {"name":"TVC:VIX","displayName":"VIX"},
+                {"name":"TVC:USOIL","displayName":"WTI"}
+              ]
+            }],
+            "showSymbolLogo":true,
+            "colorTheme":"dark",
+            "isTransparent":true,
+            "locale":"ja"
+          }
+          </script>
+        </div>
       </div>
     </div>
 
     <div class="panel">
       <div class="title">TRADE BIAS</div>
       <div class="inner">
-        <div class="big green">BUY 優勢</div>
-        <p>DXY下落・米金利低下・地政学リスク上昇ならXAUUSD買い優勢。</p>
-        <div class="row"><span>信頼度</span><span class="gold">72%</span></div>
+        <div id="bias" class="big green">監視中</div>
+        <p id="biasText">XAUUSD・USDJPY・DXY・米金利・VIX・地政学ニュースを監視。</p>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="title">GEOPOLITICAL / GOLD NEWS</div>
-      <div id="news" class="inner news">読み込み中...</div>
-    </div>
   </div>
 
   <div class="bottom">
+
     <div class="panel">
-      <div class="title">GOLD DRIVER LIVE</div>
+      <div class="title">経済指標リスク / リアルタイムニュース</div>
+      <div id="macroNews" class="inner news">経済指標ニュースを取得中...</div>
+    </div>
+
+    <div class="panel">
+      <div class="title">XAUUSDシナリオ</div>
       <div class="inner">
-        <div class="row"><span>DXY</span><span class="red">TradingView監視</span></div>
-        <div class="row"><span>US10Y</span><span class="red">TradingView監視</span></div>
-        <div class="row"><span>US02Y</span><span class="red">TradingView監視</span></div>
-        <div class="row"><span>VIX</span><span class="green">TradingView監視</span></div>
-        <div class="row"><span>WTI</span><span class="green">TradingView監視</span></div>
+        <div class="row"><span>強気条件</span><span class="green">地政学リスク上昇 / 金利低下</span></div>
+        <div class="row"><span>弱気条件</span><span class="red">DXY上昇 / 米金利上昇</span></div>
+        <div class="row"><span>USDJPY</span><span class="yellow">円安進行でドル影響監視</span></div>
+        <div class="row"><span>注目</span><span class="gold">ロンドン・NY初動</span></div>
+        <div class="row"><span>推奨</span><span id="recommend" class="yellow">監視中</span></div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="title">重要経済指標</div>
+      <div class="title">重要価格帯</div>
       <div class="inner">
-        <div class="row"><span>21:30 CPI</span><span class="red">★★★</span></div>
-        <div class="row"><span>21:30 PPI</span><span class="red">★★★</span></div>
-        <div class="row"><span>21:30 失業保険</span><span class="yellow">★★</span></div>
-        <div class="row"><span>03:00 FOMC</span><span class="red">★★★</span></div>
+        <div class="row"><span>R3</span><span class="red">2450</span></div>
+        <div class="row"><span>R2</span><span class="red">2430</span></div>
+        <div class="row"><span>R1</span><span class="yellow">2410</span></div>
+        <div class="row"><span>現在価格</span><span class="gold">TradingView参照</span></div>
+        <div class="row"><span>S1</span><span class="green">2365</span></div>
+        <div class="row"><span>S2</span><span class="green">2345</span></div>
+        <div class="row"><span>S3</span><span class="green">2320</span></div>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="title">本日のXAUUSDシナリオ</div>
-      <div class="inner">
-        <p class="green">強気：サポート維持で押し目買い</p>
-        <p class="red">弱気：直近安値割れで売り警戒</p>
-        <p class="gold">重要：ロンドン・NY初動を監視</p>
-      </div>
-    </div>
   </div>
 
 </div>
@@ -198,24 +269,54 @@ let lastSession="";
 
 function updateClock(){
   const now=new Date();
-  tokyo.innerHTML="東京 " + now.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo"});
 
-  const h=Number(now.toLocaleString("en-US",{timeZone:"Asia/Tokyo",hour:"2-digit",hour12:false}));
-  const m=Number(now.toLocaleString("en-US",{timeZone:"Asia/Tokyo",minute:"2-digit"}));
+  const tokyo=now.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo"});
+  const london=now.toLocaleTimeString("en-GB",{timeZone:"Europe/London"});
+  const ny=now.toLocaleTimeString("en-US",{timeZone:"America/New_York"});
+
+  clock.innerHTML=`東京 ${tokyo} ｜ London ${london} ｜ NY ${ny}`;
+
+  const h=Number(now.toLocaleString("en-US",{
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    hour12:false
+  }));
+
+  const m=Number(now.toLocaleString("en-US",{
+    timeZone:"Asia/Tokyo",
+    minute:"2-digit"
+  }));
 
   let s="CLOSED";
   let a="次セッション待機中";
 
-  if(h>=9&&h<15){s="ASIA OPEN";a="🇯🇵 ASIA SESSION 監視中";}
-  else if(h>=16&&h<24){s="LONDON OPEN";a="🇬🇧 LONDON SESSION 監視中";}
-  else if(h>=0&&h<5){s="NEW YORK OPEN";a="🇺🇸 NEW YORK SESSION 監視中";}
+  if(h>=9 && h<15){
+    s="ASIA OPEN";
+    a="🇯🇵 ASIA SESSION 監視中";
+  }
+  else if(h>=16 && h<24){
+    s="LONDON OPEN";
+    a="🇬🇧 LONDON SESSION 監視中";
+  }
+  else if(h>=0 && h<5){
+    s="NEW YORK OPEN";
+    a="🇺🇸 NEW YORK SESSION 監視中";
+  }
 
   session.innerHTML=s;
   alertBox.innerHTML=a;
 
-  if(h===15&&m>=55){alertBox.innerHTML="⚠️ LONDON OPEN 5分前";alertBox.classList.add("flash")}
-  else if(h===21&&m>=25){alertBox.innerHTML="⚠️ NEW YORK OPEN 5分前";alertBox.classList.add("flash")}
-  else{alertBox.classList.remove("flash")}
+  if(h===15 && m>=55){
+    alertBox.innerHTML="⚠️ LONDON OPEN 5分前";
+    alertBox.classList.add("flash");
+  }
+  else if(h===21 && m>=25){
+    alertBox.innerHTML="⚠️ NEW YORK OPEN 5分前";
+    alertBox.classList.add("flash");
+  }
+  else{
+    alertBox.classList.remove("flash");
+  }
 
   if(s!==lastSession && s!=="CLOSED"){
     alert(s);
@@ -223,24 +324,79 @@ function updateClock(){
   }
 }
 
-async function loadNews(){
+async function loadGeoRisk(){
   try{
-    const url="https://api.gdeltproject.org/api/v2/doc/doc?query=xauusd%20OR%20gold%20OR%20fed%20OR%20inflation%20OR%20war%20OR%20geopolitical&mode=ArtList&format=json&maxrecords=12&sort=HybridRel";
+    const url="https://api.gdeltproject.org/api/v2/doc/doc?query=(war%20OR%20conflict%20OR%20iran%20OR%20israel%20OR%20ukraine%20OR%20taiwan%20OR%20middle%20east%20OR%20oil%20OR%20sanctions)%20(gold%20OR%20market%20OR%20risk%20OR%20dollar)&mode=ArtList&format=json&maxrecords=15&sort=HybridRel";
     const r=await fetch(url);
     const d=await r.json();
-    news.innerHTML="";
-    d.articles.forEach(x=>{
-      news.innerHTML+=`<p><a href="${x.url}" target="_blank">${x.title}</a><br><span class="gold">${x.sourceCountry||""}</span></p>`;
+    const articles=d.articles || [];
+
+    geoNews.innerHTML="";
+
+    articles.forEach(x=>{
+      geoNews.innerHTML+=`
+        <p>
+          🌍 <a href="${x.url}" target="_blank">${x.title}</a><br>
+          <span class="gold">${x.sourceCountry || ""}</span>
+        </p>
+      `;
+    });
+
+    const score=Math.min(95,45 + articles.length * 3);
+    riskScore.innerHTML=score;
+
+    if(score>=70){
+      bias.innerHTML="BUY 優勢";
+      bias.className="big green";
+      biasText.innerHTML="地政学リスク上昇。安全資産の金に資金流入しやすい。";
+      recommend.innerHTML="押し目買い優勢";
+    }
+    else if(score>=55){
+      bias.innerHTML="中立";
+      bias.className="big yellow";
+      biasText.innerHTML="地政学リスクは中程度。DXY・USDJPY・米金利を優先監視。";
+      recommend.innerHTML="様子見";
+    }
+    else{
+      bias.innerHTML="SELL警戒";
+      bias.className="big red";
+      biasText.innerHTML="リスク後退。DXY上昇・金利上昇なら金は下落警戒。";
+      recommend.innerHTML="戻り売り警戒";
+    }
+  }catch(e){
+    geoNews.innerHTML="世界情勢ニュース取得エラー。時間を置いて更新。";
+  }
+}
+
+async function loadMacroRisk(){
+  try{
+    const url="https://api.gdeltproject.org/api/v2/doc/doc?query=(CPI%20OR%20PPI%20OR%20NFP%20OR%20FOMC%20OR%20Fed%20OR%20inflation%20OR%20interest%20rates%20OR%20employment%20OR%20GDP)%20(gold%20OR%20dollar%20OR%20yen%20OR%20market)&mode=ArtList&format=json&maxrecords=12&sort=HybridRel";
+    const r=await fetch(url);
+    const d=await r.json();
+    const articles=d.articles || [];
+
+    macroNews.innerHTML="";
+
+    articles.forEach(x=>{
+      macroNews.innerHTML+=`
+        <p>
+          📅 <a href="${x.url}" target="_blank">${x.title}</a><br>
+          <span class="gold">${x.sourceCountry || ""}</span>
+        </p>
+      `;
     });
   }catch(e){
-    news.innerHTML="ニュース取得エラー。更新してください。";
+    macroNews.innerHTML="経済指標ニュース取得エラー。時間を置いて更新。";
   }
 }
 
 setInterval(updateClock,1000);
+setInterval(loadGeoRisk,300000);
+setInterval(loadMacroRisk,300000);
+
 updateClock();
-loadNews();
-setInterval(loadNews,300000);
+loadGeoRisk();
+loadMacroRisk();
 </script>
 
 </body>
