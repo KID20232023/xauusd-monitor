@@ -8,24 +8,14 @@
 <style>
 *{box-sizing:border-box}
 :root{
-  --bg:#000;
-  --panel:#07090d;
-  --panel2:#0b0f15;
-  --line:#2b2b2b;
-  --text:#f2f2f2;
-  --muted:#9a9a9a;
-  --blue:#2f6cff;
-  --red:#ff4d4d;
-  --green:#18c985;
-  --yellow:#ffd54a;
-  --orange:#ff9f1a;
+  --bg:#000;--panel:#07090d;--line:#2b2b2b;
+  --text:#f2f2f2;--sub:#aaa;
+  --blue:#2f6cff;--red:#ff4d4d;--green:#18c985;
+  --yellow:#ffd54a;--orange:#ff9f1a;
 }
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  background:#000;
-  color:var(--text);
+  margin:0;width:100%;height:100%;
+  background:#000;color:var(--text);
   font-family:Arial,"Hiragino Sans",sans-serif;
   overflow:hidden;
 }
@@ -40,125 +30,84 @@ html,body{
   padding:7px 10px;
   font-size:15px;
   font-weight:900;
-  color:#fff;
   border-bottom:1px solid var(--line);
-  background:#0b0f15;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
 }
 .top{
-  height:76px;
+  height:78px;
   display:grid;
-  grid-template-columns:1.2fr 1fr 1.2fr .7fr;
+  grid-template-columns:1.2fr 1fr 1fr .7fr;
   gap:8px;
   padding:8px;
 }
 .box{padding:10px 12px}
-.logo{font-size:28px;font-weight:900;line-height:1}
-.sub{font-size:14px;color:var(--muted);margin-top:4px}
-.big{font-size:30px;font-weight:900}
+.logo{font-size:26px;font-weight:900}
+.sub{font-size:13px;color:var(--sub)}
+.big{font-size:28px;font-weight:900;white-space:nowrap}
 .btn{
-  width:100%;
-  height:48px;
-  background:#111;
-  color:#fff;
-  border:1px solid var(--line);
-  border-radius:8px;
-  font-size:18px;
-  font-weight:900;
+  width:100%;height:48px;background:#111;color:#fff;
+  border:1px solid var(--line);border-radius:8px;
+  font-size:18px;font-weight:900;
 }
-.layout{
-  height:calc(100vh - 76px);
+.main{
+  height:calc(100vh - 78px);
   display:grid;
-  grid-template-columns:50% 24% 26%;
-  grid-template-rows:59% 41%;
+  grid-template-columns:52% 48%;
+  grid-template-rows:58% 42%;
   gap:8px;
   padding:0 8px 8px;
 }
 .chart{grid-column:1;grid-row:1}
-.driver{grid-column:2;grid-row:1}
-.session{grid-column:3;grid-row:1}
+.rightTop{
+  grid-column:2;grid-row:1;
+  display:grid;grid-template-columns:45% 55%;gap:8px;
+}
 .bottom{
-  grid-column:1/4;
-  grid-row:2;
+  grid-column:1/3;grid-row:2;
   display:grid;
-  grid-template-columns:32% 22% 28% 18%;
+  grid-template-columns:24% 30% 23% 23%;
   gap:8px;
 }
+.inner{height:calc(100% - 34px);padding:10px}
 #tv_chart{height:calc(100% - 34px)}
-.inner{
-  height:calc(100% - 34px);
-  padding:10px;
-}
 .row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  padding:7px 0;
-  border-bottom:1px solid #1d1d1d;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:7px 0;border-bottom:1px solid #222;
   font-size:17px;
 }
-.label{color:var(--muted)}
-.value{font-weight:900;color:#fff;text-align:right}
-.count{
-  font-size:30px;
-  font-weight:900;
-  color:#fff;
+.label{color:var(--sub)}
+.value{font-weight:900;text-align:right}
+.count{font-size:30px;font-weight:900}
+.symbol{
+  padding:13px;border:1px solid #222;border-radius:8px;
+  margin-bottom:10px;
 }
-.symbolBox{
-  height:118px;
-  border:1px solid #222;
-  border-radius:8px;
-  overflow:hidden;
-  margin-bottom:8px;
-}
+.symbolName{font-size:18px;font-weight:900}
+.symbolPrice{font-size:34px;font-weight:900}
 .mapgrid{
-  height:100%;
-  display:grid;
+  height:100%;display:grid;
   grid-template-columns:1fr 1fr 1fr;
   grid-template-rows:1fr 1fr;
   gap:8px;
 }
 .mapbox{
-  background:var(--panel2);
   border:2px solid var(--line);
   border-radius:8px;
   padding:10px;
 }
-.mapTitle{
-  font-size:22px;
-  font-weight:900;
-}
-.mapSub{
-  margin-top:5px;
-  font-size:17px;
-}
-.mapImpact{
-  margin-top:8px;
-  font-size:22px;
-  font-weight:900;
-}
-.news p{
-  margin:9px 0;
-  padding-bottom:9px;
-  border-bottom:1px solid #1d1d1d;
-  font-size:17px;
-}
-.news a{color:#fff;text-decoration:none}
-.watch{color:var(--yellow);border-color:var(--yellow);animation:slowFlash 3s infinite}
-.alert{color:var(--orange);border-color:var(--orange);animation:midFlash 1.5s infinite}
-.warning{color:var(--red);border-color:var(--red);animation:fastFlash 1s infinite}
-.critical{color:var(--red);border-color:var(--red);animation:criticalFlash .45s infinite}
-.green{color:var(--green)}
-.red{color:var(--red)}
-.yellow{color:var(--yellow)}
-.orange{color:var(--orange)}
-@keyframes slowFlash{50%{box-shadow:0 0 14px rgba(255,213,74,.55)}}
-@keyframes midFlash{50%{box-shadow:0 0 16px rgba(255,159,26,.65)}}
-@keyframes fastFlash{50%{box-shadow:0 0 18px rgba(255,77,77,.75)}}
-@keyframes criticalFlash{50%{background:#3b0808}}
+.mapTitle{font-size:22px;font-weight:900}
+.mapText{font-size:17px;margin-top:5px}
+.mapImpact{font-size:22px;font-weight:900;margin-top:6px}
+.news p{font-size:17px;margin:9px 0;border-bottom:1px solid #222;padding-bottom:8px}
+.red{color:var(--red)}.green{color:var(--green)}
+.yellow{color:var(--yellow)}.orange{color:var(--orange)}
+.watch{color:var(--yellow);border-color:var(--yellow);animation:flashY 2s infinite}
+.alert{color:var(--orange);border-color:var(--orange);animation:flashO 1.4s infinite}
+.warning{color:var(--red);border-color:var(--red);animation:flashR 1s infinite}
+.critical{color:var(--red);border-color:var(--red);animation:critical .45s infinite}
+@keyframes flashY{50%{box-shadow:0 0 15px rgba(255,213,74,.7)}}
+@keyframes flashO{50%{box-shadow:0 0 15px rgba(255,159,26,.8)}}
+@keyframes flashR{50%{box-shadow:0 0 18px rgba(255,77,77,.9)}}
+@keyframes critical{50%{background:#400808}}
 </style>
 </head>
 
@@ -169,93 +118,72 @@ html,body{
     <div class="logo">XAUUSD WAR ROOM</div>
     <div class="sub">GOLD COMMAND CENTER</div>
   </div>
-
   <div class="card box">
     <div class="sub">日本時間</div>
     <div id="jstClock" class="big">--時--分--秒</div>
   </div>
-
   <div class="card box">
     <div class="sub">現在セッション</div>
     <div id="topSession" class="big">---</div>
   </div>
-
   <div class="card box">
     <button class="btn" onclick="enableAlerts()">通知ON</button>
   </div>
 </div>
 
-<div class="layout">
+<div class="main">
 
   <div class="card chart">
-    <div class="head">
-      <span>XAUUSD</span>
-      <a href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank" style="color:#fff;text-decoration:none">TRADINGVIEW</a>
-    </div>
+    <div class="head">XAUUSD</div>
     <div id="tv_chart"></div>
   </div>
 
-  <div class="card driver">
-    <div class="head">MARKET DRIVER</div>
-    <div class="inner">
-      <div class="symbolBox">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {"symbol":"OANDA:XAUUSD","width":"100%","height":118,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-        </script></div>
-      </div>
+  <div class="rightTop">
 
-      <div class="symbolBox">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {"symbol":"OANDA:USDJPY","width":"100%","height":118,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-        </script></div>
-      </div>
-
-      <div class="symbolBox">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {"symbol":"BITSTAMP:BTCUSD","width":"100%","height":118,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-        </script></div>
+    <div class="card">
+      <div class="head">MARKET DRIVER</div>
+      <div class="inner">
+        <div class="symbol">
+          <div class="symbolName">XAUUSD</div>
+          <div class="symbolPrice">TradingView</div>
+        </div>
+        <div class="symbol">
+          <div class="symbolName">USDJPY</div>
+          <div class="symbolPrice">TradingView</div>
+        </div>
+        <div class="symbol">
+          <div class="symbolName">BTCUSD</div>
+          <div class="symbolPrice">TradingView</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="card session">
-    <div class="head">SESSION COMMAND</div>
-    <div class="inner">
-      <div class="row"><span class="label">現在</span><span id="sessionNow" class="value">---</span></div>
-      <div class="row"><span class="label">次</span><span id="nextSession" class="value">---</span></div>
-      <div class="row"><span class="label">重要次</span><span id="nextMajor" class="value">---</span></div>
-      <div class="row"><span class="label">開始</span><span id="nextStart" class="value">---</span></div>
-      <div class="row"><span class="label">終了</span><span id="nextEnd" class="value">---</span></div>
-      <div class="row"><span class="label">残り</span><span id="sessionCountdown" class="count">---</span></div>
-      <div class="row"><span class="label">状態</span><span id="sessionStatus" class="value">NORMAL</span></div>
-      <div class="row"><span class="label">東京OPEN</span><span class="value">09時00分00秒</span></div>
-      <div class="row"><span class="label">ロンドンOPEN</span><span class="value">16時00分00秒</span></div>
-      <div class="row"><span class="label">NY OPEN</span><span class="value">21時30分00秒</span></div>
-      <div class="row"><span class="label">重複時間</span><span class="value">21時30分〜01時00分</span></div>
+    <div class="card">
+      <div class="head">SESSION COMMAND</div>
+      <div class="inner">
+        <div class="row"><span class="label">現在</span><span id="sessionNow" class="value">---</span></div>
+        <div class="row"><span class="label">次</span><span id="nextSession" class="value">---</span></div>
+        <div class="row"><span class="label">開始</span><span id="nextStart" class="value">---</span></div>
+        <div class="row"><span class="label">終了</span><span id="nextEnd" class="value">---</span></div>
+        <div class="row"><span class="label">残り</span><span id="sessionCountdown" class="count">---</span></div>
+        <div class="row"><span class="label">東京OPEN</span><span class="value">09時00分00秒</span></div>
+        <div class="row"><span class="label">ロンドンOPEN</span><span class="value">16時00分00秒</span></div>
+        <div class="row"><span class="label">NY OPEN</span><span class="value">21時30分00秒</span></div>
+        <div class="row"><span class="label">重複時間</span><span class="value">21時30分〜01時00分</span></div>
+      </div>
     </div>
+
   </div>
 
   <div class="bottom">
-
-    <div class="card">
-      <div class="head">ECONOMIC CALENDAR / USD JPY</div>
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-        {"colorTheme":"dark","isTransparent":true,"width":"100%","height":330,"locale":"ja","importanceFilter":"0,1","currencyFilter":"USD,JPY"}
-        </script>
-      </div>
-    </div>
 
     <div class="card" id="impactCard">
       <div class="head">HIGH IMPACT</div>
       <div class="inner">
         <div class="row"><span class="label">指標</span><span id="eventName" class="value">---</span></div>
+        <div class="row"><span class="label">内容</span><span id="eventDesc" class="value">---</span></div>
         <div class="row"><span class="label">日時</span><span id="eventDate" class="value">---</span></div>
-        <div class="row"><span class="label">重要度</span><span id="eventImpact" class="value">---</span></div>
+        <div class="row"><span class="label">重要度</span><span id="eventImpact" class="value red">---</span></div>
         <div class="row"><span class="label">残り</span><span id="eventCountdown" class="count">---</span></div>
       </div>
     </div>
@@ -264,60 +192,66 @@ html,body{
       <div class="head">GOLD WAR MAP</div>
       <div class="inner mapgrid">
         <div class="mapbox warning">
-          <div class="mapTitle">MIDDLE EAST</div>
-          <div class="mapSub">Israel / Iran / Gaza</div>
-          <div class="mapImpact">SAFE HAVEN ↑↑</div>
-          <div class="mapSub red">HIGH RISK</div>
+          <div class="mapTitle">中東</div>
+          <div class="mapText">イスラエル / イラン / ガザ</div>
+          <div class="mapImpact">金買い ↑↑</div>
+          <div class="mapText red">高リスク</div>
         </div>
-
         <div class="mapbox alert">
-          <div class="mapTitle">UKRAINE</div>
-          <div class="mapSub">Russia / Ukraine</div>
-          <div class="mapImpact">SAFE HAVEN ↑</div>
-          <div class="mapSub orange">ALERT</div>
+          <div class="mapTitle">ウクライナ</div>
+          <div class="mapText">ロシア / ウクライナ</div>
+          <div class="mapImpact">金買い ↑</div>
+          <div class="mapText orange">警戒</div>
         </div>
-
         <div class="mapbox watch">
-          <div class="mapTitle">TAIWAN</div>
-          <div class="mapSub">China / Taiwan</div>
-          <div class="mapImpact">WATCH</div>
-          <div class="mapSub yellow">MEDIUM</div>
+          <div class="mapTitle">台湾</div>
+          <div class="mapText">中国 / 台湾</div>
+          <div class="mapImpact">注意</div>
+          <div class="mapText yellow">監視</div>
         </div>
-
         <div class="mapbox warning">
-          <div class="mapTitle">IRAN</div>
-          <div class="mapSub">Military / Oil</div>
-          <div class="mapImpact">GOLD ↑↑</div>
-          <div class="mapSub red">WARNING</div>
+          <div class="mapTitle">イラン</div>
+          <div class="mapText">軍事 / 原油</div>
+          <div class="mapImpact">金買い ↑↑</div>
+          <div class="mapText red">危険</div>
         </div>
-
         <div class="mapbox watch">
-          <div class="mapTitle">CHINA</div>
-          <div class="mapSub">Economy / Yuan</div>
-          <div class="mapImpact">NEUTRAL →</div>
-          <div class="mapSub yellow">WATCH</div>
+          <div class="mapTitle">中国</div>
+          <div class="mapText">景気 / 人民元</div>
+          <div class="mapImpact">中立 →</div>
+          <div class="mapText yellow">監視</div>
         </div>
-
         <div class="mapbox alert">
-          <div class="mapTitle">RED SEA</div>
-          <div class="mapSub">Shipping Risk</div>
-          <div class="mapImpact">RISK ↑</div>
-          <div class="mapSub orange">ALERT</div>
+          <div class="mapTitle">紅海</div>
+          <div class="mapText">海運リスク</div>
+          <div class="mapImpact">リスク ↑</div>
+          <div class="mapText orange">警戒</div>
         </div>
       </div>
     </div>
 
-    <div class="card news">
+    <div class="card">
       <div class="head">NEXT ALERT</div>
       <div class="inner">
         <div class="row"><span class="label">次セッション</span><span id="nextAlertSession" class="value">---</span></div>
         <div class="row"><span class="label">時間</span><span id="nextAlertSessionTime" class="value">---</span></div>
         <div class="row"><span class="label">次指標</span><span id="nextAlertEvent" class="value">---</span></div>
         <div class="row"><span class="label">時間</span><span id="nextAlertEventTime" class="value">---</span></div>
-        <div class="row"><span class="label">WATCH</span><span class="watch">60分前</span></div>
-        <div class="row"><span class="label">ALERT</span><span class="alert">30分前</span></div>
-        <div class="row"><span class="label">WARNING</span><span class="warning">15分前</span></div>
-        <div class="row"><span class="label">CRITICAL</span><span class="critical">5分前</span></div>
+        <div class="row"><span class="label">WATCH</span><span class="yellow">60分前</span></div>
+        <div class="row"><span class="label">ALERT</span><span class="orange">30分前</span></div>
+        <div class="row"><span class="label">WARNING</span><span class="red">15分前</span></div>
+        <div class="row"><span class="label">CRITICAL</span><span class="red critical">5分前</span></div>
+      </div>
+    </div>
+
+    <div class="card news">
+      <div class="head">GOLD NEWS FEED</div>
+      <div class="inner">
+        <p>Reuters Markets <span class="red">HIGH</span></p>
+        <p>Kitco Gold News <span class="red">HIGH</span></p>
+        <p>CNBC Markets <span class="orange">MEDIUM</span></p>
+        <p>FXStreet News <span class="orange">MEDIUM</span></p>
+        <p>YouTube XAUUSD <span class="yellow">WATCH</span></p>
       </div>
     </div>
 
@@ -325,20 +259,17 @@ html,body{
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
-
 <script>
-let alerts=false;
-let lastSession="";
-let sentAlert={};
+let alerts=false, lastSession="", sentAlert={};
 
 function enableAlerts(){
   alerts=true;
-  if(Notification.permission!=="granted") Notification.requestPermission();
+  if(Notification.permission!=="granted")Notification.requestPermission();
   alert("通知ON");
 }
 
 function notifyUser(text){
-  if(alerts && Notification.permission==="granted") new Notification(text);
+  if(alerts && Notification.permission==="granted")new Notification(text);
   new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg").play().catch(()=>{});
 }
 
@@ -351,9 +282,6 @@ new TradingView.widget({
   style:"1",
   locale:"ja",
   container_id:"tv_chart",
-  hide_side_toolbar:false,
-  hide_top_toolbar:false,
-  allow_symbol_change:true,
   hide_volume:true,
   studies:[],
   overrides:{
@@ -365,110 +293,66 @@ new TradingView.widget({
     "mainSeriesProperties.candleStyle.wickDownColor":"#9aa0a6",
     "paneProperties.background":"#000000",
     "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
-    "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
-    "paneProperties.vertGridProperties.style":0,
-    "paneProperties.horzGridProperties.style":0,
-    "scalesProperties.textColor":"#b8c0cc"
-  },
-  disabled_features:[
-    "header_compare",
-    "header_symbol_search",
-    "header_screenshot",
-    "header_indicators",
-    "use_localstorage_for_settings"
-  ]
+    "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)"
+  }
 });
 
 const sessions=[
-{name:"SYDNEY OPEN",start:"07:00",end:"09:00",major:false},
-{name:"TOKYO PRE OPEN",start:"08:00",end:"09:00",major:false},
-{name:"TOKYO OPEN",start:"09:00",end:"15:00",major:true},
-{name:"TOKYO CLOSE",start:"15:00",end:"16:00",major:false},
-{name:"LONDON PRE OPEN",start:"15:30",end:"16:00",major:false},
-{name:"LONDON OPEN",start:"16:00",end:"18:00",major:true},
-{name:"LONDON AM",start:"18:00",end:"21:00",major:false},
-{name:"NEW YORK PRE OPEN",start:"21:00",end:"21:30",major:false},
-{name:"NEW YORK OPEN",start:"21:30",end:"23:00",major:true},
-{name:"OVERLAP",start:"21:30",end:"01:00",major:true},
-{name:"LONDON CLOSE",start:"01:00",end:"01:30",major:false},
-{name:"NEW YORK AM",start:"23:00",end:"02:00",major:false},
-{name:"NEW YORK PM",start:"02:00",end:"05:00",major:false},
-{name:"NEW YORK CLOSE",start:"05:00",end:"06:00",major:false}
+{name:"SYDNEY OPEN",start:"07:00",end:"09:00"},
+{name:"TOKYO OPEN",start:"09:00",end:"15:00"},
+{name:"LONDON OPEN",start:"16:00",end:"18:00"},
+{name:"NEW YORK OPEN",start:"21:30",end:"23:00"},
+{name:"OVERLAP",start:"21:30",end:"01:00"},
+{name:"NEW YORK CLOSE",start:"05:00",end:"06:00"}
 ];
 
 const events=[
-{name:"US CPI",country:"USD",date:"2026-06-10",time:"21:30",impact:"★★★★★"},
-{name:"US CORE CPI",country:"USD",date:"2026-06-10",time:"21:30",impact:"★★★★★"},
-{name:"US PPI",country:"USD",date:"2026-06-11",time:"21:30",impact:"★★★★"},
-{name:"US NFP",country:"USD",date:"2026-06-05",time:"21:30",impact:"★★★★★"},
-{name:"US PCE",country:"USD",date:"2026-06-26",time:"21:30",impact:"★★★★★"},
-{name:"FOMC",country:"USD",date:"2026-06-18",time:"03:00",impact:"★★★★★"},
-{name:"US GDP",country:"USD",date:"2026-06-25",time:"21:30",impact:"★★★★★"},
-{name:"US ISM",country:"USD",date:"2026-06-03",time:"23:00",impact:"★★★★"}
+{name:"US ISM PMI",desc:"米ISM製造業景況指数",date:"2026-06-03",time:"23:00",impact:"★★★★"},
+{name:"US NFP",desc:"米雇用統計",date:"2026-06-05",time:"21:30",impact:"★★★★★"},
+{name:"US CPI",desc:"米消費者物価指数",date:"2026-06-10",time:"21:30",impact:"★★★★★"},
+{name:"FOMC",desc:"米政策金利 / パウエル発言",date:"2026-06-18",time:"03:00",impact:"★★★★★"}
 ];
 
 function pad(n){return String(n).padStart(2,"0")}
-function toMin(t){const [h,m]=t.split(":").map(Number);return h*60+m}
-function jstNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
-
-function jpDateTime(d){
+function toMin(t){const[a,b]=t.split(":").map(Number);return a*60+b}
+function nowJST(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
+function jpDT(d){
   const w=["日","月","火","水","木","金","土"][d.getDay()];
-  return `${d.getFullYear()}年${pad(d.getMonth()+1)}月${pad(d.getDate())}日（${w}）${pad(d.getHours())}時${pad(d.getMinutes())}分${pad(d.getSeconds())}秒 JST`;
+  return `${d.getFullYear()}年${pad(d.getMonth()+1)}月${pad(d.getDate())}日（${w}）${pad(d.getHours())}時${pad(d.getMinutes())}分${pad(d.getSeconds())}秒`;
 }
-
-function jpCountdown(ms){
+function cd(ms){
   let s=Math.max(0,Math.floor(ms/1000));
   const d=Math.floor(s/86400);s%=86400;
   const h=Math.floor(s/3600);s%=3600;
   const m=Math.floor(s/60);s%=60;
   return `${d}日 ${h}時間 ${m}分 ${s}秒`;
 }
-
-function nextDate(time){
-  const now=jstNow();
-  const cm=now.getHours()*60+now.getMinutes();
-  const tm=toMin(time);
-  const d=new Date(now);
+function nextDate(t){
+  const n=nowJST(), cm=n.getHours()*60+n.getMinutes(), tm=toMin(t), d=new Date(n);
   if(tm<=cm)d.setDate(d.getDate()+1);
   if(d.getDay()===6)d.setDate(d.getDate()+2);
   if(d.getDay()===0)d.setDate(d.getDate()+1);
-  d.setHours(Number(time.split(":")[0]),Number(time.split(":")[1]),0,0);
+  d.setHours(Number(t.split(":")[0]),Number(t.split(":")[1]),0,0);
   return d;
 }
-
-function eventDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
-
-function level(diff){
-  if(diff<=5*60000)return "critical";
-  if(diff<=15*60000)return "warning";
-  if(diff<=30*60000)return "alert";
-  if(diff<=60*60000)return "watch";
-  return "";
-}
+function evDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
 
 function update(){
-  const now=jstNow();
-  const cm=now.getHours()*60+now.getMinutes();
-  jstClock.innerHTML=`${pad(now.getHours())}時${pad(now.getMinutes())}分${pad(now.getSeconds())}秒`;
+  const n=nowJST(), cm=n.getHours()*60+n.getMinutes();
+  jstClock.innerHTML=`${pad(n.getHours())}時${pad(n.getMinutes())}分${pad(n.getSeconds())}秒`;
 
-  let current="MARKET CLOSED";
+  let cur="MARKET CLOSED";
   sessions.forEach(s=>{
     const st=toMin(s.start),en=toMin(s.end);
-    if(en<st){if(cm>=st||cm<en)current=s.name}
-    else{if(cm>=st&&cm<en)current=s.name}
+    if(en<st){if(cm>=st||cm<en)cur=s.name}
+    else{if(cm>=st&&cm<en)cur=s.name}
   });
-
-  topSession.innerHTML=current;
-  sessionNow.innerHTML=current;
+  topSession.innerHTML=cur;
+  sessionNow.innerHTML=cur;
 
   const next=sessions.map(s=>{
     const d=nextDate(s.start);
-    return {...s,date:d,diff:d-now};
-  }).sort((a,b)=>a.diff-b.diff)[0];
-
-  const nextMajor=sessions.filter(s=>s.major).map(s=>{
-    const d=nextDate(s.start);
-    return {...s,date:d,diff:d-now};
+    return {...s,date:d,diff:d-n};
   }).sort((a,b)=>a.diff-b.diff)[0];
 
   const end=new Date(next.date);
@@ -476,56 +360,22 @@ function update(){
   if(toMin(next.end)<toMin(next.start))end.setDate(end.getDate()+1);
 
   nextSession.innerHTML=next.name;
-  nextMajor.innerHTML=nextMajor.name;
-  nextStart.innerHTML=jpDateTime(next.date);
-  nextEnd.innerHTML=jpDateTime(end);
-  sessionCountdown.innerHTML=jpCountdown(next.diff);
-
+  nextStart.innerHTML=jpDT(next.date);
+  nextEnd.innerHTML=jpDT(end);
+  sessionCountdown.innerHTML=cd(next.diff);
   nextAlertSession.innerHTML=next.name;
-  nextAlertSessionTime.innerHTML=jpDateTime(next.date);
+  nextAlertSessionTime.innerHTML=jpDT(next.date);
 
-  const sl=level(next.diff);
-  sessionStatus.innerHTML=sl?sl.toUpperCase():"NORMAL";
-  sessionStatus.className=sl||"value";
-  sessionCountdown.className=sl?`count ${sl}`:"count";
-
-  [60,30,15,5].forEach(min=>{
-    const key=`s-${next.name}-${min}-${jpDateTime(next.date)}`;
-    if(next.diff<=min*60000 && next.diff>(min*60000-2000) && !sentAlert[key]){
-      notifyUser(`${next.name} ${min}分前`);
-      sentAlert[key]=true;
-    }
-  });
-
-  if(current!==lastSession && current!=="MARKET CLOSED"){
-    notifyUser(`${current} 開始`);
-    lastSession=current;
-  }
-
-  const future=events.map(e=>({...e,dateObj:eventDate(e)})).filter(e=>e.dateObj>now).sort((a,b)=>a.dateObj-b.dateObj);
-  const ev=future[0];
-
+  const ev=events.map(e=>({...e,dateObj:evDate(e)})).filter(e=>e.dateObj>n).sort((a,b)=>a.dateObj-b.dateObj)[0];
   if(ev){
-    const diff=ev.dateObj-now;
-    eventName.innerHTML=`${ev.country} ${ev.name}`;
-    eventDate.innerHTML=jpDateTime(ev.dateObj);
+    const diff=ev.dateObj-n;
+    eventName.innerHTML=ev.name;
+    eventDesc.innerHTML=ev.desc;
+    eventDate.innerHTML=jpDT(ev.dateObj);
     eventImpact.innerHTML=ev.impact;
-    eventCountdown.innerHTML=jpCountdown(diff);
-
-    nextAlertEvent.innerHTML=`${ev.country} ${ev.name}`;
-    nextAlertEventTime.innerHTML=jpDateTime(ev.dateObj);
-
-    const el=level(diff);
-    impactCard.className=el?`card ${el}`:"card";
-    eventCountdown.className=el?`count ${el}`:"count";
-
-    [60,30,15,5,1].forEach(min=>{
-      const key=`e-${ev.name}-${min}-${ev.date}`;
-      if(diff<=min*60000 && diff>(min*60000-2000) && !sentAlert[key]){
-        notifyUser(`${ev.name} ${min}分前`);
-        sentAlert[key]=true;
-      }
-    });
+    eventCountdown.innerHTML=cd(diff);
+    nextAlertEvent.innerHTML=ev.name;
+    nextAlertEventTime.innerHTML=jpDT(ev.dateObj);
   }
 }
 
