@@ -4,302 +4,62 @@
 <meta charset="UTF-8">
 <title>XAUUSD COMMAND ROOM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:#050607;
-  color:#e6e6e6;
-  font-family:Arial,"Hiragino Sans",sans-serif;
-  overflow:hidden;
-}
-
-:root{
-  --bg:#050607;
-  --panel:#0b0f14;
-  --panel2:#10161d;
-  --line:#202832;
-  --text:#e6e6e6;
-  --muted:#8b949e;
-  --blue:#2f80ff;
-  --red:#ff3b45;
-  --green:#16c784;
-  --yellow:#f5c542;
-}
-
-.top{
-  height:60px;
-  display:grid;
-  grid-template-columns:260px 1fr 210px 190px 120px;
-  gap:10px;
-  align-items:center;
-  padding:8px 14px;
-  background:#07090c;
-  border-bottom:1px solid var(--line);
-}
-
-.logo{
-  font-size:21px;
-  font-weight:900;
-  letter-spacing:.5px;
-}
-
-.sub{
-  font-size:12px;
-  color:var(--muted);
-}
-
-.jst{
-  font-size:18px;
-  font-weight:bold;
-  color:#fff;
-}
-
-.session{
-  padding:8px 12px;
-  border-radius:8px;
-  text-align:center;
-  font-weight:bold;
-  background:#111922;
-  border:1px solid var(--line);
-}
-
-.btn{
-  background:#111922;
-  color:#fff;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.main{
-  height:calc(100vh - 60px);
-  display:grid;
-  grid-template-columns:170px 1.55fr 330px 310px;
-  grid-template-rows:1fr 245px;
-  gap:8px;
-  padding:8px;
-}
-
-.panel{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden;
-}
-
-.title{
-  padding:9px 10px;
-  font-size:13px;
-  font-weight:bold;
-  color:#fff;
-  background:#0d1218;
-  border-bottom:1px solid var(--line);
-}
-
-.menu{
-  grid-row:1/3;
-}
-
-.menu div{
-  padding:11px 12px;
-  border-bottom:1px solid var(--line);
-  font-size:13px;
-  color:#cfd6dd;
-}
-
-.menu .active{
-  background:#121b26;
-  color:#fff;
-  border-left:3px solid var(--blue);
-}
-
-.chart{
-  grid-column:2/3;
-}
-
-.driver{
-  grid-column:3/4;
-}
-
-.right{
-  grid-column:4/5;
-  grid-row:1/3;
-  display:grid;
-  grid-template-rows:235px 1fr;
-  gap:8px;
-}
-
-.bottom{
-  grid-column:2/4;
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-}
-
-.inner{
-  padding:10px;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  border-bottom:1px solid var(--line);
-  padding:8px 0;
-  font-size:13px;
-}
-
-.big{
-  font-size:28px;
-  font-weight:900;
-}
-
-.muted{color:var(--muted)}
-.blue{color:var(--blue)}
-.red{color:var(--red)}
-.green{color:var(--green)}
-.yellow{color:var(--yellow)}
-.white{color:#fff}
-
-.alertBox{
-  font-size:24px;
-  font-weight:900;
-  color:#fff;
-}
-
-.count{
-  font-size:26px;
-  font-weight:900;
-  color:var(--blue);
-}
-
-.riskgrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:10px;
-}
-
-.riskbox{
-  background:var(--panel2);
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:10px;
-  min-height:70px;
-}
-
-.riskHigh{border-color:var(--red)}
-.riskMid{border-color:var(--yellow)}
-.riskLow{border-color:var(--green)}
-
-.news p{
-  margin:8px 0;
-  padding-bottom:8px;
-  border-bottom:1px solid var(--line);
-  font-size:13px;
-}
-
-.news a{
-  color:#e6e6e6;
-  text-decoration:none;
-}
-
-.news a:hover{
-  color:var(--blue);
-}
-
-.flash{
-  animation:flash 1s infinite;
-}
-
-@keyframes flash{
-  0%{background:#111922}
-  50%{background:#331116}
-  100%{background:#111922}
-}
-
-iframe{
-  width:100%;
-  height:100%;
-  border:0;
-}
-
-#tv_chart{
-  height:100%;
-}
+body{margin:0;background:#050607;color:#e6e6e6;font-family:Arial,"Hiragino Sans",sans-serif;overflow:hidden}
+:root{--panel:#0b0f14;--line:#202832;--muted:#8b949e;--blue:#1f4cff;--red:#ff3b45;--green:#16c784;--yellow:#f5c542}
+.top{height:68px;display:grid;grid-template-columns:260px 1fr 220px 210px;gap:12px;align-items:center;padding:10px 16px;background:#07090c;border-bottom:1px solid var(--line)}
+.logo{font-size:24px;font-weight:900}.sub{font-size:12px;color:var(--muted)}.jst{font-size:22px;font-weight:900}.badge{padding:10px;border-radius:8px;background:#111922;border:1px solid var(--line);font-weight:900;text-align:center}
+.main{height:calc(100vh - 68px);display:grid;grid-template-columns:1.55fr 340px 360px;grid-template-rows:1fr 260px;gap:8px;padding:8px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.title{padding:9px 11px;font-size:13px;font-weight:900;border-bottom:1px solid var(--line);background:#0d1218}
+.chart{grid-column:1/2}.drivers{grid-column:2/3}.right{grid-column:3/4;grid-row:1/3;display:grid;grid-template-rows:260px 1fr;gap:8px}
+.bottom{grid-column:1/3;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.inner{padding:10px}.row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:8px 0;font-size:13px}
+.blue{color:var(--blue)}.red{color:var(--red)}.green{color:var(--green)}.yellow{color:var(--yellow)}.muted{color:var(--muted)}
+.big{font-size:30px;font-weight:900}.count{font-size:25px;font-weight:900;color:var(--blue)}
+.btn{background:#111922;color:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;font-weight:900;cursor:pointer}
+.flash{animation:flash 1s infinite}@keyframes flash{0%{background:#111922}50%{background:#331116}100%{background:#111922}}
+.news a{color:#e6e6e6;text-decoration:none}.news p{border-bottom:1px solid var(--line);padding-bottom:8px}
+#tv_chart{height:100%}iframe{width:100%;height:100%;border:0}
 </style>
 </head>
-
 <body>
 
 <div class="top">
-  <div>
-    <div class="logo">XAUUSD COMMAND ROOM</div>
-    <div class="sub">REALTIME GOLD MONITOR</div>
-  </div>
-
-  <div class="sub">
-    XAUUSD / USDJPY / DXY / US10Y / US02Y / VIX / WTI
-  </div>
-
-  <div>
-    <div class="sub">JAPAN TIME</div>
-    <div id="jstClock" class="jst">--:--:--</div>
-  </div>
-
-  <div id="sessionBox" class="session">LOADING</div>
-
+  <div><div class="logo">XAUUSD COMMAND ROOM</div><div class="sub">GOLD / USD / YIELD / RISK</div></div>
+  <div class="sub">XAUUSD・USDJPY・DXY・US10Y・US02Y・VIX・WTI</div>
+  <div><div class="sub">JAPAN TIME</div><div id="jstClock" class="jst">--:--:--</div></div>
   <button class="btn" onclick="enableAlerts()">通知ON</button>
 </div>
 
 <div class="main">
 
-  <div class="panel menu">
-    <div class="title">MENU</div>
-    <div class="active">ダッシュボード</div>
-    <div>XAUUSDチャート</div>
-    <div>USDJPY</div>
-    <div>DXY / 米金利</div>
-    <div>VIX / WTI</div>
-    <div>経済指標</div>
-    <div>セッション</div>
-    <div>ニュース</div>
-  </div>
-
   <div class="panel chart">
-    <div class="title">XAUUSD REALTIME CHART｜ローソク足のみ</div>
+    <div class="title">XAUUSD REALTIME CHART｜ローソク足のみ / インジなし / 出来高なし</div>
     <div id="tv_chart"></div>
   </div>
 
-  <div class="panel driver">
+  <div class="panel drivers">
     <div class="title">REALTIME MARKET DRIVER</div>
-
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
       {
         "width":"100%",
-        "height":520,
-        "symbolsGroups":[
-          {
-            "name":"XAUUSD DRIVER",
-            "symbols":[
-              {"name":"OANDA:XAUUSD","displayName":"XAUUSD"},
-              {"name":"FX_IDC:USDJPY","displayName":"USDJPY"},
-              {"name":"TVC:DXY","displayName":"DXY"},
-              {"name":"TVC:US10Y","displayName":"US10Y"},
-              {"name":"TVC:US02Y","displayName":"US02Y"},
-              {"name":"TVC:VIX","displayName":"VIX"},
-              {"name":"TVC:USOIL","displayName":"WTI"}
-            ]
-          }
-        ],
+        "height":560,
+        "symbolsGroups":[{
+          "name":"XAUUSD DRIVER",
+          "symbols":[
+            {"name":"OANDA:XAUUSD","displayName":"XAUUSD"},
+            {"name":"FX_IDC:USDJPY","displayName":"USDJPY"},
+            {"name":"TVC:DXY","displayName":"DXY"},
+            {"name":"TVC:US10Y","displayName":"US10Y"},
+            {"name":"TVC:US02Y","displayName":"US02Y"},
+            {"name":"TVC:VIX","displayName":"VIX"},
+            {"name":"TVC:USOIL","displayName":"WTI"}
+          ]
+        }],
         "showSymbolLogo":true,
         "colorTheme":"dark",
         "isTransparent":true,
@@ -310,33 +70,35 @@ iframe{
   </div>
 
   <div class="right">
-
     <div class="panel">
       <div class="title">SESSION DETAIL</div>
       <div class="inner">
         <div class="row"><span>現在</span><span id="sessionName" class="blue">---</span></div>
-        <div class="row"><span>次セッション</span><span id="nextSession" class="white">---</span></div>
+        <div class="row"><span>次</span><span id="nextSession">---</span></div>
         <div class="row"><span>開始まで</span><span id="sessionCountdown" class="count">--:--:--</span></div>
         <div class="row"><span>状態</span><span id="sessionStatus" class="yellow">監視中</span></div>
+        <div class="row"><span>東京</span><span>09:00 - 15:00</span></div>
+        <div class="row"><span>ロンドン前</span><span>15:30 - 16:00</span></div>
+        <div class="row"><span>ロンドン</span><span>16:00 - 21:30</span></div>
+        <div class="row"><span>NY前</span><span>21:00 - 21:30</span></div>
+        <div class="row"><span>NY</span><span>21:30 - 05:00</span></div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="title">LIVE NEWS COMMAND</div>
+      <div class="title">NEWS / TOOLS</div>
       <div class="inner news">
+        <p><a href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank">自分のTradingViewを開く</a></p>
         <p><a href="https://www.youtube.com/results?search_query=gold+news+xauusd+live" target="_blank">YouTube GOLD / XAUUSD LIVE</a></p>
         <p><a href="https://www.youtube.com/results?search_query=fomc+cpi+fed+live" target="_blank">YouTube FOMC / CPI / FED</a></p>
         <p><a href="https://www.reuters.com/markets/" target="_blank">Reuters Markets</a></p>
         <p><a href="https://www.cnbc.com/markets/" target="_blank">CNBC Markets</a></p>
         <p><a href="https://www.forexfactory.com/calendar" target="_blank">ForexFactory Calendar</a></p>
-        <p><a href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank">自分のTradingViewを開く</a></p>
       </div>
     </div>
-
   </div>
 
   <div class="bottom">
-
     <div class="panel">
       <div class="title">ECONOMIC CALENDAR｜USD / JPY</div>
       <div class="tradingview-widget-container">
@@ -346,7 +108,7 @@ iframe{
           "colorTheme":"dark",
           "isTransparent":true,
           "width":"100%",
-          "height":230,
+          "height":240,
           "locale":"ja",
           "importanceFilter":"0,1",
           "currencyFilter":"USD,JPY"
@@ -358,47 +120,39 @@ iframe{
     <div class="panel">
       <div class="title">HIGH IMPACT COUNTDOWN</div>
       <div class="inner">
-        <div class="row"><span>次の重要指標</span><span id="eventName" class="white">---</span></div>
-        <div class="row"><span>発表時間</span><span id="eventTime" class="muted">---</span></div>
+        <div class="row"><span>次の重要指標</span><span id="eventName">---</span></div>
+        <div class="row"><span>開示時間</span><span id="eventTime" class="muted">---</span></div>
         <div class="row"><span>残り</span><span id="eventCountdown" class="count">--:--:--</span></div>
         <div class="row"><span>対象</span><span class="yellow">USD / JPY</span></div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="title">XAUUSD RISK VIEW</div>
-      <div class="riskgrid">
-        <div class="riskbox riskHigh"><b>FRB / 金利</b><br><span class="red">HIGH</span><br><span class="sub">FOMC / CPI</span></div>
-        <div class="riskbox riskHigh"><b>DXY</b><br><span class="red">HIGH</span><br><span class="sub">ドル指数</span></div>
-        <div class="riskbox riskMid"><b>USDJPY</b><br><span class="yellow">WATCH</span><br><span class="sub">ドル円連動</span></div>
-        <div class="riskbox riskMid"><b>VIX / WTI</b><br><span class="yellow">WATCH</span><br><span class="sub">リスクオフ</span></div>
+      <div class="title">XAUUSD RISK / SCENARIO</div>
+      <div class="inner">
+        <div class="row"><span>BUY条件</span><span class="green">金利低下 / リスク上昇</span></div>
+        <div class="row"><span>SELL条件</span><span class="red">DXY上昇 / 金利上昇</span></div>
+        <div class="row"><span>USDJPY</span><span class="yellow">ドル影響監視</span></div>
+        <div class="row"><span>推奨</span><span class="blue">セッション初動待ち</span></div>
       </div>
     </div>
-
   </div>
 
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
-
 <script>
-let alerts=false;
-let lastSession="";
+let alerts=false,lastSession="";
 
 function enableAlerts(){
   alerts=true;
-  if(Notification.permission!=="granted"){
-    Notification.requestPermission();
-  }
+  if(Notification.permission!=="granted") Notification.requestPermission();
   alert("通知ON");
 }
 
 function notifyUser(text){
-  if(alerts && Notification.permission==="granted"){
-    new Notification(text);
-  }
-  const audio=new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-  audio.play().catch(()=>{});
+  if(alerts && Notification.permission==="granted") new Notification(text);
+  new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg").play().catch(()=>{});
 }
 
 new TradingView.widget({
@@ -430,116 +184,56 @@ new TradingView.widget({
 });
 
 const sessions=[
-  {name:"ASIA", start:"09:00", end:"15:00"},
-  {name:"LONDON PRE", start:"15:30", end:"16:00"},
-  {name:"LONDON", start:"16:00", end:"21:30"},
-  {name:"NEW YORK PRE", start:"21:00", end:"21:30"},
-  {name:"NEW YORK", start:"21:30", end:"05:00"}
+{name:"ASIA",start:"09:00",end:"15:00"},
+{name:"LONDON PRE",start:"15:30",end:"16:00"},
+{name:"LONDON",start:"16:00",end:"21:30"},
+{name:"NEW YORK PRE",start:"21:00",end:"21:30"},
+{name:"NEW YORK",start:"21:30",end:"05:00"}
 ];
 
 const events=[
-  {name:"CPI", time:"21:30"},
-  {name:"PPI", time:"21:30"},
-  {name:"失業保険申請件数", time:"21:30"},
-  {name:"ISM", time:"23:00"},
-  {name:"FOMC", time:"03:00"},
-  {name:"NFP", time:"21:30"}
+{name:"CPI",time:"21:30"},
+{name:"PPI",time:"21:30"},
+{name:"失業保険申請件数",time:"21:30"},
+{name:"Retail Sales",time:"21:30"},
+{name:"ISM",time:"23:00"},
+{name:"FOMC",time:"03:00"},
+{name:"NFP",time:"21:30"}
 ];
 
-function toMinutes(t){
-  const [h,m]=t.split(":").map(Number);
-  return h*60+m;
+function toMin(t){let [h,m]=t.split(":").map(Number);return h*60+m}
+function pad(n){return String(n).padStart(2,"0")}
+function fmt(ms){let s=Math.max(0,Math.floor(ms/1000));return `${pad(Math.floor(s/3600))}:${pad(Math.floor((s%3600)/60))}:${pad(s%60)}`}
+function jstNow(){return new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}))}
+
+function update(){
+ const now=jstNow(),cm=now.getHours()*60+now.getMinutes();
+ jstClock.innerHTML=`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+ let cur="CLOSED";
+ sessions.forEach(x=>{
+  let st=toMin(x.start),en=toMin(x.end);
+  if(en<st){if(cm>=st||cm<en)cur=x.name}else{if(cm>=st&&cm<en)cur=x.name}
+ });
+
+ sessionName.innerHTML=cur;
+
+ let next=sessions.map(x=>{let d=toMin(x.start)-cm;if(d<=0)d+=1440;return{...x,d}}).sort((a,b)=>a.d-b.d)[0];
+ nextSession.innerHTML=next.name;
+ sessionCountdown.innerHTML=fmt(next.d*60000);
+
+ if(next.d<=5){sessionStatus.innerHTML="5分前";sessionStatus.className="red"}
+ else if(next.d<=30){sessionStatus.innerHTML="30分前";sessionStatus.className="yellow"}
+ else{sessionStatus.innerHTML="通常監視";sessionStatus.className="green"}
+
+ if(cur!==lastSession&&cur!=="CLOSED"){notifyUser(`${cur} SESSION OPEN`);lastSession=cur}
+
+ let ev=events.map(x=>{let d=toMin(x.time)-cm;if(d<=0)d+=1440;return{...x,d}}).sort((a,b)=>a.d-b.d)[0];
+ eventName.innerHTML=ev.name;
+ eventTime.innerHTML=ev.time;
+ eventCountdown.innerHTML=fmt(ev.d*60000);
 }
-
-function pad(n){
-  return String(n).padStart(2,"0");
-}
-
-function formatLeft(ms){
-  if(ms<0) ms=0;
-  const total=Math.floor(ms/1000);
-  const h=Math.floor(total/3600);
-  const m=Math.floor((total%3600)/60);
-  const s=total%60;
-  return `${pad(h)}:${pad(m)}:${pad(s)}`;
-}
-
-function getJstNow(){
-  const now=new Date();
-  return new Date(now.toLocaleString("en-US",{timeZone:"Asia/Tokyo"}));
-}
-
-function updateTime(){
-  const now=getJstNow();
-  const h=now.getHours();
-  const m=now.getMinutes();
-  const currentMin=h*60+m;
-
-  jstClock.innerHTML=`${pad(h)}:${pad(m)}:${pad(now.getSeconds())}`;
-
-  let current="CLOSED";
-
-  for(const s of sessions){
-    let st=toMinutes(s.start);
-    let en=toMinutes(s.end);
-
-    if(en<st){
-      if(currentMin>=st || currentMin<en) current=s.name;
-    }else{
-      if(currentMin>=st && currentMin<en) current=s.name;
-    }
-  }
-
-  sessionBox.innerHTML=current;
-  sessionName.innerHTML=current;
-
-  let next=sessions
-    .map(s=>({name:s.name,start:s.start,min:toMinutes(s.start)}))
-    .map(s=>{
-      let diff=s.min-currentMin;
-      if(diff<=0) diff+=1440;
-      return {...s,diff};
-    })
-    .sort((a,b)=>a.diff-b.diff)[0];
-
-  nextSession.innerHTML=next.name;
-  sessionCountdown.innerHTML=formatLeft(next.diff*60*1000);
-
-  if(next.diff<=5){
-    sessionStatus.innerHTML="5分前";
-    sessionStatus.className="red";
-    sessionBox.classList.add("flash");
-  }else if(next.diff<=30){
-    sessionStatus.innerHTML="30分前";
-    sessionStatus.className="yellow";
-    sessionBox.classList.remove("flash");
-  }else{
-    sessionStatus.innerHTML="通常監視";
-    sessionStatus.className="green";
-    sessionBox.classList.remove("flash");
-  }
-
-  if(current!==lastSession && current!=="CLOSED"){
-    notifyUser(`${current} SESSION OPEN`);
-    lastSession=current;
-  }
-
-  const nextEvent=events
-    .map(e=>({name:e.name,time:e.time,min:toMinutes(e.time)}))
-    .map(e=>{
-      let diff=e.min-currentMin;
-      if(diff<=0) diff+=1440;
-      return {...e,diff};
-    })
-    .sort((a,b)=>a.diff-b.diff)[0];
-
-  eventName.innerHTML=nextEvent.name;
-  eventTime.innerHTML=nextEvent.time;
-  eventCountdown.innerHTML=formatLeft(nextEvent.diff*60*1000);
-}
-
-setInterval(updateTime,1000);
-updateTime();
+setInterval(update,1000);update();
 </script>
 
 </body>
