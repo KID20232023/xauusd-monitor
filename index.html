@@ -8,48 +8,58 @@
 <style>
 *{box-sizing:border-box}
 :root{
-  --bg:#000;--panel:#07090d;--line:#2b2b2b;
-  --text:#f2f2f2;--sub:#aaa;
-  --blue:#2f6cff;--red:#ff4d4d;--green:#18c985;
-  --yellow:#ffd54a;--orange:#ff9f1a;
+  --bg:#050608;
+  --panel:#0b0f14;
+  --panel2:#10151c;
+  --line:#2a3038;
+  --text:#f2f4f7;
+  --sub:#a7adb7;
+  --red:#ff4d5a;
+  --orange:#ff9f1a;
+  --yellow:#ffd84a;
+  --green:#15c784;
+  --blue:#2f6cff;
 }
 html,body{
-  margin:0;width:100%;height:100%;
-  background:#000;color:var(--text);
-  font-family:Arial,"Hiragino Sans",sans-serif;
+  margin:0;
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,"Hiragino Sans","Yu Gothic",sans-serif;
   overflow:hidden;
 }
 .card{
-  background:#07090d;
+  background:linear-gradient(180deg,#10151c,#080b10);
   border:1px solid var(--line);
   border-radius:8px;
   overflow:hidden;
 }
 .head{
-  height:34px;
+  height:32px;
   padding:7px 10px;
-  font-size:15px;
+  font-size:14px;
   font-weight:900;
   border-bottom:1px solid var(--line);
+  background:#0d1218;
 }
 .top{
-  height:78px;
+  height:72px;
   display:grid;
   grid-template-columns:1.2fr 1fr 1fr .7fr;
   gap:8px;
   padding:8px;
 }
-.box{padding:10px 12px}
-.logo{font-size:26px;font-weight:900}
-.sub{font-size:13px;color:var(--sub)}
-.big{font-size:28px;font-weight:900;white-space:nowrap}
+.box{padding:9px 12px}
+.logo{font-size:24px;font-weight:900}
+.sub{font-size:12px;color:var(--sub)}
+.big{font-size:25px;font-weight:900;white-space:nowrap}
 .btn{
-  width:100%;height:48px;background:#111;color:#fff;
-  border:1px solid var(--line);border-radius:8px;
-  font-size:18px;font-weight:900;
+  width:100%;height:42px;background:#111923;color:#fff;
+  border:1px solid var(--line);border-radius:8px;font-size:16px;font-weight:900;
 }
 .main{
-  height:calc(100vh - 78px);
+  height:calc(100vh - 72px);
   display:grid;
   grid-template-columns:52% 48%;
   grid-template-rows:58% 42%;
@@ -57,57 +67,57 @@ html,body{
   padding:0 8px 8px;
 }
 .chart{grid-column:1;grid-row:1}
-.rightTop{
-  grid-column:2;grid-row:1;
-  display:grid;grid-template-columns:45% 55%;gap:8px;
-}
-.bottom{
-  grid-column:1/3;grid-row:2;
-  display:grid;
-  grid-template-columns:24% 30% 23% 23%;
-  gap:8px;
-}
-.inner{height:calc(100% - 34px);padding:10px}
-#tv_chart{height:calc(100% - 34px)}
+.rightTop{grid-column:2;grid-row:1;display:grid;grid-template-columns:44% 56%;gap:8px}
+.bottom{grid-column:1/3;grid-row:2;display:grid;grid-template-columns:22% 30% 24% 24%;gap:8px}
+.inner{height:calc(100% - 32px);padding:10px}
+#tv_chart{height:calc(100% - 32px)}
 .row{
   display:flex;justify-content:space-between;align-items:center;
-  gap:10px;padding:7px 0;border-bottom:1px solid #222;
-  font-size:17px;
+  gap:10px;padding:7px 0;border-bottom:1px solid #252b33;font-size:16px;
 }
 .label{color:var(--sub)}
 .value{font-weight:900;text-align:right}
-.count{font-size:30px;font-weight:900}
-.symbol{
-  padding:13px;border:1px solid #222;border-radius:8px;
-  margin-bottom:10px;
+.count{font-size:26px;font-weight:900}
+.driverBox{
+  padding:12px;border:1px solid var(--line);border-radius:8px;margin-bottom:10px;cursor:pointer;
 }
-.symbolName{font-size:18px;font-weight:900}
-.symbolPrice{font-size:34px;font-weight:900}
-.mapgrid{
-  height:100%;display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  grid-template-rows:1fr 1fr;
-  gap:8px;
-}
+.driverName{font-size:17px;font-weight:900}
+.driverValue{font-size:30px;font-weight:900;margin-top:4px}
+.mapgrid{height:100%;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px}
 .mapbox{
-  border:2px solid var(--line);
-  border-radius:8px;
-  padding:10px;
+  border:2px solid var(--line);border-radius:8px;padding:10px;cursor:pointer;background:#111720;
 }
 .mapTitle{font-size:22px;font-weight:900}
-.mapText{font-size:17px;margin-top:5px}
-.mapImpact{font-size:22px;font-weight:900;margin-top:6px}
-.news p{font-size:17px;margin:9px 0;border-bottom:1px solid #222;padding-bottom:8px}
-.red{color:var(--red)}.green{color:var(--green)}
-.yellow{color:var(--yellow)}.orange{color:var(--orange)}
+.mapText{font-size:16px;margin-top:5px}
+.mapImpact{font-size:23px;font-weight:900;margin-top:6px}
+.newsItem{
+  padding:12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;
+  font-size:17px;font-weight:900;cursor:pointer;background:#10151c;
+}
+.newsItem:hover,.mapbox:hover,.driverBox:hover{background:#151d28}
+.red{color:var(--red)}.orange{color:var(--orange)}.yellow{color:var(--yellow)}.green{color:var(--green)}
 .watch{color:var(--yellow);border-color:var(--yellow);animation:flashY 2s infinite}
 .alert{color:var(--orange);border-color:var(--orange);animation:flashO 1.4s infinite}
 .warning{color:var(--red);border-color:var(--red);animation:flashR 1s infinite}
 .critical{color:var(--red);border-color:var(--red);animation:critical .45s infinite}
-@keyframes flashY{50%{box-shadow:0 0 15px rgba(255,213,74,.7)}}
+@keyframes flashY{50%{box-shadow:0 0 15px rgba(255,216,74,.7)}}
 @keyframes flashO{50%{box-shadow:0 0 15px rgba(255,159,26,.8)}}
-@keyframes flashR{50%{box-shadow:0 0 18px rgba(255,77,77,.9)}}
-@keyframes critical{50%{background:#400808}}
+@keyframes flashR{50%{box-shadow:0 0 18px rgba(255,77,90,.9)}}
+@keyframes critical{50%{background:#401015}}
+#modal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;
+  align-items:center;justify-content:center;
+}
+.modalBox{
+  width:640px;max-width:90vw;background:#0b0f14;border:1px solid var(--line);
+  border-radius:12px;padding:22px;
+}
+.modalTitle{font-size:26px;font-weight:900;margin-bottom:14px}
+.modalText{font-size:19px;line-height:1.7;white-space:pre-line}
+.close{
+  margin-top:18px;width:100%;height:44px;background:#111923;color:#fff;
+  border:1px solid var(--line);border-radius:8px;font-size:17px;font-weight:900;
+}
 </style>
 </head>
 
@@ -139,21 +149,17 @@ html,body{
   </div>
 
   <div class="rightTop">
-
     <div class="card">
       <div class="head">MARKET DRIVER</div>
       <div class="inner">
-        <div class="symbol">
-          <div class="symbolName">XAUUSD</div>
-          <div class="symbolPrice">TradingView</div>
+        <div class="driverBox" onclick="openModal('XAUUSD','金価格の中心監視。\n急変時は指標・地政学・USDJPYの動きと合わせて確認。')">
+          <div class="driverName">XAUUSD</div><div class="driverValue">LIVE</div>
         </div>
-        <div class="symbol">
-          <div class="symbolName">USDJPY</div>
-          <div class="symbolPrice">TradingView</div>
+        <div class="driverBox" onclick="openModal('USDJPY','ドル円監視。\nUSDJPY上昇はドル高要因になりやすく、XAUUSDには売り圧力になる場合があります。')">
+          <div class="driverName">USDJPY</div><div class="driverValue">LIVE</div>
         </div>
-        <div class="symbol">
-          <div class="symbolName">BTCUSD</div>
-          <div class="symbolPrice">TradingView</div>
+        <div class="driverBox" onclick="openModal('BTCUSD','リスク選好監視。\nBTC急変は市場心理の変化としてXAUUSDに影響する場合があります。')">
+          <div class="driverName">BTCUSD</div><div class="driverValue">LIVE</div>
         </div>
       </div>
     </div>
@@ -169,15 +175,12 @@ html,body{
         <div class="row"><span class="label">東京OPEN</span><span class="value">09時00分00秒</span></div>
         <div class="row"><span class="label">ロンドンOPEN</span><span class="value">16時00分00秒</span></div>
         <div class="row"><span class="label">NY OPEN</span><span class="value">21時30分00秒</span></div>
-        <div class="row"><span class="label">重複時間</span><span class="value">21時30分〜01時00分</span></div>
       </div>
     </div>
-
   </div>
 
   <div class="bottom">
-
-    <div class="card" id="impactCard">
+    <div class="card" id="impactCard" onclick="openModal('HIGH IMPACT','重要指標前はスプレッド拡大・急変・フェイクが出やすいです。\n5分前から新規エントリー注意。')">
       <div class="head">HIGH IMPACT</div>
       <div class="inner">
         <div class="row"><span class="label">指標</span><span id="eventName" class="value">---</span></div>
@@ -191,41 +194,23 @@ html,body{
     <div class="card">
       <div class="head">GOLD WAR MAP</div>
       <div class="inner mapgrid">
-        <div class="mapbox warning">
-          <div class="mapTitle">中東</div>
-          <div class="mapText">イスラエル / イラン / ガザ</div>
-          <div class="mapImpact">金買い ↑↑</div>
-          <div class="mapText red">高リスク</div>
+        <div class="mapbox warning" onclick="openModal('中東リスク','対象：イスラエル / イラン / ガザ\nXAUUSD影響：安全資産買いが入りやすい。\n注意：原油・米金利・突発ニュース。')">
+          <div class="mapTitle">中東</div><div class="mapText">イスラエル / イラン / ガザ</div><div class="mapImpact">金買い ↑↑</div><div class="mapText red">高リスク</div>
         </div>
-        <div class="mapbox alert">
-          <div class="mapTitle">ウクライナ</div>
-          <div class="mapText">ロシア / ウクライナ</div>
-          <div class="mapImpact">金買い ↑</div>
-          <div class="mapText orange">警戒</div>
+        <div class="mapbox alert" onclick="openModal('ウクライナ','対象：ロシア / ウクライナ\nXAUUSD影響：地政学リスクで買い材料。\n注意：停戦報道・軍事拡大。')">
+          <div class="mapTitle">ウクライナ</div><div class="mapText">ロシア / ウクライナ</div><div class="mapImpact">金買い ↑</div><div class="mapText orange">警戒</div>
         </div>
-        <div class="mapbox watch">
-          <div class="mapTitle">台湾</div>
-          <div class="mapText">中国 / 台湾</div>
-          <div class="mapImpact">注意</div>
-          <div class="mapText yellow">監視</div>
+        <div class="mapbox watch" onclick="openModal('台湾リスク','対象：中国 / 台湾\nXAUUSD影響：緊張上昇でリスク回避。\n注意：軍事演習・米中発言。')">
+          <div class="mapTitle">台湾</div><div class="mapText">中国 / 台湾</div><div class="mapImpact">注意</div><div class="mapText yellow">監視</div>
         </div>
-        <div class="mapbox warning">
-          <div class="mapTitle">イラン</div>
-          <div class="mapText">軍事 / 原油</div>
-          <div class="mapImpact">金買い ↑↑</div>
-          <div class="mapText red">危険</div>
+        <div class="mapbox warning" onclick="openModal('イラン','対象：軍事 / 原油\nXAUUSD影響：原油高・安全資産買い。\n注意：中東ヘッドライン。')">
+          <div class="mapTitle">イラン</div><div class="mapText">軍事 / 原油</div><div class="mapImpact">金買い ↑↑</div><div class="mapText red">危険</div>
         </div>
-        <div class="mapbox watch">
-          <div class="mapTitle">中国</div>
-          <div class="mapText">景気 / 人民元</div>
-          <div class="mapImpact">中立 →</div>
-          <div class="mapText yellow">監視</div>
+        <div class="mapbox watch" onclick="openModal('中国','対象：景気 / 人民元\nXAUUSD影響：景気不安は金買い、ドル高は金売り。\n注意：人民元・不動産・政策発表。')">
+          <div class="mapTitle">中国</div><div class="mapText">景気 / 人民元</div><div class="mapImpact">中立 →</div><div class="mapText yellow">監視</div>
         </div>
-        <div class="mapbox alert">
-          <div class="mapTitle">紅海</div>
-          <div class="mapText">海運リスク</div>
-          <div class="mapImpact">リスク ↑</div>
-          <div class="mapText orange">警戒</div>
+        <div class="mapbox alert" onclick="openModal('紅海リスク','対象：海運 / 物流\nXAUUSD影響：輸送不安でリスク回避。\n注意：原油・航路停止報道。')">
+          <div class="mapTitle">紅海</div><div class="mapText">海運リスク</div><div class="mapImpact">リスク ↑</div><div class="mapText orange">警戒</div>
         </div>
       </div>
     </div>
@@ -244,17 +229,23 @@ html,body{
       </div>
     </div>
 
-    <div class="card news">
-      <div class="head">GOLD NEWS FEED</div>
+    <div class="card">
+      <div class="head">GOLD LIVE CENTER</div>
       <div class="inner">
-        <p>Reuters Markets <span class="red">HIGH</span></p>
-        <p>Kitco Gold News <span class="red">HIGH</span></p>
-        <p>CNBC Markets <span class="orange">MEDIUM</span></p>
-        <p>FXStreet News <span class="orange">MEDIUM</span></p>
-        <p>YouTube XAUUSD <span class="yellow">WATCH</span></p>
+        <div class="newsItem" onclick="window.open('https://www.youtube.com/results?search_query=gold+xauusd+live+news','_blank')">🔴 XAUUSD LIVE</div>
+        <div class="newsItem" onclick="window.open('https://www.youtube.com/results?search_query=bloomberg+markets+live','_blank')">🔴 Bloomberg LIVE</div>
+        <div class="newsItem" onclick="window.open('https://www.youtube.com/results?search_query=cnbc+markets+live','_blank')">🔴 CNBC LIVE</div>
+        <div class="newsItem" onclick="window.open('https://www.youtube.com/results?search_query=kitco+gold+news+live','_blank')">🔴 Kitco GOLD</div>
       </div>
     </div>
+  </div>
+</div>
 
+<div id="modal">
+  <div class="modalBox">
+    <div id="modalTitle" class="modalTitle"></div>
+    <div id="modalText" class="modalText"></div>
+    <button class="close" onclick="closeModal()">閉じる</button>
   </div>
 </div>
 
@@ -267,7 +258,12 @@ function enableAlerts(){
   if(Notification.permission!=="granted")Notification.requestPermission();
   alert("通知ON");
 }
-
+function openModal(t,x){
+  modalTitle.innerHTML=t;
+  modalText.innerHTML=x;
+  modal.style.display="flex";
+}
+function closeModal(){modal.style.display="none"}
 function notifyUser(text){
   if(alerts && Notification.permission==="granted")new Notification(text);
   new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg").play().catch(()=>{});
@@ -366,6 +362,14 @@ function update(){
   nextAlertSession.innerHTML=next.name;
   nextAlertSessionTime.innerHTML=jpDT(next.date);
 
+  [60,30,15,5].forEach(min=>{
+    const key=`s-${next.name}-${min}-${next.start}`;
+    if(next.diff<=min*60000 && next.diff>(min*60000-2000) && !sentAlert[key]){
+      notifyUser(`${next.name} ${min}分前`);
+      sentAlert[key]=true;
+    }
+  });
+
   const ev=events.map(e=>({...e,dateObj:evDate(e)})).filter(e=>e.dateObj>n).sort((a,b)=>a.dateObj-b.dateObj)[0];
   if(ev){
     const diff=ev.dateObj-n;
@@ -378,7 +382,6 @@ function update(){
     nextAlertEventTime.innerHTML=jpDT(ev.dateObj);
   }
 }
-
 setInterval(update,1000);
 update();
 </script>
