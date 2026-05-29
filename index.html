@@ -4,89 +4,216 @@
 <meta charset="UTF-8">
 <title>XAUUSD WAR ROOM PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 *{box-sizing:border-box}
+
 :root{
-  --bg:#000;--panel:#07090d;--panel2:#0c1016;--line:#252525;
-  --text:#e6e6e6;--muted:#9a9a9a;
-  --blue:#2f6cff;--red:#ff4d4d;--wick:#9aa0a6;
-  --watch:#ffd54a;--alert:#ff9f1a;--green:#18c985;
+  --bg:#000;
+  --panel:#07090d;
+  --panel2:#0b0f15;
+  --line:#242424;
+  --text:#e6e6e6;
+  --muted:#9a9a9a;
+  --blue:#2f6cff;
+  --red:#ff4d4d;
+  --green:#18c985;
+  --watch:#ffd54a;
+  --alert:#ff9f1a;
 }
+
 html,body{
-  margin:0;width:100%;min-height:100%;background:#000;color:var(--text);
-  font-family:Arial,"Hiragino Sans",sans-serif;overflow:auto;
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  color:var(--text);
+  font-family:Arial,"Hiragino Sans",sans-serif;
+  overflow:hidden;
 }
+
+body{
+  zoom:.78;
+}
+
 .top{
-  display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px;
+  height:58px;
+  display:grid;
+  grid-template-columns:1.1fr 1fr 1fr 1fr;
+  gap:6px;
+  padding:6px;
 }
+
 .card{
   background:linear-gradient(180deg,#0b0f15,#050608);
-  border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
 }
-.box{padding:10px 12px}
-.logo{font-size:24px;font-weight:900;color:#fff}
-.sub{font-size:11px;color:var(--muted)}
-.big{font-size:24px;font-weight:900;color:#fff}
-.head{
-  height:34px;padding:8px 10px;border-bottom:1px solid var(--line);
-  font-size:12px;font-weight:900;color:#fff;background:#090d12;
-  display:flex;justify-content:space-between;align-items:center;
+
+.box{
+  padding:8px 10px;
 }
+
+.logo{
+  font-size:20px;
+  font-weight:900;
+  color:#fff;
+}
+
+.sub{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.big{
+  font-size:22px;
+  font-weight:900;
+  color:#fff;
+}
+
 .layout{
+  height:calc(128vh - 58px);
   display:grid;
-  grid-template-columns:minmax(520px,1.55fr) minmax(320px,.85fr) minmax(340px,.9fr);
-  grid-template-rows:520px 285px 260px;
-  gap:8px;padding:0 8px 8px;
+  grid-template-columns:45% 27% 28%;
+  grid-template-rows:52% 24% 24%;
+  gap:6px;
+  padding:0 6px 6px;
 }
+
+.head{
+  height:30px;
+  padding:7px 9px;
+  border-bottom:1px solid var(--line);
+  font-size:11px;
+  font-weight:900;
+  color:#fff;
+  background:#090d12;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.inner{
+  padding:8px;
+  height:calc(100% - 30px);
+}
+
+#tv_chart{
+  height:calc(100% - 30px);
+}
+
 .chart{grid-column:1;grid-row:1}
 .driver{grid-column:2;grid-row:1}
 .session{grid-column:3;grid-row:1}
+
 .calendar{grid-column:1;grid-row:2}
 .impact{grid-column:2;grid-row:2}
 .news{grid-column:3;grid-row:2}
+
 .map{grid-column:1;grid-row:3}
 .corr{grid-column:2;grid-row:3}
-.alertPanel{grid-column:3;grid-row:3}
-#tv_chart{height:calc(100% - 34px)}
-.inner{padding:10px}
+.nextAlert{grid-column:3;grid-row:3}
+
 .row{
-  display:flex;justify-content:space-between;gap:8px;
-  padding:7px 0;border-bottom:1px solid #1b1b1b;font-size:13px;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  padding:5px 0;
+  border-bottom:1px solid #1b1b1b;
+  font-size:11px;
 }
+
 .label{color:var(--muted)}
 .value{color:#fff;font-weight:800}
-.count{font-size:22px;font-weight:900;color:#fff}
+.count{font-size:18px;font-weight:900;color:#fff}
+
 .btn{
-  width:100%;height:36px;background:#111;color:#fff;border:1px solid var(--line);
-  border-radius:8px;font-weight:900;cursor:pointer;
+  width:100%;
+  height:34px;
+  background:#111;
+  color:#fff;
+  border:1px solid var(--line);
+  border-radius:8px;
+  font-weight:900;
+  cursor:pointer;
 }
+
 .symbolBox{
-  height:95px;border:1px solid #1b1b1b;border-radius:8px;
-  overflow:hidden;margin-bottom:8px;background:#050608;
+  height:82px;
+  border:1px solid #1b1b1b;
+  border-radius:8px;
+  overflow:hidden;
+  margin-bottom:6px;
+  background:#050608;
 }
-.mapgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+.mapgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+  height:100%;
+}
+
 .mapbox{
-  background:var(--panel2);border:1px solid var(--line);border-radius:8px;
-  padding:9px;min-height:72px;font-size:12px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:7px;
+  font-size:11px;
+  line-height:1.35;
 }
-.news p{margin:7px 0;padding-bottom:7px;border-bottom:1px solid #1b1b1b;font-size:13px}
-.news a{color:#fff;text-decoration:none}
-.watch{color:var(--watch);border-color:var(--watch);animation:slowFlash 3s infinite}
-.alert{color:var(--alert);border-color:var(--alert);animation:midFlash 1.5s infinite}
-.warning{color:var(--red);border-color:var(--red);animation:fastFlash 1s infinite}
-.critical{color:var(--red);border-color:var(--red);animation:criticalFlash .45s infinite}
-@keyframes slowFlash{50%{box-shadow:0 0 12px rgba(255,213,74,.45)}}
-@keyframes midFlash{50%{box-shadow:0 0 14px rgba(255,159,26,.55)}}
-@keyframes fastFlash{50%{box-shadow:0 0 16px rgba(255,77,77,.65)}}
-@keyframes criticalFlash{50%{background:#360808}}
-@media(max-width:1300px){
-  .top{grid-template-columns:1fr 1fr}
-  .layout{grid-template-columns:1fr;grid-template-rows:auto}
-  .chart,.driver,.session,.calendar,.impact,.news,.map,.corr,.alertPanel{
-    grid-column:auto;grid-row:auto;
-  }
-  .chart{height:520px}
-  .driver,.session,.calendar,.impact,.news,.map,.corr,.alertPanel{min-height:260px}
+
+.news p{
+  margin:5px 0;
+  padding-bottom:5px;
+  border-bottom:1px solid #1b1b1b;
+  font-size:11px;
+}
+
+.news a{
+  color:#fff;
+  text-decoration:none;
+}
+
+.watch{
+  color:var(--watch);
+  border-color:var(--watch);
+  animation:slowFlash 3s infinite;
+}
+
+.alert{
+  color:var(--alert);
+  border-color:var(--alert);
+  animation:midFlash 1.5s infinite;
+}
+
+.warning{
+  color:var(--red);
+  border-color:var(--red);
+  animation:fastFlash 1s infinite;
+}
+
+.critical{
+  color:var(--red);
+  border-color:var(--red);
+  animation:criticalFlash .45s infinite;
+}
+
+@keyframes slowFlash{
+  50%{box-shadow:0 0 10px rgba(255,213,74,.45)}
+}
+
+@keyframes midFlash{
+  50%{box-shadow:0 0 12px rgba(255,159,26,.55)}
+}
+
+@keyframes fastFlash{
+  50%{box-shadow:0 0 14px rgba(255,77,77,.65)}
+}
+
+@keyframes criticalFlash{
+  50%{background:#360808}
 }
 </style>
 </head>
@@ -98,14 +225,17 @@ html,body{
     <div class="logo">XAUUSD WAR ROOM</div>
     <div class="sub">GOLD COMMAND CENTER</div>
   </div>
+
   <div class="card box">
     <div class="sub">JAPAN TIME</div>
     <div id="jstClock" class="big">--:--:--</div>
   </div>
+
   <div class="card box">
     <div class="sub">CURRENT SESSION</div>
     <div id="topSession" class="big">---</div>
   </div>
+
   <div class="card box">
     <button class="btn" onclick="enableAlerts()">通知ON</button>
     <div class="sub">SESSION / HIGH IMPACT ALERT</div>
@@ -125,24 +255,38 @@ html,body{
   <div class="card driver">
     <div class="head">MARKET DRIVER</div>
     <div class="inner">
+
       <div class="symbolBox">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {"symbol":"OANDA:XAUUSD","width":"100%","height":95,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-        </script></div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+          {"symbol":"OANDA:XAUUSD","width":"100%","height":82,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
+          </script>
+        </div>
       </div>
+
       <div class="symbolBox">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {"symbol":"OANDA:USDJPY","width":"100%","height":95,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-        </script></div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+          {"symbol":"OANDA:USDJPY","width":"100%","height":82,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
+          </script>
+        </div>
       </div>
+
       <div class="symbolBox">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {"symbol":"BITSTAMP:BTCUSD","width":"100%","height":95,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-        </script></div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+          {"symbol":"BITSTAMP:BTCUSD","width":"100%","height":82,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
+          </script>
+        </div>
       </div>
+
+      <div class="row"><span class="label">XAUUSD</span><span class="value">MAIN</span></div>
+      <div class="row"><span class="label">USDJPY</span><span class="value">USD FLOW</span></div>
+      <div class="row"><span class="label">BTCUSD</span><span class="value">RISK FLOW</span></div>
+
     </div>
   </div>
 
@@ -156,6 +300,10 @@ html,body{
       <div class="row"><span class="label">END</span><span id="nextEnd" class="value">---</span></div>
       <div class="row"><span class="label">COUNTDOWN</span><span id="sessionCountdown" class="count">--:--:--</span></div>
       <div class="row"><span class="label">STATUS</span><span id="sessionStatus" class="value">NORMAL</span></div>
+      <div class="row"><span class="label">TOKYO OPEN</span><span class="value">09:00 JST</span></div>
+      <div class="row"><span class="label">LONDON OPEN</span><span class="value">16:00 JST</span></div>
+      <div class="row"><span class="label">NEW YORK OPEN</span><span class="value">21:30 JST</span></div>
+      <div class="row"><span class="label">OVERLAP</span><span class="value">21:30 - 01:00</span></div>
     </div>
   </div>
 
@@ -164,7 +312,7 @@ html,body{
     <div class="tradingview-widget-container">
       <div class="tradingview-widget-container__widget"></div>
       <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-      {"colorTheme":"dark","isTransparent":true,"width":"100%","height":245,"locale":"ja","importanceFilter":"0,1","currencyFilter":"USD,JPY"}
+      {"colorTheme":"dark","isTransparent":true,"width":"100%","height":235,"locale":"ja","importanceFilter":"0,1","currencyFilter":"USD,JPY"}
       </script>
     </div>
   </div>
@@ -196,12 +344,47 @@ html,body{
   <div class="card map">
     <div class="head">GOLD WAR MAP</div>
     <div class="inner mapgrid">
-      <div class="mapbox warning"><b>Middle East</b><br>Israel / Iran / Gaza<br>Gold ↑↑</div>
-      <div class="mapbox alert"><b>Ukraine</b><br>Russia / Ukraine<br>Gold ↑</div>
-      <div class="mapbox watch"><b>Taiwan</b><br>China / Taiwan<br>Gold ↑</div>
-      <div class="mapbox warning"><b>Iran</b><br>Military / Oil<br>Gold ↑↑</div>
-      <div class="mapbox watch"><b>China</b><br>Economy / Yuan<br>Gold →</div>
-      <div class="mapbox alert"><b>Red Sea</b><br>Shipping Risk<br>Gold ↑</div>
+      <div class="mapbox warning">
+        <b>MIDDLE EAST</b><br>
+        Israel × Iran / Gaza<br>
+        Risk: WARNING<br>
+        Gold: SAFE HAVEN ↑↑
+      </div>
+
+      <div class="mapbox alert">
+        <b>UKRAINE</b><br>
+        Russia × Ukraine<br>
+        Risk: ALERT<br>
+        Gold: SAFE HAVEN ↑
+      </div>
+
+      <div class="mapbox watch">
+        <b>TAIWAN</b><br>
+        China × Taiwan<br>
+        Risk: WATCH<br>
+        Gold: SAFE HAVEN ↑
+      </div>
+
+      <div class="mapbox warning">
+        <b>IRAN</b><br>
+        Military / Oil<br>
+        Risk: WARNING<br>
+        Gold: OIL ↑ / GOLD ↑↑
+      </div>
+
+      <div class="mapbox watch">
+        <b>CHINA</b><br>
+        Economy / Yuan<br>
+        Risk: WATCH<br>
+        Gold: NEUTRAL →
+      </div>
+
+      <div class="mapbox alert">
+        <b>RED SEA</b><br>
+        Shipping Risk<br>
+        Risk: ALERT<br>
+        Gold: RISK ↑
+      </div>
     </div>
   </div>
 
@@ -212,24 +395,28 @@ html,body{
       <div class="row"><span class="label">BTCUSD</span><span class="value">RISK FLOW</span></div>
       <div class="row"><span class="label">Gold Bias</span><span class="value">SESSION WAIT</span></div>
       <div class="row"><span class="label">Trigger</span><span class="warning">NEWS / OPEN</span></div>
+      <div class="row"><span class="label">Risk Mode</span><span class="alert">WAR / DATA</span></div>
     </div>
   </div>
 
-  <div class="card alertPanel">
-    <div class="head">ALERT STATUS</div>
+  <div class="card nextAlert">
+    <div class="head">NEXT ALERT</div>
     <div class="inner">
+      <div class="row"><span class="label">NEXT SESSION</span><span id="nextAlertSession" class="value">---</span></div>
+      <div class="row"><span class="label">SESSION TIME</span><span id="nextAlertSessionTime" class="value">---</span></div>
+      <div class="row"><span class="label">NEXT EVENT</span><span id="nextAlertEvent" class="value">---</span></div>
+      <div class="row"><span class="label">EVENT TIME</span><span id="nextAlertEventTime" class="value">---</span></div>
       <div class="row"><span class="label">WATCH</span><span class="watch">60 MIN</span></div>
       <div class="row"><span class="label">ALERT</span><span class="alert">30 MIN</span></div>
       <div class="row"><span class="label">WARNING</span><span class="warning">15 MIN</span></div>
       <div class="row"><span class="label">CRITICAL</span><span class="critical">5 MIN</span></div>
-      <div class="row"><span class="label">SOUND</span><span class="value">ON</span></div>
-      <div class="row"><span class="label">NOTIFICATION</span><span class="value">ON</span></div>
     </div>
   </div>
 
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
+
 <script>
 let alerts=false;
 let lastSession="";
@@ -267,13 +454,22 @@ new TradingView.widget({
     "mainSeriesProperties.candleStyle.borderDownColor":"#ff4d4d",
     "mainSeriesProperties.candleStyle.wickUpColor":"#9aa0a6",
     "mainSeriesProperties.candleStyle.wickDownColor":"#9aa0a6",
+
     "paneProperties.background":"#000000",
-    "paneProperties.vertGridProperties.color":"#000000",
-    "paneProperties.horzGridProperties.color":"#000000",
+    "paneProperties.vertGridProperties.color":"rgba(0,0,0,0)",
+    "paneProperties.horzGridProperties.color":"rgba(0,0,0,0)",
     "paneProperties.vertGridProperties.style":0,
     "paneProperties.horzGridProperties.style":0,
+
     "scalesProperties.textColor":"#b8c0cc"
-  }
+  },
+  disabled_features:[
+    "header_compare",
+    "header_symbol_search",
+    "header_screenshot",
+    "header_indicators",
+    "use_localstorage_for_settings"
+  ]
 });
 
 const sessions=[
@@ -373,6 +569,9 @@ function update(){
   nextEnd.innerHTML=`${jpDate(end)} ${next.end} JST`;
   sessionCountdown.innerHTML=fmt(next.diff);
 
+  nextAlertSession.innerHTML=next.name;
+  nextAlertSessionTime.innerHTML=`${jpDate(next.date)} ${next.start} JST`;
+
   const sl=level(next.diff);
   sessionStatus.innerHTML=sl?sl.toUpperCase():"NORMAL";
   sessionStatus.className=sl||"value";
@@ -403,6 +602,9 @@ function update(){
     eventForecast.innerHTML=ev.forecast;
     eventPrevious.innerHTML=ev.previous;
     eventCountdown.innerHTML=fmt(diff);
+
+    nextAlertEvent.innerHTML=`${ev.country} ${ev.name}`;
+    nextAlertEventTime.innerHTML=`${jpDate(ev.dateObj)} ${ev.time} JST`;
 
     const el=level(diff);
     impactCard.className=el?`card impact ${el}`:"card impact";
