@@ -4,209 +4,89 @@
 <meta charset="UTF-8">
 <title>XAUUSD WAR ROOM PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 *{box-sizing:border-box}
-
 :root{
-  --bg:#000;
-  --panel:#07090d;
-  --panel2:#0b0f15;
-  --line:#232323;
-  --text:#e8e8e8;
-  --muted:#8b949e;
-  --blue:#2f6cff;
-  --red:#ff4d4d;
-  --wick:#9aa0a6;
-  --gold:#d6a937;
-  --green:#18c985;
-  --orange:#ff9f1a;
-  --yellow:#ffd54a;
+  --bg:#000;--panel:#07090d;--panel2:#0c1016;--line:#252525;
+  --text:#e6e6e6;--muted:#9a9a9a;
+  --blue:#2f6cff;--red:#ff4d4d;--wick:#9aa0a6;
+  --watch:#ffd54a;--alert:#ff9f1a;--green:#18c985;
 }
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,"Hiragino Sans",sans-serif;
-  overflow:auto;
+html,body{
+  margin:0;width:100%;min-height:100%;background:#000;color:var(--text);
+  font-family:Arial,"Hiragino Sans",sans-serif;overflow:auto;
 }
-
 .top{
-  display:grid;
-  grid-template-columns:1.1fr 1fr 1fr 1fr;
-  gap:8px;
-  padding:8px;
+  display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:8px;padding:8px;
 }
-
 .card{
   background:linear-gradient(180deg,#0b0f15,#050608);
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden;
+  border:1px solid var(--line);border-radius:8px;overflow:hidden;
 }
-
+.box{padding:10px 12px}
+.logo{font-size:24px;font-weight:900;color:#fff}
+.sub{font-size:11px;color:var(--muted)}
+.big{font-size:24px;font-weight:900;color:#fff}
 .head{
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
-  font-weight:900;
-  color:var(--gold);
-  font-size:13px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  height:34px;padding:8px 10px;border-bottom:1px solid var(--line);
+  font-size:12px;font-weight:900;color:#fff;background:#090d12;
+  display:flex;justify-content:space-between;align-items:center;
 }
-
-.inner{padding:10px}
-
-.logo{
-  font-size:26px;
-  font-weight:900;
-  color:var(--gold);
-}
-
-.sub{font-size:12px;color:var(--muted)}
-.big{font-size:26px;font-weight:900}
-.gold{color:var(--gold)}
-.blue{color:var(--blue)}
-.red{color:var(--red)}
-.green{color:var(--green)}
-.orange{color:var(--orange)}
-.yellow{color:var(--yellow)}
-.muted{color:var(--muted)}
-
-.btn{
-  background:#111;
-  color:#fff;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:10px 14px;
-  font-weight:900;
-  cursor:pointer;
-}
-
 .layout{
   display:grid;
-  grid-template-columns:minmax(520px,1.6fr) minmax(280px,.75fr) minmax(300px,.85fr);
+  grid-template-columns:minmax(520px,1.55fr) minmax(320px,.85fr) minmax(340px,.9fr);
   grid-template-rows:520px 285px 260px;
-  gap:8px;
-  padding:0 8px 8px;
-  min-height:calc(100vh - 96px);
+  gap:8px;padding:0 8px 8px;
 }
-
-.chart{grid-column:1/2;grid-row:1/2}
-.driver{grid-column:2/3;grid-row:1/2}
-.session{grid-column:3/4;grid-row:1/2}
-
-.calendar{grid-column:1/2;grid-row:2/3}
-.impact{grid-column:2/3;grid-row:2/3}
-.news{grid-column:3/4;grid-row:2/3}
-
-.warmap{grid-column:1/2;grid-row:3/4}
-.correlation{grid-column:2/3;grid-row:3/4}
-.scenario{grid-column:3/4;grid-row:3/4}
-
-#tv_chart{
-  width:100%;
-  height:calc(100% - 39px);
-}
-
-iframe{
-  width:100%;
-  height:100%;
-  border:0;
-}
-
+.chart{grid-column:1;grid-row:1}
+.driver{grid-column:2;grid-row:1}
+.session{grid-column:3;grid-row:1}
+.calendar{grid-column:1;grid-row:2}
+.impact{grid-column:2;grid-row:2}
+.news{grid-column:3;grid-row:2}
+.map{grid-column:1;grid-row:3}
+.corr{grid-column:2;grid-row:3}
+.alertPanel{grid-column:3;grid-row:3}
+#tv_chart{height:calc(100% - 34px)}
+.inner{padding:10px}
 .row{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  padding:7px 0;
-  border-bottom:1px solid #1b1b1b;
-  font-size:13px;
+  display:flex;justify-content:space-between;gap:8px;
+  padding:7px 0;border-bottom:1px solid #1b1b1b;font-size:13px;
 }
-
-.count{
-  font-size:24px;
-  font-weight:900;
-  color:var(--gold);
+.label{color:var(--muted)}
+.value{color:#fff;font-weight:800}
+.count{font-size:22px;font-weight:900;color:#fff}
+.btn{
+  width:100%;height:36px;background:#111;color:#fff;border:1px solid var(--line);
+  border-radius:8px;font-weight:900;cursor:pointer;
 }
-
 .symbolBox{
-  height:78px;
-  border:1px solid #1b1b1b;
-  border-radius:8px;
-  overflow:hidden;
-  margin-bottom:8px;
-  background:#050608;
+  height:95px;border:1px solid #1b1b1b;border-radius:8px;
+  overflow:hidden;margin-bottom:8px;background:#050608;
 }
-
-.mapgrid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-}
-
+.mapgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .mapbox{
-  background:#0b0f15;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:10px;
-  min-height:72px;
-  font-size:13px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+  padding:9px;min-height:72px;font-size:12px;
 }
-
-.watch{border-color:var(--yellow); animation:slowFlash 3s infinite}
-.alert{border-color:var(--orange); animation:midFlash 1.5s infinite}
-.warning{border-color:var(--red); animation:fastFlash 1s infinite}
-.critical{border-color:var(--red); animation:criticalFlash .45s infinite}
-
-@keyframes slowFlash{
-  0%,100%{box-shadow:none}
-  50%{box-shadow:0 0 14px rgba(255,213,74,.45)}
-}
-
-@keyframes midFlash{
-  0%,100%{box-shadow:none}
-  50%{box-shadow:0 0 16px rgba(255,159,26,.55)}
-}
-
-@keyframes fastFlash{
-  0%,100%{box-shadow:none}
-  50%{box-shadow:0 0 18px rgba(255,77,77,.65)}
-}
-
-@keyframes criticalFlash{
-  0%,100%{background:#0b0f15}
-  50%{background:#3a0808}
-}
-
-.news p{
-  margin:7px 0;
-  padding-bottom:7px;
-  border-bottom:1px solid #1b1b1b;
-  font-size:13px;
-}
-
-.news a{
-  color:#fff;
-  text-decoration:none;
-}
-
-.news a:hover{color:var(--gold)}
-
+.news p{margin:7px 0;padding-bottom:7px;border-bottom:1px solid #1b1b1b;font-size:13px}
+.news a{color:#fff;text-decoration:none}
+.watch{color:var(--watch);border-color:var(--watch);animation:slowFlash 3s infinite}
+.alert{color:var(--alert);border-color:var(--alert);animation:midFlash 1.5s infinite}
+.warning{color:var(--red);border-color:var(--red);animation:fastFlash 1s infinite}
+.critical{color:var(--red);border-color:var(--red);animation:criticalFlash .45s infinite}
+@keyframes slowFlash{50%{box-shadow:0 0 12px rgba(255,213,74,.45)}}
+@keyframes midFlash{50%{box-shadow:0 0 14px rgba(255,159,26,.55)}}
+@keyframes fastFlash{50%{box-shadow:0 0 16px rgba(255,77,77,.65)}}
+@keyframes criticalFlash{50%{background:#360808}}
 @media(max-width:1300px){
   .top{grid-template-columns:1fr 1fr}
-  .layout{
-    grid-template-columns:1fr;
-    grid-template-rows:auto;
-  }
-  .chart,.driver,.session,.calendar,.impact,.news,.warmap,.correlation,.scenario{
-    grid-column:auto;
-    grid-row:auto;
+  .layout{grid-template-columns:1fr;grid-template-rows:auto}
+  .chart,.driver,.session,.calendar,.impact,.news,.map,.corr,.alertPanel{
+    grid-column:auto;grid-row:auto;
   }
   .chart{height:520px}
-  .driver,.session,.calendar,.impact,.news,.warmap,.correlation,.scenario{min-height:260px}
+  .driver,.session,.calendar,.impact,.news,.map,.corr,.alertPanel{min-height:260px}
 }
 </style>
 </head>
@@ -214,27 +94,22 @@ iframe{
 <body>
 
 <div class="top">
-
-  <div class="card inner">
+  <div class="card box">
     <div class="logo">XAUUSD WAR ROOM</div>
     <div class="sub">GOLD COMMAND CENTER</div>
   </div>
-
-  <div class="card inner">
+  <div class="card box">
     <div class="sub">JAPAN TIME</div>
-    <div id="jstClock" class="big gold">--:--:--</div>
+    <div id="jstClock" class="big">--:--:--</div>
   </div>
-
-  <div class="card inner">
+  <div class="card box">
     <div class="sub">CURRENT SESSION</div>
-    <div id="topSession" class="big blue">---</div>
+    <div id="topSession" class="big">---</div>
   </div>
-
-  <div class="card inner">
+  <div class="card box">
     <button class="btn" onclick="enableAlerts()">通知ON</button>
     <div class="sub">SESSION / HIGH IMPACT ALERT</div>
   </div>
-
 </div>
 
 <div class="layout">
@@ -242,7 +117,7 @@ iframe{
   <div class="card chart">
     <div class="head">
       <span>XAUUSD</span>
-      <a class="gold" href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank">TRADINGVIEW</a>
+      <a href="https://jp.tradingview.com/chart/CLgfBGtt/?source=promo_go_pro_button" target="_blank" style="color:#fff;text-decoration:none">TRADINGVIEW</a>
     </div>
     <div id="tv_chart"></div>
   </div>
@@ -250,51 +125,37 @@ iframe{
   <div class="card driver">
     <div class="head">MARKET DRIVER</div>
     <div class="inner">
-
       <div class="symbolBox">
-        <div class="tradingview-widget-container">
-          <div class="tradingview-widget-container__widget"></div>
-          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-          {"symbol":"OANDA:XAUUSD","width":"100%","height":78,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-          </script>
-        </div>
+        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+        {"symbol":"OANDA:XAUUSD","width":"100%","height":95,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
+        </script></div>
       </div>
-
       <div class="symbolBox">
-        <div class="tradingview-widget-container">
-          <div class="tradingview-widget-container__widget"></div>
-          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-          {"symbol":"OANDA:USDJPY","width":"100%","height":78,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-          </script>
-        </div>
+        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+        {"symbol":"OANDA:USDJPY","width":"100%","height":95,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
+        </script></div>
       </div>
-
       <div class="symbolBox">
-        <div class="tradingview-widget-container">
-          <div class="tradingview-widget-container__widget"></div>
-          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-          {"symbol":"BITSTAMP:BTCUSD","width":"100%","height":78,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
-          </script>
-        </div>
+        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+        {"symbol":"BITSTAMP:BTCUSD","width":"100%","height":95,"colorTheme":"dark","isTransparent":true,"locale":"ja"}
+        </script></div>
       </div>
-
-      <div class="row"><span>XAUUSD</span><span class="gold">MAIN</span></div>
-      <div class="row"><span>USDJPY</span><span class="orange">USD / JPY FLOW</span></div>
-      <div class="row"><span>BTCUSD</span><span class="muted">RISK SENTIMENT</span></div>
-
     </div>
   </div>
 
   <div class="card session">
     <div class="head">SESSION COMMAND</div>
     <div class="inner">
-      <div class="row"><span>CURRENT</span><span id="sessionNow" class="gold">---</span></div>
-      <div class="row"><span>NEXT SESSION</span><span id="nextSession">---</span></div>
-      <div class="row"><span>NEXT MAJOR</span><span id="nextMajor">---</span></div>
-      <div class="row"><span>START</span><span id="nextStart">---</span></div>
-      <div class="row"><span>END</span><span id="nextEnd">---</span></div>
-      <div class="row"><span>COUNTDOWN</span><span id="sessionCountdown" class="count">--:--:--</span></div>
-      <div class="row"><span>STATUS</span><span id="sessionStatus" class="green">NORMAL</span></div>
+      <div class="row"><span class="label">CURRENT</span><span id="sessionNow" class="value">---</span></div>
+      <div class="row"><span class="label">NEXT SESSION</span><span id="nextSession" class="value">---</span></div>
+      <div class="row"><span class="label">NEXT MAJOR</span><span id="nextMajor" class="value">---</span></div>
+      <div class="row"><span class="label">START</span><span id="nextStart" class="value">---</span></div>
+      <div class="row"><span class="label">END</span><span id="nextEnd" class="value">---</span></div>
+      <div class="row"><span class="label">COUNTDOWN</span><span id="sessionCountdown" class="count">--:--:--</span></div>
+      <div class="row"><span class="label">STATUS</span><span id="sessionStatus" class="value">NORMAL</span></div>
     </div>
   </div>
 
@@ -311,63 +172,64 @@ iframe{
   <div class="card impact" id="impactCard">
     <div class="head">HIGH IMPACT COUNTDOWN</div>
     <div class="inner">
-      <div class="row"><span>EVENT</span><span id="eventName" class="gold">---</span></div>
-      <div class="row"><span>DATE</span><span id="eventDate">---</span></div>
-      <div class="row"><span>TIME</span><span id="eventTime">---</span></div>
-      <div class="row"><span>IMPACT</span><span id="eventImpact" class="red">★★★★★</span></div>
-      <div class="row"><span>FORECAST</span><span id="eventForecast">---</span></div>
-      <div class="row"><span>PREVIOUS</span><span id="eventPrevious">---</span></div>
-      <div class="row"><span>COUNTDOWN</span><span id="eventCountdown" class="count">--:--:--</span></div>
+      <div class="row"><span class="label">EVENT</span><span id="eventName" class="value">---</span></div>
+      <div class="row"><span class="label">DATE</span><span id="eventDate" class="value">---</span></div>
+      <div class="row"><span class="label">TIME</span><span id="eventTime" class="value">---</span></div>
+      <div class="row"><span class="label">IMPACT</span><span id="eventImpact" class="value">---</span></div>
+      <div class="row"><span class="label">FORECAST</span><span id="eventForecast" class="value">---</span></div>
+      <div class="row"><span class="label">PREVIOUS</span><span id="eventPrevious" class="value">---</span></div>
+      <div class="row"><span class="label">COUNTDOWN</span><span id="eventCountdown" class="count">--:--:--</span></div>
     </div>
   </div>
 
   <div class="card news">
     <div class="head">GOLD NEWS FEED</div>
     <div class="inner">
-      <p><a href="https://www.reuters.com/markets/" target="_blank">Reuters Markets</a> <span class="red">HIGH</span></p>
-      <p><a href="https://www.cnbc.com/markets/" target="_blank">CNBC Markets</a> <span class="orange">MEDIUM</span></p>
-      <p><a href="https://www.kitco.com/news" target="_blank">Kitco Gold News</a> <span class="red">HIGH</span></p>
-      <p><a href="https://www.fxstreet.com/news" target="_blank">FXStreet News</a> <span class="orange">MEDIUM</span></p>
-      <p><a href="https://www.youtube.com/results?search_query=gold+news+xauusd+live" target="_blank">YouTube XAUUSD Live</a> <span class="yellow">WATCH</span></p>
+      <p><a href="https://www.reuters.com/markets/" target="_blank">Reuters Markets</a> <span class="warning">HIGH</span></p>
+      <p><a href="https://www.kitco.com/news" target="_blank">Kitco Gold News</a> <span class="warning">HIGH</span></p>
+      <p><a href="https://www.cnbc.com/markets/" target="_blank">CNBC Markets</a> <span class="alert">MEDIUM</span></p>
+      <p><a href="https://www.fxstreet.com/news" target="_blank">FXStreet News</a> <span class="alert">MEDIUM</span></p>
+      <p><a href="https://www.youtube.com/results?search_query=gold+news+xauusd+live" target="_blank">YouTube XAUUSD Live</a> <span class="watch">WATCH</span></p>
     </div>
   </div>
 
-  <div class="card warmap">
+  <div class="card map">
     <div class="head">GOLD WAR MAP</div>
     <div class="inner mapgrid">
-      <div class="mapbox warning"><b>Middle East</b><br><span class="red">WARNING</span></div>
-      <div class="mapbox alert"><b>Ukraine</b><br><span class="orange">ALERT</span></div>
-      <div class="mapbox watch"><b>Taiwan</b><br><span class="yellow">WATCH</span></div>
-      <div class="mapbox warning"><b>Iran</b><br><span class="red">WARNING</span></div>
-      <div class="mapbox watch"><b>China</b><br><span class="yellow">WATCH</span></div>
-      <div class="mapbox alert"><b>Red Sea</b><br><span class="orange">ALERT</span></div>
+      <div class="mapbox warning"><b>Middle East</b><br>Israel / Iran / Gaza<br>Gold ↑↑</div>
+      <div class="mapbox alert"><b>Ukraine</b><br>Russia / Ukraine<br>Gold ↑</div>
+      <div class="mapbox watch"><b>Taiwan</b><br>China / Taiwan<br>Gold ↑</div>
+      <div class="mapbox warning"><b>Iran</b><br>Military / Oil<br>Gold ↑↑</div>
+      <div class="mapbox watch"><b>China</b><br>Economy / Yuan<br>Gold →</div>
+      <div class="mapbox alert"><b>Red Sea</b><br>Shipping Risk<br>Gold ↑</div>
     </div>
   </div>
 
-  <div class="card correlation">
+  <div class="card corr">
     <div class="head">XAUUSD CORRELATION</div>
     <div class="inner">
-      <div class="row"><span>USDJPY</span><span class="orange">USD FLOW</span></div>
-      <div class="row"><span>BTCUSD</span><span class="muted">RISK FLOW</span></div>
-      <div class="row"><span>Gold Bias</span><span class="gold">SESSION WAIT</span></div>
-      <div class="row"><span>Trigger</span><span class="red">NEWS / OPEN</span></div>
+      <div class="row"><span class="label">USDJPY</span><span class="value">USD FLOW</span></div>
+      <div class="row"><span class="label">BTCUSD</span><span class="value">RISK FLOW</span></div>
+      <div class="row"><span class="label">Gold Bias</span><span class="value">SESSION WAIT</span></div>
+      <div class="row"><span class="label">Trigger</span><span class="warning">NEWS / OPEN</span></div>
     </div>
   </div>
 
-  <div class="card scenario">
-    <div class="head">SCENARIO</div>
+  <div class="card alertPanel">
+    <div class="head">ALERT STATUS</div>
     <div class="inner">
-      <div class="row"><span>BUY</span><span class="green">USD弱 / Risk高</span></div>
-      <div class="row"><span>SELL</span><span class="red">USD強 / Risk低</span></div>
-      <div class="row"><span>ENTRY</span><span class="gold">OPEN確認</span></div>
-      <div class="row"><span>CAUTION</span><span class="orange">指標前後</span></div>
+      <div class="row"><span class="label">WATCH</span><span class="watch">60 MIN</span></div>
+      <div class="row"><span class="label">ALERT</span><span class="alert">30 MIN</span></div>
+      <div class="row"><span class="label">WARNING</span><span class="warning">15 MIN</span></div>
+      <div class="row"><span class="label">CRITICAL</span><span class="critical">5 MIN</span></div>
+      <div class="row"><span class="label">SOUND</span><span class="value">ON</span></div>
+      <div class="row"><span class="label">NOTIFICATION</span><span class="value">ON</span></div>
     </div>
   </div>
 
 </div>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
-
 <script>
 let alerts=false;
 let lastSession="";
@@ -408,6 +270,8 @@ new TradingView.widget({
     "paneProperties.background":"#000000",
     "paneProperties.vertGridProperties.color":"#000000",
     "paneProperties.horzGridProperties.color":"#000000",
+    "paneProperties.vertGridProperties.style":0,
+    "paneProperties.horzGridProperties.style":0,
     "scalesProperties.textColor":"#b8c0cc"
   }
 });
@@ -449,10 +313,10 @@ function jpDate(d){
 }
 function fmt(ms){
   let s=Math.max(0,Math.floor(ms/1000));
-  const d=Math.floor(s/86400); s%=86400;
-  const h=Math.floor(s/3600); s%=3600;
-  const m=Math.floor(s/60); s%=60;
-  return d>0 ? `${d}日 ${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(h)}:${pad(m)}:${pad(s)}`;
+  const d=Math.floor(s/86400);s%=86400;
+  const h=Math.floor(s/3600);s%=3600;
+  const m=Math.floor(s/60);s%=60;
+  return d>0?`${pad(d)}D ${pad(h)}H ${pad(m)}M ${pad(s)}S`:`${pad(h)}H ${pad(m)}M ${pad(s)}S`;
 }
 function nextDate(time){
   const now=jstNow();
@@ -466,9 +330,7 @@ function nextDate(time){
   return d;
 }
 function eventDate(e){return new Date(`${e.date}T${e.time}:00+09:00`)}
-
-function alertLevel(diff){
-  if(diff<=1*60000)return "critical";
+function level(diff){
   if(diff<=5*60000)return "critical";
   if(diff<=15*60000)return "warning";
   if(diff<=30*60000)return "alert";
@@ -479,17 +341,13 @@ function alertLevel(diff){
 function update(){
   const now=jstNow();
   const cm=now.getHours()*60+now.getMinutes();
-
   jstClock.innerHTML=`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
   let current="MARKET CLOSED";
   sessions.forEach(s=>{
     const st=toMin(s.start),en=toMin(s.end);
-    if(en<st){
-      if(cm>=st||cm<en)current=s.name;
-    }else{
-      if(cm>=st&&cm<en)current=s.name;
-    }
+    if(en<st){if(cm>=st||cm<en)current=s.name}
+    else{if(cm>=st&&cm<en)current=s.name}
   });
 
   topSession.innerHTML=current;
@@ -505,29 +363,23 @@ function update(){
     return {...s,date:d,diff:d-now};
   }).sort((a,b)=>a.diff-b.diff)[0];
 
-  nextSession.innerHTML=next.name;
-  nextMajor.innerHTML=nextMajor.name;
-
   const end=new Date(next.date);
   end.setHours(Number(next.end.split(":")[0]),Number(next.end.split(":")[1]),0,0);
   if(toMin(next.end)<toMin(next.start))end.setDate(end.getDate()+1);
 
+  nextSession.innerHTML=next.name;
+  nextMajor.innerHTML=nextMajor.name;
   nextStart.innerHTML=`${jpDate(next.date)} ${next.start} JST`;
   nextEnd.innerHTML=`${jpDate(end)} ${next.end} JST`;
   sessionCountdown.innerHTML=fmt(next.diff);
 
-  const sl=alertLevel(next.diff);
-  sessionStatus.className=sl || "green";
-  sessionStatus.innerHTML=sl ? sl.toUpperCase() : "NORMAL";
+  const sl=level(next.diff);
+  sessionStatus.innerHTML=sl?sl.toUpperCase():"NORMAL";
+  sessionStatus.className=sl||"value";
+  sessionCountdown.className=sl?`count ${sl}`:"count";
 
-  if(sl){
-    sessionCountdown.className=`count ${sl}`;
-  }else{
-    sessionCountdown.className="count";
-  }
-
-  [60,30,15,5,1].forEach(min=>{
-    const key=`session-${next.name}-${min}-${jpDate(next.date)}`;
+  [60,30,15,5].forEach(min=>{
+    const key=`s-${next.name}-${min}-${jpDate(next.date)}`;
     if(next.diff<=min*60000 && next.diff>(min*60000-2000) && !sentAlert[key]){
       notifyUser(`${next.name} ${min} MIN`);
       sentAlert[key]=true;
@@ -552,12 +404,12 @@ function update(){
     eventPrevious.innerHTML=ev.previous;
     eventCountdown.innerHTML=fmt(diff);
 
-    const el=alertLevel(diff);
-    impactCard.className=`card impact ${el}`;
-    eventCountdown.className=el ? `count ${el}` : "count";
+    const el=level(diff);
+    impactCard.className=el?`card impact ${el}`:"card impact";
+    eventCountdown.className=el?`count ${el}`:"count";
 
     [60,30,15,5,1].forEach(min=>{
-      const key=`event-${ev.name}-${min}-${ev.date}`;
+      const key=`e-${ev.name}-${min}-${ev.date}`;
       if(diff<=min*60000 && diff>(min*60000-2000) && !sentAlert[key]){
         notifyUser(`${ev.name} ${min} MIN`);
         sentAlert[key]=true;
