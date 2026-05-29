@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAUUSD WORLD MONITOR</title>
+
+<style>
+
+body{
+background:#000;
+color:#fff;
+font-family:Arial;
+margin:0;
+padding:20px;
+}
+
+.header{
+text-align:center;
+font-size:40px;
+font-weight:bold;
+color:#d4af37;
+margin-bottom:30px;
+}
+
+.box{
+background:#111;
+border:1px solid #d4af37;
+border-radius:15px;
+padding:20px;
+margin-bottom:20px;
+}
+
+.price{
+font-size:80px;
+font-weight:bold;
+color:#d4af37;
+text-align:center;
+}
+
+.session{
+font-size:30px;
+text-align:center;
+}
+
+.clock{
+font-size:40px;
+text-align:center;
+color:#00ff88;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+XAUUSD WORLD MONITOR
+</div>
+
+<div class="box">
+<h2>GOLD PRICE</h2>
+<div class="price">
+LIVE
+</div>
+</div>
+
+<div class="box">
+<h2>WORLD CLOCK</h2>
+<div class="clock" id="clock"></div>
+</div>
+
+<div class="box">
+<h2>MARKET SESSION</h2>
+
+<div class="session">
+🇯🇵 ASIA SESSION
+</div>
+
+<br>
+
+<div class="session">
+🇬🇧 LONDON SESSION
+</div>
+
+<br>
+
+<div class="session">
+🇺🇸 NEW YORK SESSION
+</div>
+
+</div>
+
+<script>
+
+function updateClock(){
+
+const now = new Date();
+
+document.getElementById("clock").innerHTML =
+now.toLocaleString();
+
+}
+
+setInterval(updateClock,1000);
+
+</script>
+
+</body>
+</html>
