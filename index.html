@@ -1,81 +1,305 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>XAUUSD PRO MONITOR</title>
+<title>XAUUSD WAR ROOM PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
+*{box-sizing:border-box}
 body{
-background:#050505;
-color:white;
-font-family:Arial;
-margin:0;
-padding:20px;
+  margin:0;
+  background:#05070a;
+  color:#e8e8e8;
+  font-family:Arial, sans-serif;
 }
-
-h1{
-text-align:center;
-color:#d4af37;
+.header{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1.2fr;
+  gap:12px;
+  padding:14px;
+  background:#080b10;
+  border-bottom:1px solid #3a2d10;
 }
-
-.box{
-border:1px solid #d4af37;
-border-radius:15px;
-padding:20px;
-margin-bottom:20px;
-background:#111;
+.card,.box{
+  background:#0d1117;
+  border:1px solid #2f3540;
+  border-radius:12px;
+  padding:14px;
 }
-
-.time{
-font-size:30px;
-color:#00ff88;
-text-align:center;
+.gold{color:#d4af37}
+.green{color:#00d67a}
+.red{color:#ff4d4d}
+.yellow{color:#ffd166}
+.big{font-size:34px;font-weight:bold}
+h1,h2,h3{margin:0 0 10px;color:#d4af37}
+.grid{
+  display:grid;
+  grid-template-columns:220px 1.6fr 1fr 270px;
+  gap:12px;
+  padding:12px;
 }
-
+.menu div{
+  padding:12px;
+  border-bottom:1px solid #222;
+}
+.chart{height:500px}
+.status{
+  display:inline-block;
+  padding:8px 18px;
+  border-radius:20px;
+  background:#003d23;
+  color:#00ff88;
+  font-weight:bold;
+}
+.alert{
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+  background:#1a1200;
+  border:1px solid #d4af37;
+  color:#ffd166;
+  font-weight:bold;
+}
+.flash{
+  animation:flash 1s infinite;
+}
+@keyframes flash{
+  0%{background:#351000}
+  50%{background:#8a0000}
+  100%{background:#351000}
+}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid #222;text-align:left}
+.footergrid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  padding:0 12px 12px;
+}
+.signal{
+  font-size:34px;
+  font-weight:bold;
+  color:#00ff88;
+}
+iframe{
+  border-radius:8px;
+}
 </style>
-
 </head>
 
 <body>
 
-<h1>XAUUSD PRO MONITOR</h1>
+<div class="header">
+  <div>
+    <h2>XAUUSD WAR ROOM PRO</h2>
+    <div>GOLD INTELLIGENCE MONITOR</div>
+  </div>
 
-<div class="box">
-<h2>東京</h2>
-<div id="tokyo" class="time"></div>
+  <div>
+    <h3>XAUUSD</h3>
+    <div class="big gold">LIVE</div>
+    <div class="green">リアルタイム監視</div>
+  </div>
+
+  <div>
+    <h3>SESSION</h3>
+    <div id="session" class="status">確認中</div>
+    <div id="sessionAlert" class="alert">待機中</div>
+  </div>
+
+  <div>
+    <h3>WORLD CLOCK</h3>
+    <div>🇯🇵 東京：<span id="tokyo"></span></div>
+    <div>🇬🇧 London：<span id="london"></span></div>
+    <div>🇺🇸 New York：<span id="ny"></span></div>
+  </div>
 </div>
 
-<div class="box">
-<h2>ロンドン</h2>
-<div id="london" class="time"></div>
+<div class="grid">
+
+  <div class="card menu">
+    <h3>MAIN MENU</h3>
+    <div>📊 ダッシュボード</div>
+    <div>📈 XAUUSDチャート</div>
+    <div>📰 ニュース分析</div>
+    <div>📅 経済指標</div>
+    <div>🌍 マクロ監視</div>
+    <div>🚨 アラート</div>
+    <div>⚙️ 設定</div>
+  </div>
+
+  <div class="card">
+    <h3>XAUUSD CHART</h3>
+    <div class="chart">
+      <iframe
+      src="https://www.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=15&theme=dark&style=1"
+      width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <div>
+    <div class="box">
+      <h3>GOLD DRIVER</h3>
+      <table>
+        <tr><td>DXY</td><td class="red">監視中</td></tr>
+        <tr><td>US10Y</td><td class="red">監視中</td></tr>
+        <tr><td>US02Y</td><td class="red">監視中</td></tr>
+        <tr><td>VIX</td><td class="green">監視中</td></tr>
+        <tr><td>WTI</td><td class="green">監視中</td></tr>
+      </table>
+    </div>
+
+    <div class="box">
+      <h3>重要経済指標</h3>
+      <table>
+        <tr><th>時間</th><th>指標</th><th>重要度</th></tr>
+        <tr><td>21:30</td><td>CPI</td><td>★★★</td></tr>
+        <tr><td>21:30</td><td>PPI / 失業保険</td><td>★★★</td></tr>
+        <tr><td>23:00</td><td>ISM</td><td>★★</td></tr>
+        <tr><td>03:00</td><td>FOMC</td><td>★★★</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div class="box">
+      <h3>GOLD RISK INDEX</h3>
+      <div class="big gold">68</div>
+      <div>高リスク</div>
+    </div>
+
+    <div class="box">
+      <h3>XAUUSD SENTIMENT</h3>
+      <div class="green">BUY 61%</div>
+      <div class="red">SELL 39%</div>
+    </div>
+
+    <div class="box">
+      <h3>TRADE BIAS</h3>
+      <div class="signal">BUY 優勢</div>
+      <p>DXY下落 / 金利低下なら押し目買い優勢</p>
+    </div>
+  </div>
+
 </div>
 
-<div class="box">
-<h2>ニューヨーク</h2>
-<div id="ny" class="time"></div>
+<div class="footergrid">
+  <div class="box">
+    <h3>重要価格帯</h3>
+    <table>
+      <tr><td>R3</td><td>2420</td></tr>
+      <tr><td>R2</td><td>2405</td></tr>
+      <tr><td>R1</td><td>2392</td></tr>
+      <tr><td>現在価格</td><td class="gold">LIVE</td></tr>
+      <tr><td>S1</td><td>2368</td></tr>
+      <tr><td>S2</td><td>2355</td></tr>
+      <tr><td>S3</td><td>2338</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>TECHNICAL SIGNAL</h3>
+    <table>
+      <tr><td>MA20</td><td class="green">BUY</td></tr>
+      <tr><td>MA50</td><td class="green">BUY</td></tr>
+      <tr><td>MA200</td><td class="green">BUY</td></tr>
+      <tr><td>RSI</td><td class="yellow">NEUTRAL</td></tr>
+      <tr><td>MACD</td><td class="green">BUY</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>本日のシナリオ</h3>
+    <p class="green">強気：2368維持で上昇継続</p>
+    <p class="green">2392突破で上昇加速</p>
+    <p class="red">弱気：2368割れで下落警戒</p>
+    <p>推奨：押し目買い優勢</p>
+  </div>
 </div>
 
 <script>
+let lastSession = "";
+
+function speak(text){
+  const voice = new SpeechSynthesisUtterance(text);
+  voice.lang = "en-US";
+  speechSynthesis.speak(voice);
+}
 
 function updateTime(){
+  const now = new Date();
 
-const now=new Date();
+  document.getElementById("tokyo").innerHTML =
+  now.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo"});
 
-document.getElementById("tokyo").innerHTML=
-now.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo"});
+  document.getElementById("london").innerHTML =
+  now.toLocaleTimeString("en-GB",{timeZone:"Europe/London"});
 
-document.getElementById("london").innerHTML=
-now.toLocaleTimeString("en-GB",{timeZone:"Europe/London"});
+  document.getElementById("ny").innerHTML =
+  now.toLocaleTimeString("en-US",{timeZone:"America/New_York"});
 
-document.getElementById("ny").innerHTML=
-now.toLocaleTimeString("en-US",{timeZone:"America/New_York"});
+  const hour = Number(now.toLocaleString("en-US",{
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    hour12:false
+  }));
 
+  const minute = Number(now.toLocaleString("en-US",{
+    timeZone:"Asia/Tokyo",
+    minute:"2-digit"
+  }));
+
+  let currentSession = "CLOSED";
+  let alertText = "次のセッション待機中";
+
+  if(hour >= 9 && hour < 15){
+    currentSession = "🇯🇵 ASIA OPEN";
+    alertText = "ASIA SESSION 監視中";
+  }
+  else if(hour >= 16 && hour < 24){
+    currentSession = "🇬🇧 LONDON OPEN";
+    alertText = "LONDON SESSION 監視中";
+  }
+  else if(hour >= 0 && hour < 5){
+    currentSession = "🇺🇸 NEW YORK OPEN";
+    alertText = "NEW YORK SESSION 監視中";
+  }
+
+  document.getElementById("session").innerHTML = currentSession;
+  document.getElementById("sessionAlert").innerHTML = alertText;
+
+  if(hour === 15 && minute >= 55){
+    document.getElementById("sessionAlert").innerHTML = "⚠️ LONDON OPEN 5分前";
+    document.getElementById("sessionAlert").classList.add("flash");
+  }
+  else if(hour === 21 && minute >= 25){
+    document.getElementById("sessionAlert").innerHTML = "⚠️ NEW YORK OPEN 5分前";
+    document.getElementById("sessionAlert").classList.add("flash");
+  }
+  else{
+    document.getElementById("sessionAlert").classList.remove("flash");
+  }
+
+  if(currentSession !== lastSession){
+    if(currentSession.includes("ASIA")){
+      alert("🇯🇵 ASIA SESSION OPEN");
+      speak("Asia session open");
+    }
+    if(currentSession.includes("LONDON")){
+      alert("🇬🇧 LONDON SESSION OPEN");
+      speak("London session open");
+    }
+    if(currentSession.includes("NEW YORK")){
+      alert("🇺🇸 NEW YORK SESSION OPEN");
+      speak("New York session open");
+    }
+    lastSession = currentSession;
+  }
 }
 
 setInterval(updateTime,1000);
 updateTime();
-
 </script>
 
 </body>
