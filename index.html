@@ -2,193 +2,245 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>XAUUSD WAR ROOM PRO</title>
+<title>XAUUSD WAR ROOM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#05070a;color:#e8e8e8;font-family:Arial}
-.header{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:10px;padding:12px;background:#080b10;border-bottom:1px solid #d4af37}
-.card,.box{background:#0d1117;border:1px solid #2f3540;border-radius:10px;padding:12px}
-.gold{color:#d4af37}.green{color:#00d67a}.red{color:#ff4d4d}.yellow{color:#ffd166}
-.big{font-size:32px;font-weight:bold}
-h2,h3{margin:0 0 8px;color:#d4af37}
-.grid{display:grid;grid-template-columns:220px 1.7fr 1fr 280px;gap:10px;padding:10px}
-.menu div{padding:10px;border-bottom:1px solid #222}
-.chart{height:520px}
-.status{padding:8px 16px;border-radius:20px;background:#003d23;color:#00ff88;font-weight:bold;display:inline-block}
-.alert{margin-top:8px;padding:8px;border:1px solid #d4af37;border-radius:8px;color:#ffd166}
+body{
+  margin:0;
+  background:#05070a;
+  color:#e6e6e6;
+  font-family:Arial,"Hiragino Sans",sans-serif;
+  overflow:hidden;
+}
+.top{
+  height:48px;
+  display:grid;
+  grid-template-columns:220px 1fr 160px 160px 220px;
+  align-items:center;
+  gap:10px;
+  padding:6px 12px;
+  background:#090d12;
+  border-bottom:1px solid #1f2a35;
+}
+.logo{color:#d4af37;font-weight:bold;font-size:20px}
+.badge{background:#0e1d16;color:#00ff88;padding:6px 12px;border-radius:20px;text-align:center}
+.time{color:#9aa4b2;font-size:13px}
+.main{
+  height:calc(100vh - 48px);
+  display:grid;
+  grid-template-columns:190px 1.25fr 1fr 280px;
+  grid-template-rows:1fr 230px;
+  gap:8px;
+  padding:8px;
+}
+.panel{
+  background:#0b1016;
+  border:1px solid #1f2a35;
+  border-radius:8px;
+  overflow:hidden;
+}
+.title{
+  padding:9px 10px;
+  color:#d4af37;
+  font-weight:bold;
+  border-bottom:1px solid #1f2a35;
+  background:#0d131b;
+}
+.menu{grid-row:1/3}
+.menu div{
+  padding:10px 12px;
+  border-bottom:1px solid #1a232e;
+  font-size:14px;
+}
+.menu .active{background:#2a230d;color:#ffd66b}
+.chart{grid-column:2/3}
+.map{grid-column:3/4}
+.right{grid-column:4/5;grid-row:1/3;display:grid;grid-template-rows:190px 190px 1fr;gap:8px}
+.bottom{
+  grid-column:2/4;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+.inner{padding:10px}
+.green{color:#00d67a}
+.red{color:#ff4d4d}
+.gold{color:#d4af37}
+.yellow{color:#ffd166}
+.big{font-size:34px;font-weight:bold}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #1a232e;padding:7px 0;font-size:14px}
+.news{
+  height:100%;
+  overflow:auto;
+  font-size:13px;
+  line-height:1.45;
+}
+.news a{color:#e6e6e6;text-decoration:none}
+.news p{border-bottom:1px solid #1a232e;padding-bottom:8px}
+.riskCircle{
+  width:120px;height:120px;border-radius:50%;
+  border:12px solid #d4af37;
+  display:flex;align-items:center;justify-content:center;
+  margin:12px auto;
+  font-size:34px;font-weight:bold;color:#ffd166;
+}
+.alert{
+  padding:8px;
+  border:1px solid #d4af37;
+  color:#ffd166;
+  border-radius:8px;
+  margin-top:8px;
+}
 .flash{animation:flash 1s infinite}
-@keyframes flash{0%{background:#351000}50%{background:#8a0000}100%{background:#351000}}
-.news{height:260px;overflow:auto;font-size:13px}
-.news a{color:#ffd166;text-decoration:none}
-.footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 10px 10px}
-iframe{border:0;border-radius:8px}
+@keyframes flash{0%{background:#251000}50%{background:#7a0000}100%{background:#251000}}
+iframe{width:100%;height:100%;border:0}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <div><h2>XAUUSD WAR ROOM PRO</h2><div>GOLD INTELLIGENCE MONITOR</div></div>
-  <div><h3>XAUUSD</h3><div class="big gold">LIVE</div><div class="green">TradingView連動</div></div>
-  <div><h3>SESSION</h3><div id="session" class="status">確認中</div><div id="sessionAlert" class="alert">待機中</div></div>
-  <div><h3>WORLD CLOCK</h3><div>🇯🇵 東京 <span id="tokyo"></span></div><div>🇬🇧 London <span id="london"></span></div><div>🇺🇸 NY <span id="ny"></span></div></div>
+<div class="top">
+  <div class="logo">XAUUSD WAR ROOM</div>
+  <div class="gold">GOLD INTELLIGENCE MONITOR</div>
+  <div id="session" class="badge">LOADING</div>
+  <div id="tokyo" class="time"></div>
+  <div id="alertBox" class="alert">SESSION ALERT READY</div>
 </div>
 
-<div class="grid">
-  <div class="card menu">
-    <h3>MAIN MENU</h3>
-    <div>📊 ダッシュボード</div>
+<div class="main">
+
+  <div class="panel menu">
+    <div class="title">メインメニュー</div>
+    <div class="active">📊 ダッシュボード</div>
     <div>📈 XAUUSDチャート</div>
+    <div>🌍 地政学リスク</div>
     <div>📰 GOLDニュース</div>
     <div>📅 経済指標</div>
-    <div>🌍 地政学リスク</div>
-    <div>🚨 セッションアラート</div>
+    <div>💵 DXY / 金利</div>
+    <div>⚠️ セッションアラート</div>
+    <div>🎯 重要価格帯</div>
+    <div>📌 シナリオ</div>
   </div>
 
-  <div class="card">
-    <h3>XAUUSD LIVE CHART</h3>
-    <div class="chart">
-      <iframe width="100%" height="100%" src="https://www.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=15&theme=dark&style=1"></iframe>
-    </div>
+  <div class="panel chart">
+    <div class="title">XAUUSD LIVE CHART</div>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=15&theme=dark&style=1"></iframe>
   </div>
 
-  <div>
-    <div class="box">
-      <h3>GOLD DRIVER LIVE</h3>
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-        {
-          "width":"100%",
-          "height":420,
-          "symbolsGroups":[{
-            "name":"XAUUSD DRIVER",
-            "symbols":[
-              {"name":"OANDA:XAUUSD","displayName":"XAUUSD"},
-              {"name":"TVC:DXY","displayName":"DXY"},
-              {"name":"TVC:US10Y","displayName":"US10Y"},
-              {"name":"TVC:US02Y","displayName":"US02Y"},
-              {"name":"TVC:VIX","displayName":"VIX"},
-              {"name":"TVC:USOIL","displayName":"WTI"}
-            ]
-          }],
-          "colorTheme":"dark",
-          "isTransparent":true,
-          "locale":"ja"
-        }
-        </script>
+  <div class="panel map">
+    <div class="title">地政学リスクマップ / GOLD影響</div>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=TVC%3AGOLD&interval=60&theme=dark&style=3"></iframe>
+  </div>
+
+  <div class="right">
+    <div class="panel">
+      <div class="title">GOLD RISK INDEX</div>
+      <div class="riskCircle">68</div>
+      <div class="inner">
+        <div class="row"><span>地政学リスク</span><span class="red">HIGH</span></div>
+        <div class="row"><span>金利リスク</span><span class="yellow">MID</span></div>
+        <div class="row"><span>DXY影響</span><span class="green">BUY優勢</span></div>
       </div>
     </div>
 
-    <div class="box">
-      <h3>経済指標カレンダー</h3>
-      <iframe width="100%" height="300" src="https://www.tradingview.com/markets/currencies/economic-calendar/"></iframe>
+    <div class="panel">
+      <div class="title">TRADE BIAS</div>
+      <div class="inner">
+        <div class="big green">BUY 優勢</div>
+        <p>DXY下落・米金利低下・地政学リスク上昇ならXAUUSD買い優勢。</p>
+        <div class="row"><span>信頼度</span><span class="gold">72%</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="title">GEOPOLITICAL / GOLD NEWS</div>
+      <div id="news" class="inner news">読み込み中...</div>
     </div>
   </div>
 
-  <div>
-    <div class="box">
-      <h3>GOLD RISK INDEX</h3>
-      <div class="big gold">68</div>
-      <div>高リスク監視</div>
+  <div class="bottom">
+    <div class="panel">
+      <div class="title">GOLD DRIVER LIVE</div>
+      <div class="inner">
+        <div class="row"><span>DXY</span><span class="red">TradingView監視</span></div>
+        <div class="row"><span>US10Y</span><span class="red">TradingView監視</span></div>
+        <div class="row"><span>US02Y</span><span class="red">TradingView監視</span></div>
+        <div class="row"><span>VIX</span><span class="green">TradingView監視</span></div>
+        <div class="row"><span>WTI</span><span class="green">TradingView監視</span></div>
+      </div>
     </div>
 
-    <div class="box">
-      <h3>TRADE BIAS</h3>
-      <div class="big green">BUY 優勢</div>
-      <p>DXY下落・金利低下なら押し目買い優勢</p>
+    <div class="panel">
+      <div class="title">重要経済指標</div>
+      <div class="inner">
+        <div class="row"><span>21:30 CPI</span><span class="red">★★★</span></div>
+        <div class="row"><span>21:30 PPI</span><span class="red">★★★</span></div>
+        <div class="row"><span>21:30 失業保険</span><span class="yellow">★★</span></div>
+        <div class="row"><span>03:00 FOMC</span><span class="red">★★★</span></div>
+      </div>
     </div>
 
-    <div class="box">
-      <h3>GEOPOLITICAL NEWS</h3>
-      <div id="geoNews" class="news">読み込み中...</div>
+    <div class="panel">
+      <div class="title">本日のXAUUSDシナリオ</div>
+      <div class="inner">
+        <p class="green">強気：サポート維持で押し目買い</p>
+        <p class="red">弱気：直近安値割れで売り警戒</p>
+        <p class="gold">重要：ロンドン・NY初動を監視</p>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="footer">
-  <div class="box">
-    <h3>重要価格帯</h3>
-    <p>R3 2420 / R2 2405 / R1 2392</p>
-    <p class="gold">現在価格：TradingView参照</p>
-    <p>S1 2368 / S2 2355 / S3 2338</p>
-  </div>
-
-  <div class="box">
-    <h3>TECHNICAL SIGNAL</h3>
-    <p class="green">MA20 BUY</p>
-    <p class="green">MA50 BUY</p>
-    <p class="yellow">RSI NEUTRAL</p>
-    <p class="green">MACD BUY</p>
-  </div>
-
-  <div class="box">
-    <h3>本日のシナリオ</h3>
-    <p class="green">強気：2368維持で上昇継続</p>
-    <p class="red">弱気：2368割れで下落警戒</p>
-    <p>推奨：押し目買い優勢</p>
-  </div>
 </div>
 
 <script>
 let lastSession="";
 
-function speak(t){
-  const v=new SpeechSynthesisUtterance(t);
-  v.lang="en-US";
-  speechSynthesis.speak(v);
-}
-
-function updateTime(){
+function updateClock(){
   const now=new Date();
-  tokyo.innerHTML=now.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo"});
-  london.innerHTML=now.toLocaleTimeString("en-GB",{timeZone:"Europe/London"});
-  ny.innerHTML=now.toLocaleTimeString("en-US",{timeZone:"America/New_York"});
+  tokyo.innerHTML="東京 " + now.toLocaleTimeString("ja-JP",{timeZone:"Asia/Tokyo"});
 
   const h=Number(now.toLocaleString("en-US",{timeZone:"Asia/Tokyo",hour:"2-digit",hour12:false}));
   const m=Number(now.toLocaleString("en-US",{timeZone:"Asia/Tokyo",minute:"2-digit"}));
 
   let s="CLOSED";
-  let a="次のセッション待機中";
+  let a="次セッション待機中";
 
-  if(h>=9&&h<15){s="🇯🇵 ASIA OPEN";a="ASIA SESSION 監視中";}
-  else if(h>=16&&h<24){s="🇬🇧 LONDON OPEN";a="LONDON SESSION 監視中";}
-  else if(h>=0&&h<5){s="🇺🇸 NEW YORK OPEN";a="NEW YORK SESSION 監視中";}
+  if(h>=9&&h<15){s="ASIA OPEN";a="🇯🇵 ASIA SESSION 監視中";}
+  else if(h>=16&&h<24){s="LONDON OPEN";a="🇬🇧 LONDON SESSION 監視中";}
+  else if(h>=0&&h<5){s="NEW YORK OPEN";a="🇺🇸 NEW YORK SESSION 監視中";}
 
   session.innerHTML=s;
-  sessionAlert.innerHTML=a;
+  alertBox.innerHTML=a;
 
-  if(h===15&&m>=55){sessionAlert.innerHTML="⚠️ LONDON OPEN 5分前";sessionAlert.classList.add("flash");}
-  else if(h===21&&m>=25){sessionAlert.innerHTML="⚠️ NEW YORK OPEN 5分前";sessionAlert.classList.add("flash");}
-  else{sessionAlert.classList.remove("flash");}
+  if(h===15&&m>=55){alertBox.innerHTML="⚠️ LONDON OPEN 5分前";alertBox.classList.add("flash")}
+  else if(h===21&&m>=25){alertBox.innerHTML="⚠️ NEW YORK OPEN 5分前";alertBox.classList.add("flash")}
+  else{alertBox.classList.remove("flash")}
 
-  if(s!==lastSession){
-    if(s.includes("ASIA")){alert("ASIA SESSION OPEN");speak("Asia session open");}
-    if(s.includes("LONDON")){alert("LONDON SESSION OPEN");speak("London session open");}
-    if(s.includes("NEW YORK")){alert("NEW YORK SESSION OPEN");speak("New York session open");}
+  if(s!==lastSession && s!=="CLOSED"){
+    alert(s);
     lastSession=s;
   }
 }
 
-async function loadGeoNews(){
+async function loadNews(){
   try{
-    const url="https://api.gdeltproject.org/api/v2/doc/doc?query=gold%20OR%20xauusd%20OR%20geopolitical%20risk%20OR%20war%20OR%20fed&mode=ArtList&format=json&maxrecords=10&sort=HybridRel";
-    const res=await fetch(url);
-    const data=await res.json();
-    geoNews.innerHTML="";
-    data.articles.slice(0,10).forEach(n=>{
-      geoNews.innerHTML+=`<p><a href="${n.url}" target="_blank">${n.title}</a><br><span>${n.sourceCountry || ""}</span></p>`;
+    const url="https://api.gdeltproject.org/api/v2/doc/doc?query=xauusd%20OR%20gold%20OR%20fed%20OR%20inflation%20OR%20war%20OR%20geopolitical&mode=ArtList&format=json&maxrecords=12&sort=HybridRel";
+    const r=await fetch(url);
+    const d=await r.json();
+    news.innerHTML="";
+    d.articles.forEach(x=>{
+      news.innerHTML+=`<p><a href="${x.url}" target="_blank">${x.title}</a><br><span class="gold">${x.sourceCountry||""}</span></p>`;
     });
   }catch(e){
-    geoNews.innerHTML="ニュース取得エラー。時間を置いて更新してください。";
+    news.innerHTML="ニュース取得エラー。更新してください。";
   }
 }
 
-setInterval(updateTime,1000);
-updateTime();
-loadGeoNews();
-setInterval(loadGeoNews,300000);
+setInterval(updateClock,1000);
+updateClock();
+loadNews();
+setInterval(loadNews,300000);
 </script>
 
 </body>
