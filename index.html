@@ -3,556 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>XAUUSD WORLD WAR ROOM</title>
-
+<title>XAUUSD WORLD MONITOR</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  width:100%;height:100%;overflow:hidden;
-  background:#020407;color:#e8edf2;
-  font-family:Arial,"Hiragino Sans","Meiryo",sans-serif;
-}
+html,body{width:100%;height:100%;overflow:hidden;background:#080808;color:#ddd;font-family:Arial,"Meiryo",sans-serif}
 a{color:inherit;text-decoration:none}
+:root{--line:#222;--panel:#111;--green:#00e676;--red:#ff3b30;--orange:#ff8c1a;--yellow:#ffd54f;--blue:#3d8bff}
 
-:root{
-  --gold:#d9a441;--red:#ff3030;--orange:#ff8c1a;
-  --blue:#2f8cff;--green:#00e676;--purple:#9b4dff;
-  --line:#1b2b38;
-}
+.app{height:100vh;display:grid;grid-template-rows:34px 1fr 250px;gap:2px;background:#050505}
+.topbar{height:34px;background:#0b0b0b;border-bottom:1px solid #1f1f1f;display:flex;align-items:center;gap:18px;padding:0 10px;font-size:13px}
+.brand{color:#00d0aa;font-weight:900;font-size:17px}
+.centerTitle{margin:auto;background:#111;border:1px solid #8a5d17;color:#f2b84b;border-radius:5px;padding:5px 60px;font-weight:900}
+.live{color:var(--green)}
+.time{color:#fff}
 
-.app{
-  height:100vh;padding:5px;
-  display:grid;
-  grid-template-rows:72px 1fr 265px 32px;
-  gap:5px;
-}
+.main{display:grid;grid-template-columns:155px 1fr;gap:2px;min-height:0}
+.sidebar{background:#0c0c0c;border-right:1px solid #222;padding:7px;overflow:hidden}
+.sideTitle{font-size:12px;font-weight:900;color:#fff;margin:5px 0}
+.check{display:flex;align-items:center;gap:6px;border-bottom:1px solid #202020;padding:6px 0;font-size:11px}
+.check input{accent-color:#00c878}
 
-.box{
-  background:linear-gradient(180deg,#09111a,#05080d);
-  border:1px solid var(--line);
-  border-radius:6px;
-  padding:8px;
-  overflow:hidden;
-}
+.mapArea{display:grid;grid-template-rows:1fr 250px;gap:2px;min-height:0}
+.mapWrap{position:relative;background:#090909;border:1px solid #202020}
+#map{width:100%;height:100%;background:#080808}
+.leaflet-container{background:#080808!important;filter:brightness(.62) contrast(1.25) saturate(.8)}
+.leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
 
-.top{
-  display:grid;
-  grid-template-columns:430px 1fr 230px;
-  gap:5px;
-}
+.mapTop{position:absolute;top:10px;left:12px;z-index:500;background:#080808d9;border:1px solid #222;border-radius:4px;padding:6px 10px;font-size:12px}
+.mapClock{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909d9;border:1px solid #222;border-radius:4px;padding:5px 16px;font-size:12px}
+.legend{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909e6;border:1px solid #222;border-radius:4px;padding:7px 14px;font-size:11px}
 
-.priceBox{padding:0}
-.priceBox iframe{width:100%!important;height:72px!important}
+.pulse{width:12px;height:12px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor,0 0 30px currentColor,0 0 70px currentColor;position:relative}
+.pulse:after{content:"";position:absolute;inset:-20px;border:1px solid currentColor;border-radius:50%;animation:ripple 1.6s infinite}
+@keyframes ripple{from{transform:scale(.3);opacity:1}to{transform:scale(1.8);opacity:0}}
 
-.topTicker{
-  display:flex;
-  align-items:center;
-  overflow:hidden;
-}
-.topTrack{
-  white-space:nowrap;
-  animation:topFlow 120s linear infinite;
-  font-size:15px;
-  font-weight:900;
-}
-@keyframes topFlow{
-  from{transform:translateX(100%)}
-  to{transform:translateX(-100%)}
-}
-
-.sub{font-size:11px;color:#94a0aa}
-.clock{font-size:32px;font-weight:900;color:#fff;line-height:1}
-.date{font-size:12px;color:#9ca8b3;margin-top:5px}
-
-.red{color:var(--red)}.orange{color:var(--orange)}.blue{color:var(--blue)}
-.green{color:var(--green)}.gold{color:var(--gold)}.purple{color:var(--purple)}
-
-.main{
-  display:grid;
-  grid-template-columns:220px 1fr 320px;
-  gap:5px;
-  min-height:0;
-}
-.left,.right{display:grid;gap:5px;min-height:0}
-
-.title{
-  font-size:14px;
-  font-weight:900;
-  color:var(--gold);
-  margin-bottom:7px;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  border-bottom:1px solid #152531;
-  padding:7px 0;
-  font-size:13px;
-  white-space:nowrap;
-}
-
-.item{
-  display:block;
-  border-bottom:1px solid #152531;
-  padding:7px 0;
-  font-size:12px;
-  line-height:1.35;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.item:hover,.row:hover,.box:hover{
-  background:#101b24;
-  border-color:#334657;
-}
-
-.badge{
-  display:inline-block;
-  padding:2px 6px;
-  border-radius:3px;
-  font-weight:900;
-  margin-right:5px;
-  font-size:11px;
-}
-.bh{background:#4a1010;color:#ff5050}
-.bm{background:#3b2606;color:#ffae32}
-.bl{background:#062944;color:#43a1ff}
-
-.mapBox{
-  position:relative;
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden;
-  background:#010306;
-}
-
-#map{
-  width:100%;
-  height:100%;
-  background:#010306;
-}
-
-.leaflet-container{
-  background:#010306!important;
-  filter:brightness(.72) contrast(1.25) saturate(.75);
-}
-.leaflet-control-zoom,
-.leaflet-control-attribution{display:none!important}
-
-.mapTitle{
-  position:absolute;
-  z-index:500;
-  top:9px;
-  left:10px;
-  background:#05090de8;
-  border:1px solid #263745;
-  border-radius:7px;
-  padding:7px 12px;
-}
-.mapTitle h2{font-size:18px;color:#fff}
-.mapTitle p{font-size:10px;color:#9aa6b0;margin-top:2px}
-
-.legend{
-  position:absolute;
-  z-index:500;
-  left:10px;
-  bottom:10px;
-  background:#05090de8;
-  border:1px solid #263745;
-  border-radius:7px;
-  padding:7px 12px;
-  font-size:11px;
-}
-
-.glowPulse{
-  width:22px;height:22px;border-radius:50%;
-  background:currentColor;
-  box-shadow:
-    0 0 20px currentColor,
-    0 0 50px currentColor,
-    0 0 100px currentColor,
-    0 0 180px currentColor,
-    0 0 260px currentColor;
-  position:relative;
-}
-.glowPulse:before{
-  content:"";
-  position:absolute;
-  inset:-34px;
-  border-radius:50%;
-  background:currentColor;
-  opacity:.32;
-  filter:blur(10px);
-  animation:hotPulse 1.25s infinite;
-}
-.glowPulse:after{
-  content:"";
-  position:absolute;
-  inset:-52px;
-  border:1px solid currentColor;
-  border-radius:50%;
-  animation:ringPulse 1.45s infinite;
-}
-@keyframes hotPulse{
-  0%{transform:scale(.7);opacity:.55}
-  50%{transform:scale(1.45);opacity:.18}
-  100%{transform:scale(.7);opacity:.55}
-}
-@keyframes ringPulse{
-  0%{transform:scale(.35);opacity:.95}
-  100%{transform:scale(1.65);opacity:0}
-}
-
-.mapLabel{
-  background:rgba(5,9,13,.95)!important;
-  color:#fff!important;
-  border:1px solid #334655!important;
-  border-radius:7px!important;
-  box-shadow:0 0 18px #000!important;
-  font-size:11px!important;
-  line-height:1.35!important;
-  padding:7px 10px!important;
-  min-width:130px!important;
-}
+.tooltip{background:#080808e8!important;color:#fff!important;border:1px solid #333!important;border-radius:4px!important;font-size:11px!important;padding:7px 9px!important;box-shadow:0 0 15px #000!important}
 .leaflet-tooltip:before{display:none!important}
 
-.news{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr 1fr;
-  gap:5px;
-  min-height:0;
-}
+.bottom{display:grid;grid-template-columns:1.05fr 1fr 1fr 1fr 1fr;gap:2px;background:#050505}
+.panel{background:#0d0d0d;border:1px solid #222;padding:8px;overflow:hidden}
+.panelTitle{font-size:12px;font-weight:900;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between}
+.item{display:block;border-bottom:1px solid #242424;padding:6px 0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-block;padding:1px 5px;border-radius:2px;margin-right:5px;font-weight:900}
+.h{background:#4b1010;color:#ff4d4d}.m{background:#3d2706;color:#ffb13b}.l{background:#06263f;color:#49a3ff}
 
-.footer{
-  display:flex;
-  background:#070d13;
-  border:1px solid var(--line);
-  border-radius:5px;
-  overflow:hidden;
-}
-.break{
-  background:#b30d0d;
-  color:#fff;
-  font-weight:900;
-  padding:8px 16px;
-  font-size:12px;
-}
-.ticker{
-  white-space:nowrap;
-  animation:flow 300s linear infinite;
-  font-size:12px;
-  padding:8px;
-}
-@keyframes flow{
-  from{transform:translateX(100%)}
-  to{transform:translateX(-100%)}
-}
-
-/* CLICK EXPAND PANEL */
-.mapPanel{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.86);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-}
-.mapPanel.show{display:flex}
-.mapPanelCard{
-  width:min(760px,90vw);
-  background:#070d15;
-  border:1px solid var(--gold);
-  border-radius:12px;
-  padding:22px;
-  box-shadow:0 0 55px rgba(217,164,65,.45);
-}
-.mapPanelTitle{
-  font-size:30px;
-  font-weight:900;
-  color:var(--gold);
-  margin-bottom:14px;
-}
-.mapPanelBody{
-  font-size:17px;
-  line-height:1.8;
-}
-.mapPanelBody a{
-  display:inline-block;
-  margin:8px 10px 0 0;
-  padding:8px 12px;
-  border:1px solid #334657;
-  border-radius:6px;
-  background:#0b121a;
-}
+.footerPanels{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px}
+.videoBox{background:#0b0b0b;border:1px solid #222;padding:8px}
+.videoThumb{height:145px;background:linear-gradient(135deg,#162635,#050505);border:1px solid #333;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff}
+.break{position:absolute;bottom:0;left:0;right:0;height:28px;background:#0a0a0a;border-top:1px solid #222;display:flex;align-items:center;overflow:hidden}
+.break b{background:#b00000;color:#fff;padding:8px 18px;font-size:12px}
+.ticker{white-space:nowrap;animation:flow 180s linear infinite;font-size:12px;padding-left:20px}
+@keyframes flow{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<div class="top">
-  <div class="box priceBox">
-    <div class="tradingview-widget-container">
-      <div class="tradingview-widget-container__widget"></div>
-      <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-      {"symbol":"OANDA:XAUUSD","width":"100%","height":"72","colorTheme":"dark","isTransparent":true,"locale":"ja"}
-      </script>
+  <div class="topbar">
+    <div class="brand">🌐 ワールド</div>
+    <b>モニター</b>
+    <span>v2.1.4</span>
+    <span class="live">● ライブ</span>
+    <span>グローバル</span>
+    <div class="centerTitle">XAUUSD WAR ROOM</div>
+    <span>更新中 <span id="jstTop">--:--:--</span> JST</span>
+    <span class="live">● 自動更新</span>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="sideTitle">世界情報</div>
+      <label class="check"><input type="checkbox" checked> インテリジェントスポット</label>
+      <label class="check"><input type="checkbox" checked> 紛争地域</label>
+      <label class="check"><input type="checkbox" checked> 重要指標</label>
+      <label class="check"><input type="checkbox" checked> 原油・金利</label>
+      <label class="check"><input type="checkbox"> 為替・通貨</label>
+      <label class="check"><input type="checkbox"> 供給網</label>
+      <label class="check"><input type="checkbox"> AIデータセンター</label>
+      <label class="check"><input type="checkbox" checked> 事件速報</label>
+      <label class="check"><input type="checkbox"> 貿易政策</label>
+      <label class="check"><input type="checkbox"> フライト遅延</label>
+      <label class="check"><input type="checkbox"> 核関連</label>
+    </div>
+
+    <div class="mapArea">
+      <div class="mapWrap">
+        <div id="map"></div>
+        <div class="mapTop">すべて</div>
+        <div class="mapClock" id="mapClock">--:--:-- UTC</div>
+        <div class="legend">
+          <span style="color:#ff3b30">● 高インパクト</span>　
+          <span style="color:#ff8c1a">● 地政学</span>　
+          <span style="color:#ffd54f">● 経済</span>　
+          <span style="color:#3d8bff">● 金融</span>　
+          <span style="color:#9b4dff">● 市場</span>
+        </div>
+      </div>
+
+      <div class="footerPanels">
+        <div class="videoBox">
+          <div class="panelTitle">ライブニュース <span class="live">● ライブ</span></div>
+          <a target="_blank" href="https://www.youtube.com/@BloombergTV/live"><div class="videoThumb">Bloomberg TV Live</div></a>
+        </div>
+        <div class="panel"><div class="panelTitle">AIインサイト</div><div id="aiNews"></div></div>
+        <div class="panel"><div class="panelTitle">AI検知脅威</div><div id="riskNews"></div></div>
+        <div class="panel"><div class="panelTitle">国別不安定指数</div><div id="hotNews"></div></div>
+      </div>
     </div>
   </div>
 
-  <div class="box topTicker">
-    <div id="topTicker" class="topTrack">
-      HIGH IMPACT NEWS ｜ USD CPI 21:30 JST ｜ FOMC WATCH ｜ NFP ｜ FED SPEECH ｜ PCE ｜ UKRAINE RISK ｜ MIDDLE EAST RISK ｜ GOLD ETF FLOW
-    </div>
+  <div class="bottom">
+    <div class="panel"><div class="panelTitle">中東 / MENA</div><div id="mena"></div></div>
+    <div class="panel"><div class="panelTitle">アフリカ</div><div id="africa"></div></div>
+    <div class="panel"><div class="panelTitle">中南米</div><div id="latam"></div></div>
+    <div class="panel"><div class="panelTitle">アジア太平洋</div><div id="asia"></div></div>
+    <div class="panel"><div class="panelTitle">エネルギー・資源</div><div id="energy"></div></div>
   </div>
 
-  <a class="box" target="_blank" href="https://time.is/Tokyo">
-    <div class="sub">JST CLOCK</div>
-    <div id="clock" class="clock">--:--:--</div>
-    <div id="date" class="date">----</div>
-  </a>
-</div>
-
-<div class="main">
-
-  <div class="left">
-    <div class="box">
-      <div class="title">NEWS CATEGORY</div>
-      <a class="row gold" target="_blank" href="https://news.google.com/search?q=XAUUSD%20gold"><span>すべてのニュース</span><b>LIVE</b></a>
-      <a class="row" target="_blank" href="https://news.google.com/search?q=high%20impact%20gold"><span>高インパクト</span><b>RSS</b></a>
-      <a class="row" target="_blank" href="https://news.google.com/search?q=geopolitical%20risk%20gold"><span>地政学リスク</span><b>RSS</b></a>
-      <a class="row" target="_blank" href="https://news.google.com/search?q=Federal%20Reserve%20gold"><span>FRB・金融政策</span><b>RSS</b></a>
-      <a class="row" target="_blank" href="https://news.google.com/search?q=CPI%20inflation%20gold"><span>経済指標・CPI</span><b>RSS</b></a>
-      <a class="row" target="_blank" href="https://news.google.com/search?q=gold%20ETF%20flows"><span>ゴールド関連</span><b>RSS</b></a>
-    </div>
-
-    <div class="box">
-      <div class="title">LIVE TV</div>
-      <a class="item" target="_blank" href="https://www.youtube.com/@BloombergTV/live">Bloomberg Live</a>
-      <a class="item" target="_blank" href="https://www.youtube.com/@CNBC/live">CNBC Live</a>
-      <a class="item" target="_blank" href="https://www.youtube.com/@KitcoNEWS/live">Kitco News Live</a>
-      <a class="item" target="_blank" href="https://www.reuters.com/markets/">Reuters Markets</a>
-      <a class="item" target="_blank" href="https://www.financialjuice.com/">Financial Juice</a>
-    </div>
+  <div class="break">
+    <b>BREAKING NEWS</b>
+    <div id="ticker" class="ticker">RSS読み込み中...</div>
   </div>
 
-  <div class="mapBox">
-    <div id="map"></div>
-    <div class="mapTitle">
-      <h2>GLOBAL FLASHPOINTS</h2>
-      <p>クリックで拡大表示 / セッションも対応</p>
-    </div>
-    <div class="legend">
-      <span class="blue">●</span> SESSION　
-      <span class="red">●</span> 高インパクト　
-      <span class="orange">●</span> 地政学　
-      <span class="gold">●</span> 金需要
-    </div>
-  </div>
-
-  <div class="right">
-    <div class="box">
-      <div class="title red">HIGH IMPACT ALERT</div>
-      <div id="alertBox"></div>
-    </div>
-
-    <div class="box">
-      <div class="title">WORLD HOTSPOTS</div>
-      <div id="hotspotBox"></div>
-    </div>
-  </div>
-
-</div>
-
-<div class="news">
-  <div class="box"><div class="title">LIVE NEWS</div><div id="rss-live"></div></div>
-  <div class="box"><div class="title red">HIGH IMPACT NEWS</div><div id="rss-impact"></div></div>
-  <div class="box"><div class="title orange">GEOPOLITICAL NEWS</div><div id="rss-geo"></div></div>
-  <div class="box"><div class="title blue">FRB / CENTRAL BANK</div><div id="rss-fed"></div></div>
-  <div class="box"><div class="title">GOLD / ETF / DEMAND</div><div id="rss-gold"></div></div>
-</div>
-
-<div class="footer">
-  <div class="break">BREAKING</div>
-  <div id="ticker" class="ticker">RSS読み込み中...</div>
-</div>
-
-</div>
-
-<div id="mapPanel" class="mapPanel" onclick="this.classList.remove('show')">
-  <div class="mapPanelCard" onclick="event.stopPropagation()">
-    <div id="mapPanelTitle" class="mapPanelTitle"></div>
-    <div id="mapPanelBody" class="mapPanelBody"></div>
-  </div>
 </div>
 
 <script>
 function clock(){
-  const now=new Date();
-  document.getElementById("clock").textContent=new Intl.DateTimeFormat("ja-JP",{
-    timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false
-  }).format(now);
-  document.getElementById("date").textContent=new Intl.DateTimeFormat("ja-JP",{
-    timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"
-  }).format(now);
+  const jst=new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+  const utc=new Intl.DateTimeFormat("en-GB",{timeZone:"UTC",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+  document.getElementById("jstTop").textContent=jst;
+  document.getElementById("mapClock").textContent=utc+" UTC";
 }
 setInterval(clock,1000);clock();
 
-const map=L.map("map",{
-  zoomControl:false,attributionControl:false,dragging:false,
-  scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false
-}).setView([27,18],2);
+const map=L.map("map",{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false}).setView([20,10],2);
 
-L.tileLayer("https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",{
-  maxZoom:20,
-  minZoom:2,
-  attribution:""
-}).addTo(map);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19}).addTo(map);
 
-const colors={red:"#ff3030",orange:"#ff8c1a",blue:"#2f8cff",purple:"#9b4dff",gold:"#d9a441"};
+const c={red:"#ff3b30",orange:"#ff8c1a",yellow:"#ffd54f",blue:"#3d8bff",purple:"#9b4dff"};
 
-function openMapPanel(title,type,desc,links){
-  document.getElementById("mapPanelTitle").innerHTML=title;
-  document.getElementById("mapPanelBody").innerHTML=`
-    <b>${type}</b><br><br>
-    ${desc}<br><br>
-    <a target="_blank" href="${links.news}">News</a>
-    <a target="_blank" href="${links.tv}">Live TV</a>
-    <a target="_blank" href="${links.market}">Market</a>
-  `;
-  document.getElementById("mapPanel").classList.add("show");
-}
-
-function marker(lat,lng,color,title,type,desc,links,dir,offset){
-  const icon=L.divIcon({
-    className:"",
-    html:`<div class="glowPulse" style="color:${colors[color]}"></div>`,
-    iconSize:[34,34],
-    iconAnchor:[17,17]
-  });
+function add(lat,lng,color,title,body,dir="top",offset=[0,-10]){
+  const icon=L.divIcon({className:"",html:`<div class="pulse" style="color:${c[color]}"></div>`,iconSize:[24,24],iconAnchor:[12,12]});
   const m=L.marker([lat,lng],{icon}).addTo(map);
-
-  m.bindTooltip(`<b>${title}</b><br>${type}<br>${desc}`,{
-    permanent:true,
-    direction:dir,
-    offset:offset,
-    opacity:.95,
-    className:"mapLabel"
-  });
-
-  m.on("click",()=>openMapPanel(title,type,desc,links));
+  m.bindTooltip(`<b>${title}</b><br>${body}`,{permanent:false,direction:dir,offset,className:"tooltip"});
+  m.on("click",()=>window.open("https://news.google.com/search?q="+encodeURIComponent(title+" gold XAUUSD"),"_blank"));
 }
 
-/* SESSION */
-marker(35.6,139.7,"blue","TOKYO","ASIA SESSION",
-"OPEN 08:00 JST<br>CLOSE 17:00 JST",
-{news:"https://news.google.com/search?q=Asia%20session%20gold%20market",tv:"https://www.youtube.com/results?search_query=asia+market+live",market:"https://www.tradingview.com/symbols/OANDA-XAUUSD/"},
-"right",[36,0]);
+add(50,31,"red","Ukraine Conflict","Conflict Zone","top");
+add(31,45,"orange","Middle East","Geopolitical Risk","right");
+add(39,-77,"blue","Washington DC","FRB / Policy","right");
+add(40,-74,"purple","New York","Market / CPI / NFP","bottom");
+add(51.5,-0.1,"blue","London","Financial Market","top");
+add(35.6,139.7,"purple","Tokyo","Market / Gold","left");
+add(39,116,"yellow","Beijing","China Demand","left");
+add(1.3,103.8,"blue","Singapore","Asia Flow","bottom");
+add(-33,151,"orange","Australia","Resources","top");
+add(31,35,"red","Israel","Conflict Watch","right");
+add(24,54,"orange","UAE","Oil / Gold Flow","bottom");
+add(28,77,"yellow","India","Gold Demand","top");
+add(-23,-46,"orange","Brazil","Commodity Flow","top");
+add(19,-99,"orange","Mexico","Trade / USD","bottom");
+add(48,14,"blue","EU","ECB / Rates","bottom");
+add(55,37,"red","Russia","Sanctions / Energy","top");
 
-marker(51.5,-0.1,"orange","LONDON","LONDON SESSION",
-"OPEN 16:00 JST<br>CLOSE 01:00 JST",
-{news:"https://news.google.com/search?q=London%20session%20gold%20market",tv:"https://www.youtube.com/results?search_query=london+market+live",market:"https://www.tradingview.com/symbols/OANDA-XAUUSD/"},
-"left",[-42,-8]);
-
-marker(40.7,-74,"purple","NEW YORK","US SESSION",
-"OPEN 21:30 JST<br>CLOSE 06:00 JST",
-{news:"https://news.google.com/search?q=New%20York%20session%20gold%20market",tv:"https://www.youtube.com/results?search_query=us+market+live",market:"https://www.tradingview.com/symbols/OANDA-XAUUSD/"},
-"right",[36,-15]);
-
-/* HOTSPOTS */
-marker(39,-77,"blue","WASHINGTON","FRB・政策",
-"金利・ドル材料 / FOMC / Powell",
-{news:"https://news.google.com/search?q=Federal%20Reserve%20gold",tv:"https://www.youtube.com/results?search_query=Federal+Reserve+live",market:"https://www.investing.com/economic-calendar/"},
-"bottom",[0,30]);
-
-marker(50,31,"red","UKRAINE","地政学リスク",
-"戦争リスク / XAUUSD上昇圧力",
-{news:"https://news.google.com/search?q=Ukraine%20war%20gold",tv:"https://www.youtube.com/results?search_query=ukraine+news+live",market:"https://www.reuters.com/world/"},
-"top",[0,-35]);
-
-marker(31,45,"orange","MIDDLE EAST","地政学リスク",
-"原油上昇 / 安全資産買い",
-{news:"https://news.google.com/search?q=Middle%20East%20gold%20oil",tv:"https://www.youtube.com/results?search_query=middle+east+news+live",market:"https://www.reuters.com/world/middle-east/"},
-"right",[38,10]);
-
-marker(39,116,"gold","BEIJING","金需要",
-"中国金需要 / 中央銀行買い",
-{news:"https://news.google.com/search?q=China%20gold%20demand",tv:"https://www.youtube.com/results?search_query=china+economy+live",market:"https://www.gold.org/"},
-"left",[-38,-8]);
-
-marker(1.3,103.8,"blue","SINGAPORE","市場・経済",
-"アジア資金フロー",
-{news:"https://news.google.com/search?q=Singapore%20gold%20market",tv:"https://www.youtube.com/results?search_query=asia+markets+live",market:"https://www.investing.com/commodities/gold"},
-"bottom",[0,30]);
-
-marker(-33,151,"purple","AUSTRALIA","資源国",
-"金・資源国材料",
-{news:"https://news.google.com/search?q=Australia%20gold%20market",tv:"https://www.youtube.com/results?search_query=australia+market+news",market:"https://www.tradingview.com/markets/commodities/"},
-"top",[0,-35]);
-
-/* RSS */
-const feeds=[
-["rss-live","XAUUSD gold market"],
-["rss-impact","US CPI inflation gold Federal Reserve"],
-["rss-geo","Ukraine Middle East Taiwan geopolitical risk gold"],
-["rss-fed","Federal Reserve interest rates FOMC gold"],
-["rss-gold","gold ETF inflows central bank gold demand"]
+const fallback=[
+ ["高","ウクライナ情勢、ロシアの攻撃激化で避難指示拡大","https://news.google.com/search?q=Ukraine+war+gold"],
+ ["高","米CPIが予想以上に上昇、金価格に影響","https://news.google.com/search?q=US+CPI+gold"],
+ ["中","中東情勢の緊迫化で安全資産としての金需要が高まる","https://news.google.com/search?q=Middle+East+gold"],
+ ["中","FRB高官、利下げ判断はデータ次第と発言","https://news.google.com/search?q=FRB+gold"],
+ ["低","世界の金ETF、前日比で資金流入","https://news.google.com/search?q=gold+ETF+inflows"]
 ];
 
-const fallback={
-"rss-live":[["米CPI上振れ、XAUUSDに上昇圧力","https://news.google.com/search?q=US%20CPI%20XAUUSD"],["FRB発言で金利見通しに変化","https://news.google.com/search?q=FRB%20gold"],["中東リスク上昇、安全資産買い継続","https://news.google.com/search?q=Middle%20East%20gold"]],
-"rss-impact":[["米CPIが予想以上に上昇、金価格に影響","https://news.google.com/search?q=US%20CPI%20gold"],["FRB高官、利下げ判断はデータ次第","https://news.google.com/search?q=FRB%20rate%20cut%20gold"],["米金利・ドル動向に市場が反応","https://news.google.com/search?q=US%20yields%20gold"]],
-"rss-geo":[["ウクライナ情勢緊迫、安全資産買い意識","https://news.google.com/search?q=Ukraine%20war%20gold"],["中東リスク上昇、原油と金需要に影響","https://news.google.com/search?q=Middle%20East%20gold%20oil"],["台湾周辺リスク、アジア市場が警戒","https://news.google.com/search?q=Taiwan%20risk%20gold"]],
-"rss-fed":[["FOMC議事要旨に市場注目","https://news.google.com/search?q=FOMC%20gold"],["FRB発言で金利見通しに変化","https://news.google.com/search?q=Federal%20Reserve%20gold"],["米10年債利回りが金価格の重し","https://news.google.com/search?q=US10Y%20gold"]],
-"rss-gold":[["金ETFに資金流入、投資家需要が継続","https://news.google.com/search?q=gold%20ETF%20inflows"],["中央銀行の金買いが継続","https://news.google.com/search?q=central%20bank%20gold%20buying"],["安全資産として金需要が強まる","https://news.google.com/search?q=safe%20haven%20gold"]]
-};
-
-function fill(id){
-  document.getElementById(id).innerHTML=fallback[id].map((x,i)=>`
-    <a class="item" target="_blank" href="${x[1]}">
-      <span class="badge ${i==0?"bh":"bm"}">${i==0?"高":"中"}</span>${x[0]}
-    </a>`).join("");
+function render(id,items=fallback){
+  document.getElementById(id).innerHTML=items.map(x=>`<a class="item" target="_blank" href="${x[2]}"><span class="badge ${x[0]=="高"?"h":x[0]=="中"?"m":"l"}">${x[0]}</span>${x[1]}</a>`).join("");
 }
 
-async function loadRSS(){
- let all=[];
- for(const [id,q] of feeds){
+["aiNews","riskNews","hotNews","mena","africa","latam","asia","energy"].forEach(id=>render(id));
+
+async function loadNews(){
   try{
-   const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent("https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=ja&gl=JP&ceid=JP:ja");
-   const j=await (await fetch(url)).json();
-   const items=(j.items||[]).slice(0,4);
-   if(!items.length){fill(id);continue}
-   document.getElementById(id).innerHTML="";
-   items.forEach((it,i)=>{
-     all.push(it);
-     document.getElementById(id).innerHTML+=`
-       <a class="item" target="_blank" href="${it.link}">
-         <span class="badge ${i==0?"bh":"bm"}">${i==0?"高":"中"}</span>${it.title.replace(/ - .*/,"")}
-       </a>`;
-   });
-  }catch(e){fill(id)}
- }
-
- document.getElementById("alertBox").innerHTML=(all.length?all.slice(0,5).map((x,i)=>`
-   <a class="item" target="_blank" href="${x.link}">
-     <span class="badge ${i<2?"bh":"bm"}">${i<2?"高":"中"}</span>${x.title.replace(/ - .*/,"")}
-   </a>`).join(""):document.getElementById("rss-impact").innerHTML);
-
- document.getElementById("hotspotBox").innerHTML=`
- <a class="item" target="_blank" href="https://news.google.com/search?q=Ukraine%20conflict%20gold">ウクライナ　地政学リスク</a>
- <a class="item" target="_blank" href="https://news.google.com/search?q=Middle%20East%20gold">中東　安全資産買い</a>
- <a class="item" target="_blank" href="https://news.google.com/search?q=US%20inflation%20gold">米国　CPI / NFP</a>
- <a class="item" target="_blank" href="https://news.google.com/search?q=China%20gold%20demand">中国　金需要</a>
- <a class="item" target="_blank" href="https://news.google.com/search?q=ECB%20gold%20rates">EU　ECB / 金利</a>`;
-
- document.getElementById("topTicker").textContent=all.length?all.map(x=>x.title.replace(/ - .*/,"")).slice(0,14).join("　｜　"):"HIGH IMPACT NEWS ｜ USD CPI 21:30 JST ｜ FOMC WATCH ｜ NFP ｜ FED SPEECH ｜ GOLD ETF FLOW";
- document.getElementById("ticker").textContent=all.length?all.map(x=>x.title.replace(/ - .*/,"")).slice(0,20).join("　｜　"):"RSS監視中";
+    const q="XAUUSD gold geopolitical risk Federal Reserve CPI";
+    const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent("https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=ja&gl=JP&ceid=JP:ja");
+    const j=await (await fetch(url)).json();
+    const items=(j.items||[]).slice(0,8).map((it,i)=>[i<2?"高":i<5?"中":"低",it.title.replace(/ - .*/,""),it.link]);
+    if(items.length){
+      render("aiNews",items.slice(0,4));
+      render("riskNews",items.slice(1,5));
+      render("hotNews",items.slice(2,6));
+      render("mena",items.slice(0,4));
+      render("africa",items.slice(1,5));
+      render("latam",items.slice(2,6));
+      render("asia",items.slice(3,7));
+      render("energy",items.slice(4,8));
+      document.getElementById("ticker").textContent=items.map(x=>x[1]).join("　｜　");
+    }
+  }catch(e){
+    document.getElementById("ticker").textContent=fallback.map(x=>x[1]).join("　｜　");
+  }
 }
-loadRSS();setInterval(loadRSS,30000);
+loadNews();
+setInterval(loadNews,60000);
 </script>
 </body>
 </html>
