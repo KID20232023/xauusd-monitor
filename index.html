@@ -4,59 +4,283 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>XAUUSD WORLD MONITOR</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#080808;color:#ddd;font-family:Arial,"Meiryo",sans-serif}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#050505;
+  color:#e8edf2;
+  font-family:Arial,"Meiryo",sans-serif;
+}
 a{color:inherit;text-decoration:none}
-:root{--line:#222;--panel:#111;--green:#00e676;--red:#ff3b30;--orange:#ff8c1a;--yellow:#ffd54f;--blue:#3d8bff}
 
-.app{height:100vh;display:grid;grid-template-rows:34px 1fr 250px;gap:2px;background:#050505}
-.topbar{height:34px;background:#0b0b0b;border-bottom:1px solid #1f1f1f;display:flex;align-items:center;gap:18px;padding:0 10px;font-size:13px}
+:root{
+  --line:#222;
+  --gold:#d9a441;
+  --red:#ff3030;
+  --orange:#ff8c1a;
+  --yellow:#ffd54f;
+  --blue:#2f8cff;
+  --purple:#9b4dff;
+  --green:#00e676;
+}
+
+.app{
+  height:100vh;
+  display:grid;
+  grid-template-rows:34px 1fr 250px 28px;
+  gap:2px;
+  background:#050505;
+}
+
+.topbar{
+  background:#0b0b0b;
+  border-bottom:1px solid #202020;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:0 10px;
+  font-size:13px;
+}
+
 .brand{color:#00d0aa;font-weight:900;font-size:17px}
-.centerTitle{margin:auto;background:#111;border:1px solid #8a5d17;color:#f2b84b;border-radius:5px;padding:5px 60px;font-weight:900}
+.centerTitle{
+  margin:auto;
+  background:#111;
+  border:1px solid #8a5d17;
+  color:#f2b84b;
+  border-radius:5px;
+  padding:5px 70px;
+  font-weight:900;
+}
 .live{color:var(--green)}
-.time{color:#fff}
 
-.main{display:grid;grid-template-columns:155px 1fr;gap:2px;min-height:0}
-.sidebar{background:#0c0c0c;border-right:1px solid #222;padding:7px;overflow:hidden}
-.sideTitle{font-size:12px;font-weight:900;color:#fff;margin:5px 0}
-.check{display:flex;align-items:center;gap:6px;border-bottom:1px solid #202020;padding:6px 0;font-size:11px}
+.main{
+  display:grid;
+  grid-template-columns:155px 1fr;
+  gap:2px;
+  min-height:0;
+}
+
+.sidebar{
+  background:#0c0c0c;
+  border-right:1px solid #222;
+  padding:7px;
+  overflow:hidden;
+}
+
+.sideTitle{
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.check{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border-bottom:1px solid #202020;
+  padding:6px 0;
+  font-size:11px;
+}
 .check input{accent-color:#00c878}
 
-.mapArea{display:grid;grid-template-rows:1fr 250px;gap:2px;min-height:0}
-.mapWrap{position:relative;background:#090909;border:1px solid #202020}
-#map{width:100%;height:100%;background:#080808}
-.leaflet-container{background:#080808!important;filter:brightness(.62) contrast(1.25) saturate(.8)}
-.leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
+.mapArea{
+  display:grid;
+  grid-template-rows:1fr 250px;
+  gap:2px;
+  min-height:0;
+}
 
-.mapTop{position:absolute;top:10px;left:12px;z-index:500;background:#080808d9;border:1px solid #222;border-radius:4px;padding:6px 10px;font-size:12px}
-.mapClock{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909d9;border:1px solid #222;border-radius:4px;padding:5px 16px;font-size:12px}
-.legend{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909e6;border:1px solid #222;border-radius:4px;padding:7px 14px;font-size:11px}
+.mapWrap{
+  position:relative;
+  background:#05070b;
+  border:1px solid #202020;
+  overflow:hidden;
+}
 
-.pulse{width:12px;height:12px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor,0 0 30px currentColor,0 0 70px currentColor;position:relative}
-.pulse:after{content:"";position:absolute;inset:-20px;border:1px solid currentColor;border-radius:50%;animation:ripple 1.6s infinite}
-@keyframes ripple{from{transform:scale(.3);opacity:1}to{transform:scale(1.8);opacity:0}}
+#map{
+  width:100%;
+  height:100%;
+  background:#05070b;
+}
 
-.tooltip{background:#080808e8!important;color:#fff!important;border:1px solid #333!important;border-radius:4px!important;font-size:11px!important;padding:7px 9px!important;box-shadow:0 0 15px #000!important}
+.leaflet-container{
+  background:#05070b!important;
+  filter:brightness(1.05) contrast(1.15) saturate(1);
+}
+.leaflet-control-attribution,
+.leaflet-control-zoom{
+  display:none!important;
+}
+
+.mapTop{
+  position:absolute;
+  top:10px;
+  left:12px;
+  z-index:500;
+  background:#080808d9;
+  border:1px solid #222;
+  border-radius:4px;
+  padding:6px 10px;
+  font-size:12px;
+}
+
+.mapClock{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:500;
+  background:#090909d9;
+  border:1px solid #222;
+  border-radius:4px;
+  padding:5px 16px;
+  font-size:12px;
+}
+
+.legend{
+  position:absolute;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:500;
+  background:#090909e6;
+  border:1px solid #222;
+  border-radius:4px;
+  padding:7px 14px;
+  font-size:11px;
+}
+
+.pulse{
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  background:currentColor;
+  box-shadow:
+    0 0 12px currentColor,
+    0 0 30px currentColor,
+    0 0 70px currentColor,
+    0 0 120px currentColor;
+  position:relative;
+}
+
+.pulse:after{
+  content:"";
+  position:absolute;
+  inset:-22px;
+  border:1px solid currentColor;
+  border-radius:50%;
+  animation:ripple 1.6s infinite;
+}
+
+@keyframes ripple{
+  from{transform:scale(.3);opacity:1}
+  to{transform:scale(1.8);opacity:0}
+}
+
+.tooltip{
+  background:#080808e8!important;
+  color:#fff!important;
+  border:1px solid #333!important;
+  border-radius:4px!important;
+  font-size:11px!important;
+  padding:7px 9px!important;
+  box-shadow:0 0 15px #000!important;
+}
 .leaflet-tooltip:before{display:none!important}
 
-.bottom{display:grid;grid-template-columns:1.05fr 1fr 1fr 1fr 1fr;gap:2px;background:#050505}
-.panel{background:#0d0d0d;border:1px solid #222;padding:8px;overflow:hidden}
-.panelTitle{font-size:12px;font-weight:900;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between}
-.item{display:block;border-bottom:1px solid #242424;padding:6px 0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.badge{display:inline-block;padding:1px 5px;border-radius:2px;margin-right:5px;font-weight:900}
-.h{background:#4b1010;color:#ff4d4d}.m{background:#3d2706;color:#ffb13b}.l{background:#06263f;color:#49a3ff}
+.footerPanels{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:2px;
+}
 
-.footerPanels{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px}
-.videoBox{background:#0b0b0b;border:1px solid #222;padding:8px}
-.videoThumb{height:145px;background:linear-gradient(135deg,#162635,#050505);border:1px solid #333;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff}
-.break{position:absolute;bottom:0;left:0;right:0;height:28px;background:#0a0a0a;border-top:1px solid #222;display:flex;align-items:center;overflow:hidden}
-.break b{background:#b00000;color:#fff;padding:8px 18px;font-size:12px}
-.ticker{white-space:nowrap;animation:flow 180s linear infinite;font-size:12px;padding-left:20px}
-@keyframes flow{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.panel,.videoBox{
+  background:#0d0d0d;
+  border:1px solid #222;
+  padding:8px;
+  overflow:hidden;
+}
+
+.panelTitle{
+  font-size:12px;
+  font-weight:900;
+  color:#fff;
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.videoThumb{
+  height:145px;
+  background:linear-gradient(135deg,#203750,#050505);
+  border:1px solid #333;
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:900;
+  color:#fff;
+}
+
+.bottom{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+  gap:2px;
+}
+
+.item{
+  display:block;
+  border-bottom:1px solid #242424;
+  padding:6px 0;
+  font-size:11px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.badge{
+  display:inline-block;
+  padding:1px 5px;
+  border-radius:2px;
+  margin-right:5px;
+  font-weight:900;
+}
+.h{background:#4b1010;color:#ff4d4d}
+.m{background:#3d2706;color:#ffb13b}
+.l{background:#06263f;color:#49a3ff}
+
+.break{
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  background:#0a0a0a;
+  border-top:1px solid #222;
+}
+.break b{
+  background:#b00000;
+  color:#fff;
+  padding:8px 18px;
+  font-size:12px;
+}
+.ticker{
+  white-space:nowrap;
+  animation:flow 180s linear infinite;
+  font-size:12px;
+  padding-left:20px;
+}
+@keyframes flow{
+  from{transform:translateX(100%)}
+  to{transform:translateX(-100%)}
+}
 </style>
 </head>
 
@@ -75,6 +299,7 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <div class="main">
+
     <div class="sidebar">
       <div class="sideTitle">世界情報</div>
       <label class="check"><input type="checkbox" checked> インテリジェントスポット</label>
@@ -91,15 +316,16 @@ a{color:inherit;text-decoration:none}
     </div>
 
     <div class="mapArea">
+
       <div class="mapWrap">
         <div id="map"></div>
         <div class="mapTop">すべて</div>
         <div class="mapClock" id="mapClock">--:--:-- UTC</div>
         <div class="legend">
-          <span style="color:#ff3b30">● 高インパクト</span>　
+          <span style="color:#ff3030">● 高インパクト</span>　
           <span style="color:#ff8c1a">● 地政学</span>　
           <span style="color:#ffd54f">● 経済</span>　
-          <span style="color:#3d8bff">● 金融</span>　
+          <span style="color:#2f8cff">● 金融</span>　
           <span style="color:#9b4dff">● 市場</span>
         </div>
       </div>
@@ -107,12 +333,16 @@ a{color:inherit;text-decoration:none}
       <div class="footerPanels">
         <div class="videoBox">
           <div class="panelTitle">ライブニュース <span class="live">● ライブ</span></div>
-          <a target="_blank" href="https://www.youtube.com/@BloombergTV/live"><div class="videoThumb">Bloomberg TV Live</div></a>
+          <a target="_blank" href="https://www.youtube.com/@BloombergTV/live">
+            <div class="videoThumb">Bloomberg TV Live</div>
+          </a>
         </div>
+
         <div class="panel"><div class="panelTitle">AIインサイト</div><div id="aiNews"></div></div>
         <div class="panel"><div class="panelTitle">AI検知脅威</div><div id="riskNews"></div></div>
         <div class="panel"><div class="panelTitle">国別不安定指数</div><div id="hotNews"></div></div>
       </div>
+
     </div>
   </div>
 
@@ -133,24 +363,82 @@ a{color:inherit;text-decoration:none}
 
 <script>
 function clock(){
-  const jst=new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
-  const utc=new Intl.DateTimeFormat("en-GB",{timeZone:"UTC",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+  const now=new Date();
+
+  const jst=new Intl.DateTimeFormat("ja-JP",{
+    timeZone:"Asia/Tokyo",
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit",
+    hour12:false
+  }).format(now);
+
+  const utc=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"UTC",
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit",
+    hour12:false
+  }).format(now);
+
   document.getElementById("jstTop").textContent=jst;
   document.getElementById("mapClock").textContent=utc+" UTC";
 }
-setInterval(clock,1000);clock();
+setInterval(clock,1000);
+clock();
 
-const map=L.map("map",{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false}).setView([20,10],2);
+const map=L.map("map",{
+  zoomControl:false,
+  attributionControl:false,
+  dragging:false,
+  scrollWheelZoom:false,
+  doubleClickZoom:false,
+  boxZoom:false,
+  keyboard:false
+}).setView([20,10],2);
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19}).addTo(map);
+L.tileLayer(
+  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  {
+    subdomains:"abcd",
+    maxZoom:19
+  }
+).addTo(map);
 
-const c={red:"#ff3b30",orange:"#ff8c1a",yellow:"#ffd54f",blue:"#3d8bff",purple:"#9b4dff"};
+const colors={
+  red:"#ff3030",
+  orange:"#ff8c1a",
+  yellow:"#ffd54f",
+  blue:"#2f8cff",
+  purple:"#9b4dff"
+};
 
 function add(lat,lng,color,title,body,dir="top",offset=[0,-10]){
-  const icon=L.divIcon({className:"",html:`<div class="pulse" style="color:${c[color]}"></div>`,iconSize:[24,24],iconAnchor:[12,12]});
+  const icon=L.divIcon({
+    className:"",
+    html:`<div class="pulse" style="color:${colors[color]}"></div>`,
+    iconSize:[24,24],
+    iconAnchor:[12,12]
+  });
+
   const m=L.marker([lat,lng],{icon}).addTo(map);
-  m.bindTooltip(`<b>${title}</b><br>${body}`,{permanent:false,direction:dir,offset,className:"tooltip"});
-  m.on("click",()=>window.open("https://news.google.com/search?q="+encodeURIComponent(title+" gold XAUUSD"),"_blank"));
+
+  m.bindTooltip(
+    `<b>${title}</b><br>${body}`,
+    {
+      permanent:false,
+      direction:dir,
+      offset,
+      className:"tooltip"
+    }
+  );
+
+  m.on("click",()=>{
+    window.open(
+      "https://news.google.com/search?q="+encodeURIComponent(title+" gold XAUUSD"),
+      "_blank"
+    );
+  });
 }
 
 add(50,31,"red","Ukraine Conflict","Conflict Zone","top");
@@ -179,7 +467,11 @@ const fallback=[
 ];
 
 function render(id,items=fallback){
-  document.getElementById(id).innerHTML=items.map(x=>`<a class="item" target="_blank" href="${x[2]}"><span class="badge ${x[0]=="高"?"h":x[0]=="中"?"m":"l"}">${x[0]}</span>${x[1]}</a>`).join("");
+  document.getElementById(id).innerHTML=items.map(x=>`
+    <a class="item" target="_blank" href="${x[2]}">
+      <span class="badge ${x[0]=="高"?"h":x[0]=="中"?"m":"l"}">${x[0]}</span>${x[1]}
+    </a>
+  `).join("");
 }
 
 ["aiNews","riskNews","hotNews","mena","africa","latam","asia","energy"].forEach(id=>render(id));
@@ -187,9 +479,18 @@ function render(id,items=fallback){
 async function loadNews(){
   try{
     const q="XAUUSD gold geopolitical risk Federal Reserve CPI";
-    const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent("https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=ja&gl=JP&ceid=JP:ja");
+    const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(
+      "https://news.google.com/rss/search?q="+encodeURIComponent(q)+"&hl=ja&gl=JP&ceid=JP:ja"
+    );
+
     const j=await (await fetch(url)).json();
-    const items=(j.items||[]).slice(0,8).map((it,i)=>[i<2?"高":i<5?"中":"低",it.title.replace(/ - .*/,""),it.link]);
+
+    const items=(j.items||[]).slice(0,8).map((it,i)=>[
+      i<2?"高":i<5?"中":"低",
+      it.title.replace(/ - .*/,""),
+      it.link
+    ]);
+
     if(items.length){
       render("aiNews",items.slice(0,4));
       render("riskNews",items.slice(1,5));
@@ -205,6 +506,7 @@ async function loadNews(){
     document.getElementById("ticker").textContent=fallback.map(x=>x[1]).join("　｜　");
   }
 }
+
 loadNews();
 setInterval(loadNews,60000);
 </script>
