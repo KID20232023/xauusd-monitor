@@ -6,207 +6,215 @@
 <title>XAUUSD WAR ROOM</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#030507;color:#ddd;font-family:Arial,"Hiragino Sans",sans-serif;overflow:hidden}
-:root{--gold:#f5b82e;--red:#ff3030;--orange:#ff8c1a;--blue:#2f8cff;--green:#00e676;--panel:#080c10;--line:#1f2a32}
-.app{width:100vw;height:100vh;padding:8px;display:grid;grid-template-rows:78px 1fr 34px;gap:8px}
-.top{display:grid;grid-template-columns:280px 220px 180px 170px 170px 150px 220px 160px;gap:6px}
-.card{background:linear-gradient(180deg,#0a0f14,#05080b);border:1px solid var(--line);border-radius:6px;padding:12px;box-shadow:0 0 18px #000}
-.logo h1{color:var(--gold);font-size:25px;letter-spacing:1px}
-.logo p{font-size:12px;color:#ccc}
-.label{font-size:12px;color:#aaa}
-.big{font-size:34px;color:var(--gold);font-weight:900}
-.green{color:var(--green)}.red{color:var(--red)}.orange{color:var(--orange)}.blue{color:var(--blue)}.gold{color:var(--gold)}
-.main{display:grid;grid-template-columns:210px 1fr 310px;gap:8px;min-height:0}
-.left,.right{display:grid;gap:8px;min-height:0}
-.mapWrap{display:grid;grid-template-rows:1fr 300px;gap:8px;min-height:0}
-.map{position:relative;overflow:hidden;background:#05080b;border:1px solid var(--line);border-radius:6px}
-.map:before{content:"";position:absolute;inset:0;background:url("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg") center/cover no-repeat;filter:brightness(.28) contrast(1.25) saturate(.6)}
-.map:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 35%,#020406 90%)}
-.mapTitle{position:absolute;z-index:3;top:12px;left:16px;font-weight:900;font-size:18px}
-.legend{position:absolute;z-index:3;bottom:14px;left:16px;background:#070b10cc;border:1px solid #26323b;border-radius:5px;padding:9px 14px;font-size:12px}
-.dot{position:absolute;z-index:4;width:13px;height:13px;border-radius:50%;box-shadow:0 0 18px currentColor}
-.ring{position:absolute;z-index:5;border:3px solid currentColor;border-radius:50%;width:64px;height:64px;box-shadow:0 0 25px currentColor}
-.session{position:absolute;z-index:6;text-align:center;font-weight:900}
-.session small{display:block;font-size:11px;margin-top:3px}
-.asia{left:78%;top:45%;color:var(--blue)}
-.london{left:49%;top:42%;color:var(--orange)}
-.us{left:27%;top:48%;color:var(--red)}
+body{background:#030508;color:#e8edf2;font-family:Arial,"Hiragino Sans",sans-serif;overflow:hidden}
+:root{--gold:#d9a441;--red:#ff3131;--orange:#ff8a1c;--blue:#2f8cff;--green:#00e676;--panel:#070b10;--line:#1c2933}
+.app{height:100vh;padding:6px;display:grid;grid-template-rows:42px 1fr 260px 32px;gap:6px}
+.top{display:grid;grid-template-columns:190px 1fr 150px 170px 160px 150px 150px 130px;gap:6px}
+.box{background:#070b10;border:1px solid var(--line);border-radius:5px;padding:8px}
+.logo{color:var(--gold);font-size:18px;font-weight:900}
+.sub{font-size:10px;color:#9ba6ad}
+.num{font-size:24px;font-weight:900;color:var(--gold)}
+.red{color:var(--red)}.orange{color:var(--orange)}.blue{color:var(--blue)}.green{color:var(--green)}.gold{color:var(--gold)}
+.main{display:grid;grid-template-columns:190px 1fr 270px;gap:6px;min-height:0}
+.left,.right{display:grid;gap:6px}
+.map{position:relative;background:#05080c;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.map:before{content:"";position:absolute;inset:0;background:url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg") center/92% 92% no-repeat;filter:invert(1) brightness(.35) sepia(.25) hue-rotate(160deg);opacity:.75}
+.map:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 35%,#030508 92%),linear-gradient(180deg,#0000,#0008)}
+.map h2{position:absolute;z-index:3;top:12px;left:16px;font-size:18px}
+.legend{position:absolute;z-index:4;bottom:14px;left:18px;background:#05080ccc;border:1px solid #27323c;border-radius:4px;padding:8px 14px;font-size:12px}
+.point{position:absolute;z-index:5;width:10px;height:10px;border-radius:50%;box-shadow:0 0 16px currentColor;background:currentColor}
+.pin{position:absolute;z-index:8;text-align:center;font-weight:900;text-shadow:0 0 15px #000}
+.pin span{display:block;border:1px solid currentColor;background:#04070bdc;padding:3px 8px;border-radius:4px;margin-top:3px;font-size:11px}
+.ring{position:absolute;z-index:6;width:54px;height:54px;border-radius:50%;border:3px solid currentColor;box-shadow:0 0 22px currentColor}
+.asia{left:78%;top:42%;color:var(--blue)}
+.london{left:49%;top:38%;color:var(--orange)}
+.us{left:29%;top:43%;color:var(--red)}
 .blink{animation:blink 1s infinite}
-.glow{filter:drop-shadow(0 0 14px currentColor)}
-@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.25;transform:scale(1.15)}}
-.newsGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;min-height:0}
-.newsBox{background:#070b0f;border:1px solid var(--line);border-radius:6px;padding:12px;overflow:hidden}
-.newsBox h3{font-size:15px;margin-bottom:10px}
-.item{border-bottom:1px solid #1b252d;padding:10px 0;font-size:12px;line-height:1.45}
-.badge{display:inline-block;padding:2px 6px;border-radius:3px;font-weight:900;margin-right:6px}
-.high{background:#401010;color:#ff4545}.mid{background:#3a2605;color:#ffad33}.low{background:#0b2740;color:#4aa3ff}
-.sideTitle{color:var(--gold);font-size:14px;margin-bottom:10px}
-.cat{display:flex;justify-content:space-between;padding:9px;border-bottom:1px solid #172027;font-size:13px}
-.score{font-size:52px;color:var(--gold);font-weight:900;text-align:center;margin:15px 0}
-.bar{height:8px;background:#1a2228;border-radius:10px;overflow:hidden}.bar span{display:block;height:100%;width:68%;background:linear-gradient(90deg,#2cff73,#ffd23a,#ff3333)}
-.footer{display:flex;align-items:center;background:#080b0f;border:1px solid var(--line);border-radius:5px;overflow:hidden}
-.break{background:#b10d0d;color:#fff;font-weight:900;padding:9px 22px;height:100%}
-.ticker{white-space:nowrap;animation:flow 30s linear infinite;font-size:14px}
+@keyframes blink{50%{opacity:.25;transform:scale(1.12)}}
+.panelTitle{font-size:14px;font-weight:900;margin-bottom:8px;color:var(--gold)}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #17222b;padding:8px 0;font-size:12px}
+.news{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1fr;gap:6px;min-height:0}
+.news .box{overflow:hidden}
+.item{border-bottom:1px solid #18232c;padding:8px 0;font-size:12px;line-height:1.35}
+.badge{display:inline-block;padding:2px 5px;border-radius:3px;font-weight:900;margin-right:4px;font-size:11px}
+.high{background:#441010;color:#ff4b4b}.mid{background:#3a2506;color:#ffae32}.low{background:#082946;color:#42a5ff}
+.score{font-size:42px;color:var(--gold);font-weight:900;text-align:center;margin:10px 0}
+.bar{height:7px;background:#1b242c;border-radius:10px;overflow:hidden}.bar span{display:block;width:68%;height:100%;background:linear-gradient(90deg,#00e676,#ffd54f,#ff3030)}
+.footer{display:flex;background:#070b10;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.break{background:#b90e0e;color:#fff;font-weight:900;padding:8px 18px}
+.ticker{white-space:nowrap;animation:flow 28s linear infinite;font-size:13px;padding:8px}
 @keyframes flow{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.tv{height:100%;overflow:hidden}
 </style>
 </head>
-
 <body>
+
 <div class="app">
 
   <div class="top">
-    <div class="card logo">
-      <h1>XAUUSD WAR ROOM</h1>
-      <p>GOLD INTELLIGENCE MONITOR</p>
+    <div class="box"><div class="logo">XAUUSD WAR ROOM</div><div class="sub">GOLD INTELLIGENCE MONITOR</div></div>
+
+    <div class="box tv">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+        {
+          "symbol": "OANDA:XAUUSD",
+          "width": "100%",
+          "locale": "ja",
+          "colorTheme": "dark",
+          "isTransparent": true
+        }
+        </script>
+      </div>
     </div>
-    <div class="card">
-      <div class="label">XAUUSD</div>
-      <div class="big">2,382.45</div>
-      <div class="green">+18.72　+0.79%</div>
-    </div>
-    <div class="card">
-      <div class="label">GOLD RISK INDEX</div>
-      <div class="big red">68</div>
-      <div>高リスク</div>
-    </div>
-    <div class="card"><div class="label">GLOBAL FLASHPOINTS</div><div class="big red">12</div><div>高リスク地域</div></div>
-    <div class="card"><div class="label">MARKET CATALYST</div><div class="big gold">5</div><div>本日予定</div></div>
-    <div class="card"><div class="label">RED ALERT</div><div class="big red">3</div><div>発生中</div></div>
-    <div class="card"><div class="label">JST CLOCK</div><div id="clock" class="big" style="color:#fff">--:--:--</div><div id="date"></div></div>
-    <div class="card"><div class="label">AUTO UPDATE</div><div class="big green" style="font-size:28px">5 MIN</div><div class="green">自動更新中</div></div>
+
+    <div class="box"><div class="sub">GOLD RISK INDEX</div><div class="num red">68</div></div>
+    <div class="box"><div class="sub">GLOBAL FLASHPOINTS</div><div class="num red">12</div></div>
+    <div class="box"><div class="sub">MARKET CATALYST</div><div class="num gold">5</div></div>
+    <div class="box"><div class="sub">RED ALERT</div><div class="num red">3</div></div>
+    <div class="box"><div class="sub">JST CLOCK</div><div id="clock" class="num" style="color:white">--:--:--</div></div>
+    <div class="box"><div class="sub">AUTO UPDATE</div><div class="num green">5 MIN</div></div>
   </div>
 
   <div class="main">
 
     <div class="left">
-      <div class="card">
-        <div class="sideTitle">ニュースカテゴリ</div>
-        <div class="cat gold"><span>すべてのニュース</span><b>128</b></div>
-        <div class="cat"><span>グローバルフラッシュポイント</span><b>12</b></div>
-        <div class="cat"><span>マーケットカタリスト</span><b>24</b></div>
-        <div class="cat"><span>FRB・金融政策</span><b>16</b></div>
-        <div class="cat"><span>経済指標</span><b>21</b></div>
-        <div class="cat"><span>地政学リスク</span><b>18</b></div>
-        <div class="cat"><span>ゴールド関連</span><b>15</b></div>
+      <div class="box">
+        <div class="panelTitle">ニュースカテゴリ</div>
+        <div class="row gold"><span>すべてのニュース</span><b>128</b></div>
+        <div class="row"><span>高インパクト</span><b>24</b></div>
+        <div class="row"><span>地政学リスク</span><b>18</b></div>
+        <div class="row"><span>FRB・金融政策</span><b>16</b></div>
+        <div class="row"><span>経済指標・CPI</span><b>21</b></div>
+        <div class="row"><span>金利・インフレ</span><b>14</b></div>
+        <div class="row"><span>ゴールド関連</span><b>23</b></div>
+        <div class="row"><span>要人発言</span><b>12</b></div>
       </div>
-      <div class="card">
-        <div class="sideTitle">GOLD IMPACT SCORE</div>
+
+      <div class="box">
+        <div class="panelTitle">GOLD IMPACT SCORE</div>
         <div class="score">68</div>
         <div class="bar"><span></span></div>
-        <p class="red" style="text-align:center;margin-top:10px;font-weight:900">高インパクト</p>
+        <div class="red" style="text-align:center;margin-top:8px;font-weight:900">強気・上昇圧力</div>
       </div>
-      <div class="card">
-        <div class="sideTitle">SAFE HAVEN FLOW</div>
-        <div class="cat"><span>金ETF流入</span><b class="green">+12.3 ton</b></div>
-        <div class="cat"><span>中央銀行の金買い</span><b class="green">強い</b></div>
-        <div class="cat"><span>リスク回避ムード</span><b class="green">高まる</b></div>
-        <div class="cat"><span>米10年債利回り</span><b>4.45%</b></div>
+
+      <div class="box">
+        <div class="panelTitle">SAFE HAVEN FLOW</div>
+        <div class="row"><span>金ETF流入</span><b class="green">+12.3t</b></div>
+        <div class="row"><span>中央銀行の金買い</span><b class="green">強い</b></div>
+        <div class="row"><span>リスク回避ムード</span><b class="green">上昇</b></div>
+        <div class="row"><span>米10年債利回り</span><b>4.45%</b></div>
       </div>
     </div>
 
-    <div class="mapWrap">
-      <div class="map">
-        <div class="mapTitle">GLOBAL FLASHPOINTS</div>
+    <div class="map">
+      <h2>GLOBAL FLASHPOINTS</h2>
 
-        <div class="ring asia blink"></div>
-        <div class="session asia blink">TOKYO<span>LIVE</span><small>ASIA SESSION</small></div>
+      <div class="ring asia blink"></div>
+      <div class="pin asia blink">TOKYO<span>ASIA LIVE</span></div>
 
-        <div class="ring london glow"></div>
-        <div class="session london glow">LONDON<span>LIVE</span><small>LONDON SESSION</small></div>
+      <div class="ring london"></div>
+      <div class="pin london">LONDON<span>LONDON LIVE</span></div>
 
-        <div class="ring us glow"></div>
-        <div class="session us glow">NEW YORK<span>LIVE</span><small>US SESSION</small></div>
+      <div class="ring us"></div>
+      <div class="pin us">NEW YORK<span>US LIVE</span></div>
 
-        <span class="dot red" style="left:31%;top:47%"></span>
-        <span class="dot orange" style="left:50%;top:45%"></span>
-        <span class="dot red" style="left:59%;top:52%"></span>
-        <span class="dot orange" style="left:67%;top:56%"></span>
-        <span class="dot blue" style="left:74%;top:45%"></span>
-        <span class="dot red" style="left:83%;top:43%"></span>
+      <span class="point red" style="left:55%;top:27%"></span>
+      <span class="point orange" style="left:58%;top:51%"></span>
+      <span class="point red" style="left:61%;top:47%"></span>
+      <span class="point orange" style="left:70%;top:55%"></span>
+      <span class="point blue" style="left:75%;top:42%"></span>
+      <span class="point red" style="left:83%;top:41%"></span>
+      <span class="point orange" style="left:34%;top:40%"></span>
+      <span class="point blue" style="left:24%;top:39%"></span>
 
-        <div class="legend">
-          <span class="red">●</span> 戦争・紛争　
-          <span class="orange">●</span> テロ・暴動　
-          <span class="gold">●</span> 経済指標　
-          <span class="blue">●</span> 金融政策
-        </div>
-      </div>
-
-      <div class="newsGrid">
-        <div class="newsBox">
-          <h3 class="orange">MARKET CATALYST</h3>
-          <div class="item"><span class="badge high">高</span>09:12 米CPIが予想上回る<br><span class="gold">Bloomberg</span></div>
-          <div class="item"><span class="badge mid">中</span>21:30 米PPI発表予定<br><span class="gold">Reuters</span></div>
-          <div class="item"><span class="badge mid">中</span>23:00 消費者信頼感指数</div>
-        </div>
-        <div class="newsBox">
-          <h3 class="gold">GOLD DRIVERS</h3>
-          <div class="item"><span class="badge high">高</span>金価格、1週間ぶり高値更新</div>
-          <div class="item"><span class="badge mid">中</span>投資家のリスク回避強まる</div>
-          <div class="item"><span class="badge low">低</span>金ETFに資金流入続く</div>
-        </div>
-        <div class="newsBox">
-          <h3 class="blue">RATE & MACRO</h3>
-          <div class="item"><span class="badge high">高</span>米10年債利回り上昇</div>
-          <div class="item"><span class="badge mid">中</span>FRB理事「データ次第」</div>
-          <div class="item"><span class="badge low">低</span>DXY小幅下落</div>
-        </div>
-        <div class="newsBox">
-          <h3 class="red">GEOPOLITICAL RISK</h3>
-          <div class="item"><span class="badge high">高</span>ウクライナ情勢緊迫</div>
-          <div class="item"><span class="badge high">高</span>中東情勢で原油急騰</div>
-          <div class="item"><span class="badge mid">中</span>台湾周辺で軍事演習</div>
-        </div>
-        <div class="newsBox">
-          <h3 class="green">ECONOMIC CALENDAR</h3>
-          <div class="item">20:30 小売売上高</div>
-          <div class="item">21:15 鉱工業生産</div>
-          <div class="item">23:30 原油在庫</div>
-        </div>
+      <div class="legend">
+        <span class="red">●</span> 高インパクト　
+        <span class="orange">●</span> 地政学リスク　
+        <span class="blue">●</span> FRB・金融政策　
+        <span class="gold">●</span> ゴールド関連
       </div>
     </div>
 
     <div class="right">
-      <div class="card">
-        <div class="sideTitle red">RED ALERT</div>
-        <div class="item"><span class="badge high">高</span>09:08 ウクライナ、攻撃激化</div>
-        <div class="item"><span class="badge high">高</span>09:05 中東情勢緊迫</div>
-        <div class="item"><span class="badge high">高</span>08:45 パキスタン周辺で衝突</div>
+      <div class="box">
+        <div class="panelTitle red">HIGH IMPACT ALERT</div>
+        <div class="item"><span class="badge high">高</span>米CPIが予想以上に上昇</div>
+        <div class="item"><span class="badge high">高</span>FRB高官「利下げはデータ次第」</div>
+        <div class="item"><span class="badge mid">中</span>ウクライナ情勢、緊迫化</div>
+        <div class="item"><span class="badge mid">中</span>中東の金需要が急増</div>
       </div>
-      <div class="card">
-        <div class="sideTitle">GOLD IMPACT SCORE</div>
-        <div class="score">68</div>
+
+      <div class="box">
+        <div class="panelTitle">ニュース影響スコア</div>
+        <div class="score">45</div>
         <div class="bar"><span></span></div>
       </div>
-      <div class="card">
-        <div class="sideTitle green">SAFE HAVEN FLOW</div>
-        <div class="cat"><span>金ETF流入</span><b class="green">+12.3 ton</b></div>
-        <div class="cat"><span>中央銀行の金買い</span><b class="green">強い</b></div>
-        <div class="cat"><span>金先物ポジション</span><b class="red">増加中</b></div>
+
+      <div class="box">
+        <div class="panelTitle">ゴールドインパクト</div>
+        <div class="score">68<span style="font-size:18px">/100</span></div>
+        <div class="bar"><span></span></div>
       </div>
     </div>
 
   </div>
 
+  <div class="news">
+    <div class="box">
+      <div class="panelTitle">ライブニュース</div>
+      <div class="item"><span class="badge high">高</span>米CPI、予想上回る</div>
+      <div class="item"><span class="badge high">高</span>FRB発言で金利観測変化</div>
+      <div class="item"><span class="badge mid">中</span>中東情勢で安全資産買い</div>
+    </div>
+
+    <div class="box">
+      <div class="panelTitle red">高インパクトニュース</div>
+      <div class="item"><span class="badge high">高</span>米CPIが予想以上に上昇</div>
+      <div class="item"><span class="badge high">高</span>FRB高官発言</div>
+      <div class="item"><span class="badge mid">中</span>ウクライナ情勢緊迫化</div>
+    </div>
+
+    <div class="box">
+      <div class="panelTitle orange">地政学リスクニュース</div>
+      <div class="item"><span class="badge mid">中</span>ウクライナ、攻撃激化</div>
+      <div class="item"><span class="badge mid">中</span>中東情勢の緊張続く</div>
+      <div class="item"><span class="badge low">低</span>台湾周辺で演習継続</div>
+    </div>
+
+    <div class="box">
+      <div class="panelTitle blue">FRB / 金融政策ニュース</div>
+      <div class="item"><span class="badge high">高</span>利下げ判断はデータ次第</div>
+      <div class="item"><span class="badge mid">中</span>FOMC議事要旨に注目</div>
+      <div class="item"><span class="badge low">低</span>米金利は小動き</div>
+    </div>
+
+    <div class="box">
+      <div class="panelTitle">世界のホットスポット</div>
+      <div class="item">🇺🇦 ウクライナ　攻撃激化</div>
+      <div class="item">🔥 中東　地政学リスク上昇</div>
+      <div class="item">🇺🇸 米国　インフレ上昇</div>
+    </div>
+  </div>
+
   <div class="footer">
     <div class="break">BREAKING NEWS</div>
-    <div class="ticker">09:16　米CPIが予想を上回る、インフレ根強く金価格は上昇　｜　09:12　ウクライナ情勢緊迫　｜　09:08　中東情勢で原油価格が急騰</div>
+    <div class="ticker">09:16 米CPIが予想以上に上昇　｜　09:12 ウクライナ情勢緊迫化　｜　08:45 FRB高官「利下げ判断はデータ次第」</div>
   </div>
 
 </div>
 
 <script>
-function updateClock(){
+function clock(){
   const now=new Date();
-  const opt={timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false};
-  document.getElementById("clock").textContent=new Intl.DateTimeFormat('ja-JP',opt).format(now);
-  document.getElementById("date").textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(now);
+  document.getElementById("clock").textContent=new Intl.DateTimeFormat("ja-JP",{
+    timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false
+  }).format(now);
 }
-setInterval(updateClock,1000);
-updateClock();
-
-// APIなし自動更新：5分ごとに画面更新
+setInterval(clock,1000);clock();
 setInterval(()=>location.reload(),300000);
 </script>
+
 </body>
 </html>
