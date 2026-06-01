@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XAUUSD MONITOR</title>
 
 <style>
@@ -18,9 +18,23 @@
   --red:#ff2d2d;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
-body{background:var(--bg);color:var(--text);padding:16px;}
-.wrap{max-width:1720px;margin:auto;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  padding:14px;
+}
+
+.wrap{
+  max-width:1780px;
+  margin:0 auto;
+}
 
 .panel{
   background:linear-gradient(180deg,var(--panel),var(--panel2));
@@ -29,9 +43,9 @@ body{background:var(--bg);color:var(--text);padding:16px;}
   padding:14px;
 }
 
-.gridTop{
+.top{
   display:grid;
-  grid-template-columns:1fr 1.35fr 1.15fr;
+  grid-template-columns:1fr 1.55fr 1.15fr;
   gap:14px;
   margin-bottom:14px;
 }
@@ -39,64 +53,162 @@ body{background:var(--bg);color:var(--text);padding:16px;}
 .label{
   font-size:11px;
   color:var(--text);
-  letter-spacing:1.4px;
+  letter-spacing:1.3px;
   font-weight:700;
+  margin-bottom:8px;
 }
 
-.xauTitle{font-size:14px;color:var(--text);margin-bottom:8px;}
-.price{font-size:42px;color:var(--green);font-weight:800;}
-.change{font-size:18px;color:var(--green);font-weight:700;margin-top:4px;}
-.updated{font-size:11px;color:var(--muted);margin-top:8px;}
+.price{
+  color:var(--green);
+  font-size:44px;
+  font-weight:900;
+}
 
-.clockBox{
+.change{
+  color:var(--green);
+  font-size:18px;
+  margin-top:4px;
+  font-weight:800;
+}
+
+.small{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:8px;
+}
+
+.clockCal{
   display:grid;
-  grid-template-columns:1fr 1.2fr;
-  gap:16px;
+  grid-template-columns:.8fr 1.2fr;
+  gap:18px;
 }
 
-.clock{font-size:40px;color:var(--text);font-weight:800;}
-.date{font-size:13px;color:var(--text);margin-top:8px;}
+.clock{
+  font-size:42px;
+  font-weight:900;
+  color:var(--text);
+}
 
-.monthTitle{font-size:13px;color:var(--text);margin-bottom:8px;text-align:center;}
-.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.date{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--text);
+}
+
+.monthTitle{
+  text-align:center;
+  font-size:13px;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.calGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+
 .calHead,.calDay{
   text-align:center;
   font-size:11px;
   color:var(--text);
   padding:5px 0;
 }
-.calHead{color:var(--muted);}
+
+.calHead{
+  color:var(--muted);
+}
+
 .today{
-  background:rgba(255,45,45,.16);
+  background:rgba(255,45,45,.14);
   border:1px solid rgba(255,45,45,.35);
   border-radius:6px;
 }
 
+.todayImpact{
+  height:100%;
+}
+
+.todayImpactList{
+  height:128px;
+  overflow:hidden;
+}
+
+.todayImpactItem{
+  display:grid;
+  grid-template-columns:50px 1fr 70px;
+  gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid #181818;
+  font-size:12px;
+}
+
+.todayImpactItem .time{
+  color:var(--green);
+  font-weight:800;
+}
+
+.todayImpactItem .name{
+  color:var(--text);
+  font-weight:800;
+}
+
+.todayImpactItem .count{
+  color:var(--red);
+  font-weight:900;
+  text-align:right;
+}
+
 .main{
   display:grid;
-  grid-template-columns:58% 42%;
+  grid-template-columns:52% 48%;
   gap:14px;
   margin-bottom:14px;
 }
 
-.mapBox{
-  height:420px;
+.mapPanel{
+  height:480px;
   position:relative;
   overflow:hidden;
 }
 
-.mapBox iframe{
-  width:100%;
-  height:100%;
-  border:0;
-  filter:brightness(.62) grayscale(18%) contrast(1.08);
+.mapTitle{
+  position:absolute;
+  top:14px;
+  left:16px;
+  z-index:5;
+  color:var(--text);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+.worldMap{
+  position:absolute;
+  left:14px;
+  right:14px;
+  top:48px;
+  bottom:14px;
+  border:1px solid #171717;
+  border-radius:10px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 52% 50%, rgba(184,155,94,.18), transparent 10%),
+    radial-gradient(circle at 26% 43%, rgba(184,155,94,.10), transparent 9%),
+    radial-gradient(circle at 75% 48%, rgba(184,155,94,.10), transparent 9%),
+    url("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg");
+  background-size:cover;
+  background-position:center;
+  filter:grayscale(1) brightness(.36) contrast(1.25);
 }
 
 .session{
   position:absolute;
+  z-index:10;
   color:var(--text);
-  background:rgba(5,5,5,.74);
-  border:1px solid rgba(184,155,94,.18);
+  background:rgba(5,5,5,.75);
+  border:1px solid rgba(184,155,94,.22);
   border-radius:8px;
   padding:8px 10px;
   font-size:12px;
@@ -104,57 +216,130 @@ body{background:var(--bg);color:var(--text);padding:16px;}
   letter-spacing:.8px;
 }
 
-.asia{left:68%;top:45%;}
-.london{left:47%;top:31%;}
-.us{left:24%;top:37%;}
+.asia{left:69%;top:51%;}
+.london{left:47%;top:39%;}
+.us{left:25%;top:43%;}
 
-.openMark{display:none;color:var(--red);font-weight:800;}
-.session.open .openMark{display:block;animation:redBlink 1s infinite;}
-.session.open{border-color:rgba(255,45,45,.6);}
+.openMark{
+  display:none;
+  color:var(--red);
+  font-weight:900;
+}
+
+.session.open{
+  border-color:rgba(255,45,45,.65);
+}
+
+.session.open .openMark{
+  display:block;
+  animation:redBlink 1s infinite;
+}
 
 @keyframes redBlink{
   0%{opacity:1;text-shadow:0 0 5px var(--red);}
-  50%{opacity:.22;text-shadow:0 0 18px var(--red);}
+  50%{opacity:.25;text-shadow:0 0 20px var(--red);}
   100%{opacity:1;text-shadow:0 0 5px var(--red);}
 }
 
-.eventsPanel{height:420px;overflow:hidden;}
-.eventsGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
-.dayBlock{border:1px solid #191919;border-radius:10px;padding:10px;height:360px;overflow:hidden;}
-.dayTitle{font-size:12px;color:var(--gold);margin-bottom:10px;font-weight:800;}
-
-.event{
-  border-bottom:1px solid #181818;
-  padding:9px 0;
+.layers{
+  position:absolute;
+  left:24px;
+  bottom:24px;
+  z-index:10;
+  color:var(--text);
   font-size:12px;
+  line-height:1.9;
 }
 
-.eventTop{
+.layerDot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--gold);
+  margin-right:7px;
+}
+
+.newsPanel{
+  height:480px;
+  overflow:hidden;
+}
+
+.newsHead{
   display:grid;
-  grid-template-columns:48px 1fr 72px;
+  grid-template-columns:70px 55px 1fr 70px 70px 90px;
   gap:8px;
+  padding:10px 0;
+  border-bottom:1px solid #1b1b1b;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.newsRow{
+  display:grid;
+  grid-template-columns:70px 55px 1fr 70px 70px 90px;
+  gap:8px;
+  padding:9px 0;
+  border-bottom:1px solid #181818;
+  font-size:12px;
   align-items:center;
 }
 
-.eventTime{color:var(--green);font-weight:800;}
-.eventName{color:var(--text);font-weight:700;}
-.impact{color:var(--red);font-weight:800;text-align:right;}
-.eventSub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:7px;color:var(--muted);}
-.count{color:var(--gold);margin-top:6px;font-weight:800;}
+.newsRow .dateCell,
+.newsRow .timeCell{
+  color:var(--text);
+}
+
+.newsRow .eventCell{
+  color:var(--text);
+  font-weight:800;
+}
+
+.newsRow .impactCell{
+  color:var(--red);
+  font-weight:900;
+}
+
+.newsRow .forecastCell,
+.newsRow .previousCell{
+  color:var(--text);
+}
+
+.newsRow .countCell{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.redCount{
+  color:var(--red) !important;
+}
 
 .intel{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
+  grid-template-columns:repeat(8,1fr);
+  gap:10px;
   margin-bottom:14px;
 }
 
-.card{min-height:94px;}
-.cardName{font-size:12px;color:var(--text);font-weight:800;margin-bottom:18px;}
-.cardStatus{font-size:18px;color:var(--gold);font-weight:800;}
+.intelCard{
+  height:96px;
+}
+
+.intelTitle{
+  color:var(--text);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:16px;
+}
+
+.intelStatus{
+  color:var(--gold);
+  font-size:18px;
+  font-weight:900;
+}
 
 .banner{
-  height:54px;
+  height:58px;
   overflow:hidden;
   position:relative;
   color:var(--text);
@@ -162,24 +347,40 @@ body{background:var(--bg);color:var(--text);padding:16px;}
 
 .bannerInner{
   position:absolute;
+  top:19px;
   white-space:nowrap;
-  animation:ticker 34s linear infinite;
-  font-size:13px;
-  letter-spacing:1.3px;
-  top:18px;
+  animation:ticker 35s linear infinite;
   color:var(--text);
+  font-size:13px;
+  letter-spacing:1.1px;
 }
 
-.bannerInner span{margin-right:55px;}
+.bannerInner span{
+  margin-right:50px;
+}
+
+.bannerInner .green{
+  color:var(--green);
+  font-weight:900;
+}
+
+.bannerInner .red{
+  color:var(--red);
+  font-weight:900;
+}
 
 @keyframes ticker{
   from{transform:translateX(100%);}
   to{transform:translateX(-100%);}
 }
 
-@media(max-width:1100px){
-  .gridTop,.main,.intel{grid-template-columns:1fr;}
-  .clockBox,.eventsGrid{grid-template-columns:1fr;}
+@media(max-width:1200px){
+  .top,.main,.intel{
+    grid-template-columns:1fr;
+  }
+  .clockCal{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -187,16 +388,16 @@ body{background:var(--bg);color:var(--text);padding:16px;}
 <body>
 <div class="wrap">
 
-  <div class="gridTop">
+  <div class="top">
 
     <div class="panel">
-      <div class="xauTitle">XAUUSD</div>
+      <div class="label">XAUUSD</div>
       <div class="price" id="xauPrice">----</div>
       <div class="change" id="xauChange">----</div>
-      <div class="updated" id="xauUpdated">REALTIME UPDATE</div>
+      <div class="small" id="xauUpdated">REALTIME UPDATE</div>
     </div>
 
-    <div class="panel clockBox">
+    <div class="panel clockCal">
       <div>
         <div class="label">JST CLOCK</div>
         <div class="clock" id="clock">00:00:00</div>
@@ -209,18 +410,19 @@ body{background:var(--bg);color:var(--text);padding:16px;}
       </div>
     </div>
 
-    <div class="panel">
-      <div class="label">AUTO UPDATE</div>
-      <div class="price" style="font-size:32px;">LIVE</div>
-      <div class="updated">XAUUSD / EVENTS / CLOCK</div>
+    <div class="panel todayImpact">
+      <div class="label">TODAY HIGH IMPACT</div>
+      <div class="todayImpactList" id="todayImpactTop"></div>
     </div>
 
   </div>
 
   <div class="main">
 
-    <div class="panel mapBox">
-      <iframe src="https://www.worldmonitor.app/?lat=-22.9997&lon=12.8906&zoom=1.00&view=global&timeRange=7d&layers=conflicts%2Cbases%2Chotspots%2Cnuclear%2Csanctions%2Cweather%2Ceconomic%2Cwaterways%2Coutages%2Cmilitary%2Cnatural%2CiranAttacks"></iframe>
+    <div class="panel mapPanel">
+      <div class="mapTitle">WORLD MONITOR</div>
+
+      <div class="worldMap"></div>
 
       <div class="session asia" id="asiaSession">
         ASIA<br>07:00-15:00<br><span class="openMark">● OPEN</span>
@@ -233,62 +435,55 @@ body{background:var(--bg);color:var(--text);padding:16px;}
       <div class="session us" id="usSession">
         US<br>21:00-06:00<br><span class="openMark">● OPEN</span>
       </div>
+
+      <div class="layers">
+        <div><span class="layerDot"></span>CONFLICTS</div>
+        <div><span class="layerDot"></span>HOTSPOTS</div>
+        <div><span class="layerDot"></span>SANCTIONS</div>
+        <div><span class="layerDot"></span>ENERGY</div>
+        <div><span class="layerDot"></span>ECONOMIC</div>
+      </div>
     </div>
 
-    <div class="panel eventsPanel">
+    <div class="panel newsPanel">
       <div class="label">HIGH IMPACT NEWS</div>
 
-      <div class="eventsGrid">
-        <div class="dayBlock">
-          <div class="dayTitle">TODAY</div>
-          <div id="todayEvents"></div>
-        </div>
-
-        <div class="dayBlock">
-          <div class="dayTitle">TOMORROW</div>
-          <div id="tomorrowEvents"></div>
-        </div>
+      <div class="newsHead">
+        <div>DATE</div>
+        <div>TIME</div>
+        <div>EVENT</div>
+        <div>IMPACT</div>
+        <div>予想</div>
+        <div>COUNTDOWN</div>
       </div>
+
+      <div id="highImpactList"></div>
     </div>
 
   </div>
 
   <div class="intel">
-    <div class="panel card"><div class="cardName">MIDDLE EAST</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">RED SEA</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">UKRAINE</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">TAIWAN</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">FED</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">CENTRAL BANK</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">ENERGY</div><div class="cardStatus">WATCH</div></div>
-    <div class="panel card"><div class="cardName">SANCTIONS</div><div class="cardStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">MIDDLE EAST</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">RED SEA</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">UKRAINE</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">TAIWAN</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">FED</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">CENTRAL BANK</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">ENERGY</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
   </div>
 
   <div class="panel banner">
-    <div class="bannerInner">
-      <span>XAUUSD WAR ROOM</span>
-      <span>REUTERS</span>
-      <span>BLOOMBERG</span>
-      <span>FOREXLIVE</span>
-      <span>HIGH IMPACT NEWS</span>
-      <span>WORLD MONITOR</span>
-      <span>XAUUSD MARKET WATCH</span>
-    </div>
+    <div class="bannerInner" id="tickerText"></div>
   </div>
 
 </div>
 
 <script>
-/* =========================
-   XAUUSD REALTIME
-   ここを自分のAPIに差し替え
-========================= */
-
-const XAUUSD_API_URL = ""; 
-// 例: "https://YOUR_API_URL/xauusd"
-// 返却例: { "price": 3382.45, "change": 18.72, "changePercent": 0.79 }
-
-let lastMockPrice = 3382.45;
+/* XAUUSD */
+const XAUUSD_API_URL = "";
+let mockPrice = 3382.45;
+let currentXauText = "XAUUSD ----";
 
 async function updateXAUUSD(){
   try{
@@ -300,114 +495,72 @@ async function updateXAUUSD(){
     const res = await fetch(XAUUSD_API_URL,{cache:"no-store"});
     const data = await res.json();
 
-    const price = Number(data.price);
-    const change = Number(data.change);
-    const percent = Number(data.changePercent);
-
-    renderXAU(price,change,percent);
-
+    renderXAU(
+      Number(data.price),
+      Number(data.change),
+      Number(data.changePercent)
+    );
   }catch(e){
     mockXAUUSD();
   }
 }
 
 function mockXAUUSD(){
-  const move = (Math.random() - .45) * .75;
-  lastMockPrice += move;
-
-  const change = lastMockPrice - 3382.45;
-  const percent = (change / 3382.45) * 100;
-
-  renderXAU(lastMockPrice,change,percent);
+  const move = (Math.random() - 0.45) * 0.9;
+  mockPrice += move;
+  const change = mockPrice - 3382.45;
+  const percent = change / 3382.45 * 100;
+  renderXAU(mockPrice,change,percent);
 }
 
 function renderXAU(price,change,percent){
-  document.getElementById("xauPrice").textContent =
-    price.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const p = price.toLocaleString("en-US",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
 
   const sign = change >= 0 ? "+" : "";
+
+  document.getElementById("xauPrice").textContent = p;
   document.getElementById("xauChange").textContent =
     `${sign}${change.toFixed(2)}  ${sign}${percent.toFixed(2)}%`;
 
   document.getElementById("xauUpdated").textContent =
-    "Last Update " + new Date().toLocaleTimeString("ja-JP");
+    "Last Update " + new Date().toLocaleTimeString("ja-JP",{hour12:false});
+
+  currentXauText = `XAUUSD ${p} ${sign}${change.toFixed(2)} (${sign}${percent.toFixed(2)}%)`;
+  renderTicker();
 }
 
-/* =========================
-   HIGH IMPACT NEWS 2 DAYS
-   ここに自分で調べた指標を入れる
-========================= */
-
-const events = [
-  {
-    day:"today",
-    time:"21:30",
-    currency:"USD",
-    name:"CPI m/m",
-    impact:"HIGH",
-    forecast:"0.3%",
-    previous:"0.2%"
-  },
-  {
-    day:"today",
-    time:"21:30",
-    currency:"USD",
-    name:"CPI y/y",
-    impact:"HIGH",
-    forecast:"2.4%",
-    previous:"2.6%"
-  },
-  {
-    day:"today",
-    time:"23:00",
-    currency:"USD",
-    name:"ISM Manufacturing PMI",
-    impact:"HIGH",
-    forecast:"49.8",
-    previous:"48.7"
-  },
-  {
-    day:"tomorrow",
-    time:"21:15",
-    currency:"USD",
-    name:"ADP Employment Change",
-    impact:"HIGH",
-    forecast:"115K",
-    previous:"102K"
-  },
-  {
-    day:"tomorrow",
-    time:"21:30",
-    currency:"USD",
-    name:"PPI m/m",
-    impact:"HIGH",
-    forecast:"0.2%",
-    previous:"-0.1%"
-  },
-  {
-    day:"tomorrow",
-    time:"03:00",
-    currency:"USD",
-    name:"FOMC Statement",
-    impact:"HIGH",
-    forecast:"---",
-    previous:"---"
-  }
+/* HIGH IMPACT NEWS */
+const highImpactEvents = [
+  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
+  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.4%",previous:"2.6%"},
+  {date:"2026-06-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"49.8",previous:"48.7"},
+  {date:"2026-06-01",time:"23:00",currency:"USD",event:"JOLTS Job Openings",impact:"HIGH",forecast:"7.45M",previous:"7.19M"},
+  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
+  {date:"2026-06-03",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
+  {date:"2026-06-04",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%"},
+  {date:"2026-06-09",time:"23:00",currency:"USD",event:"JOLTS Job Openings",impact:"HIGH",forecast:"7.45M",previous:"7.19M"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
+  {date:"2026-06-12",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
+  {date:"2026-06-12",time:"21:30",currency:"USD",event:"PPI y/y",impact:"HIGH",forecast:"2.6%",previous:"2.7%"},
+  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
+  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"}
 ];
 
-function getEventDate(day,time){
-  const now = new Date();
-  const d = new Date(now);
-
-  if(day === "tomorrow") d.setDate(d.getDate()+1);
-
-  const [h,m] = time.split(":").map(Number);
-  d.setHours(h,m,0,0);
-
-  return d;
+function getEventDate(e){
+  const [y,m,d] = e.date.split("-").map(Number);
+  const [hh,mm] = e.time.split(":").map(Number);
+  return new Date(y,m-1,d,hh,mm,0,0);
 }
 
-function countdown(target){
+function formatCountdown(target){
   const now = new Date();
   const diff = target - now;
 
@@ -427,49 +580,57 @@ function countdown(target){
   return `${String(hours).padStart(2,"0")}:${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
 }
 
-function renderEvents(){
-  const todayBox = document.getElementById("todayEvents");
-  const tomorrowBox = document.getElementById("tomorrowEvents");
+function renderHighImpact(){
+  const list = document.getElementById("highImpactList");
+  const todayTop = document.getElementById("todayImpactTop");
 
-  todayBox.innerHTML = "";
-  tomorrowBox.innerHTML = "";
+  list.innerHTML = "";
+  todayTop.innerHTML = "";
 
-  events.forEach(e=>{
-    const target = getEventDate(e.day,e.time);
-    const cd = countdown(target);
+  const now = new Date();
+  const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+
+  highImpactEvents.forEach(e=>{
+    const target = getEventDate(e);
+    const cd = formatCountdown(target);
     if(cd === null) return;
 
-    const html = `
-      <div class="event">
-        <div class="eventTop">
-          <div class="eventTime">${e.time}</div>
-          <div class="eventName">${e.currency} ${e.name}</div>
-          <div class="impact">${e.impact}</div>
-        </div>
-        <div class="eventSub">
-          <div>予想 ${e.forecast}</div>
-          <div>前回 ${e.previous}</div>
-        </div>
-        <div class="count">残り ${cd}</div>
-      </div>
-    `;
+    const diff = target - now;
+    const isRed = diff <= 86400000 && diff >= -3600000;
 
-    if(e.day === "today") todayBox.innerHTML += html;
-    if(e.day === "tomorrow") tomorrowBox.innerHTML += html;
+    const row = document.createElement("div");
+    row.className = "newsRow";
+    row.innerHTML = `
+      <div class="dateCell">${e.date.slice(5)}</div>
+      <div class="timeCell">${e.time}</div>
+      <div class="eventCell">${e.currency} ${e.event}<br><span style="color:#5f5f5f;font-weight:400;">前回 ${e.previous}</span></div>
+      <div class="impactCell">${e.impact}</div>
+      <div class="forecastCell">${e.forecast}</div>
+      <div class="countCell ${isRed ? "redCount" : ""}">${cd}</div>
+    `;
+    list.appendChild(row);
+
+    if(e.date === todayKey){
+      const item = document.createElement("div");
+      item.className = "todayImpactItem";
+      item.innerHTML = `
+        <div class="time">${e.time}</div>
+        <div class="name">${e.currency} ${e.event}<br><span style="color:#5f5f5f;font-weight:400;">予想 ${e.forecast} / 前回 ${e.previous}</span></div>
+        <div class="count">${cd}</div>
+      `;
+      todayTop.appendChild(item);
+    }
   });
+
+  renderTicker();
 }
 
-/* =========================
-   CLOCK + MONTH CALENDAR
-========================= */
-
+/* CLOCK + CALENDAR */
 function updateClock(){
   const now = new Date();
 
   document.getElementById("clock").textContent =
     now.toLocaleTimeString("ja-JP",{hour12:false});
-
-  document.getElementById("date").textContent;
 
   document.getElementById("dateText").textContent =
     now.toLocaleDateString("ja-JP",{
@@ -482,7 +643,7 @@ function updateClock(){
   updateSession(now.getHours());
 }
 
-function renderMonthCalendar(){
+function renderCalendar(){
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -493,8 +654,7 @@ function renderMonthCalendar(){
   const grid = document.getElementById("calendarGrid");
   grid.innerHTML = "";
 
-  const heads = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
-  heads.forEach(h=>{
+  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
     const div = document.createElement("div");
     div.className = "calHead";
     div.textContent = h;
@@ -503,32 +663,23 @@ function renderMonthCalendar(){
 
   const first = new Date(year,month,1);
   const last = new Date(year,month+1,0);
-  const startDay = first.getDay();
 
-  for(let i=0;i<startDay;i++){
-    const empty = document.createElement("div");
-    empty.className = "calDay";
-    empty.textContent = "";
-    grid.appendChild(empty);
+  for(let i=0;i<first.getDay();i++){
+    const div = document.createElement("div");
+    div.className = "calDay";
+    grid.appendChild(div);
   }
 
   for(let d=1; d<=last.getDate(); d++){
     const div = document.createElement("div");
     div.className = "calDay";
-
-    if(d === now.getDate()){
-      div.classList.add("today");
-    }
-
+    if(d === now.getDate()) div.classList.add("today");
     div.textContent = d;
     grid.appendChild(div);
   }
 }
 
-/* =========================
-   SESSION
-========================= */
-
+/* SESSION */
 function updateSession(hour){
   const asia = document.getElementById("asiaSession");
   const london = document.getElementById("londonSession");
@@ -547,17 +698,40 @@ function updateSession(hour){
   }
 }
 
-/* =========================
-   INIT
-========================= */
+/* TICKER */
+function renderTicker(){
+  const now = new Date();
+  const next = highImpactEvents
+    .map(e=>({...e,target:getEventDate(e)}))
+    .filter(e=>e.target - now > 0)
+    .sort((a,b)=>a.target-b.target)
+    .slice(0,3)
+    .map(e=>{
+      const cd = formatCountdown(e.target);
+      return `<span>${e.event} <b class="red">${cd}</b></span>`;
+    })
+    .join("");
 
-renderMonthCalendar();
+  document.getElementById("tickerText").innerHTML = `
+    <span>XAUUSD WAR ROOM</span>
+    <span class="green">${currentXauText}</span>
+    ${next}
+    <span>REUTERS</span>
+    <span>BLOOMBERG</span>
+    <span>FOREXLIVE</span>
+    <span class="green">${currentXauText}</span>
+    <span>XAUUSD WAR ROOM</span>
+  `;
+}
+
+/* INIT */
+renderCalendar();
 updateClock();
-renderEvents();
+renderHighImpact();
 updateXAUUSD();
 
 setInterval(updateClock,1000);
-setInterval(renderEvents,1000);
+setInterval(renderHighImpact,1000);
 setInterval(updateXAUUSD,1000);
 </script>
 
