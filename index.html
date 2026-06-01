@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XAUUSD MONITOR</title>
+<title>XAUUSD WAR ROOM</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
   --bg:#050505;
   --panel:#0b0b0b;
-  --panel2:#101010;
+  --panel2:#111;
   --border:#202020;
   --text:#8a8a8a;
-  --muted:#5f5f5f;
+  --muted:#5c5c5c;
   --gold:#b89b5e;
   --green:#00ff88;
   --red:#ff2d2d;
@@ -20,140 +22,38 @@
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{background:var(--bg);color:var(--text);padding:14px}
+
 .wrap{max-width:1780px;margin:0 auto}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:12px;padding:14px}
 
-.panel{
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-}
+.top{display:grid;grid-template-columns:1fr 1.55fr 1.25fr;gap:14px;margin-bottom:14px}
+.label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:800;margin-bottom:8px}
 
-.top{
-  display:grid;
-  grid-template-columns:1fr 1.55fr 1.25fr;
-  gap:14px;
-  margin-bottom:14px;
-}
+.tvBox{height:145px;overflow:hidden}
 
-.label{
-  font-size:11px;
-  color:var(--text);
-  letter-spacing:1.3px;
-  font-weight:700;
-  margin-bottom:8px;
-}
+.clockCal{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px}
+.clock{font-size:42px;font-weight:900;color:var(--text)}
+.date{margin-top:8px;font-size:14px;color:var(--text)}
 
-.tvBox{
-  height:145px;
-  overflow:hidden;
-}
-
-.clockCal{
-  display:grid;
-  grid-template-columns:.8fr 1.2fr;
-  gap:18px;
-}
-
-.clock{
-  font-size:42px;
-  font-weight:900;
-  color:var(--text);
-}
-
-.date{
-  margin-top:8px;
-  font-size:14px;
-  color:var(--text);
-}
-
-.monthTitle{
-  text-align:center;
-  font-size:13px;
-  font-weight:800;
-  color:var(--text);
-  margin-bottom:8px;
-}
-
-.calGrid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-}
-
-.calHead,.calDay{
-  text-align:center;
-  font-size:11px;
-  color:var(--text);
-  padding:5px 0;
-}
-
+.monthTitle{text-align:center;font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calHead,.calDay{text-align:center;font-size:11px;color:var(--text);padding:5px 0}
 .calHead{color:var(--muted)}
+.today{background:rgba(255,45,45,.14);border:1px solid rgba(255,45,45,.35);border-radius:6px}
 
-.today{
-  background:rgba(255,45,45,.14);
-  border:1px solid rgba(255,45,45,.35);
-  border-radius:6px;
-}
-
-.todayTopList{
-  height:130px;
-  overflow:hidden;
-}
-
-.todayItem{
-  border-bottom:1px solid #181818;
-  padding:8px 0;
-  font-size:12px;
-}
-
-.todayMain{
-  display:grid;
-  grid-template-columns:62px 1fr 78px;
-  gap:8px;
-  align-items:center;
-}
-
+.todayTopList{height:130px;overflow:hidden}
+.todayItem{border-bottom:1px solid #181818;padding:8px 0;font-size:12px}
+.todayMain{display:grid;grid-template-columns:62px 1fr 78px;gap:8px;align-items:center}
 .todayDate{color:var(--gold);font-weight:900}
 .todayEvent{color:var(--text);font-weight:900}
 .todayCount{color:var(--red);font-weight:900;text-align:right}
 .todaySub{color:var(--muted);margin-top:5px;font-size:11px}
 
-.blink24{
-  animation:redPulse 1s infinite;
-}
+.main{display:grid;grid-template-columns:52% 48%;gap:14px;margin-bottom:14px}
+.mapPanel{height:480px;position:relative;overflow:hidden}
+.mapTitle{position:absolute;top:14px;left:16px;z-index:50;color:var(--text);font-size:13px;font-weight:800;letter-spacing:1px}
 
-@keyframes redPulse{
-  0%{opacity:1;text-shadow:0 0 4px var(--red)}
-  50%{opacity:.35;text-shadow:0 0 18px var(--red)}
-  100%{opacity:1;text-shadow:0 0 4px var(--red)}
-}
-
-.main{
-  display:grid;
-  grid-template-columns:52% 48%;
-  gap:14px;
-  margin-bottom:14px;
-}
-
-.mapPanel{
-  height:480px;
-  position:relative;
-  overflow:hidden;
-}
-
-.mapTitle{
-  position:absolute;
-  top:14px;
-  left:16px;
-  z-index:5;
-  color:var(--text);
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-
-.worldFrame{
+#map{
   position:absolute;
   left:14px;
   right:14px;
@@ -165,120 +65,62 @@ body{background:var(--bg);color:var(--text);padding:14px}
   background:#050505;
 }
 
-.worldFrame iframe{
-  width:100%;
-  height:100%;
-  border:0;
-  filter:brightness(.78) contrast(1.1) saturate(.85);
-}
+.leaflet-control-attribution,
+.leaflet-control-zoom{display:none!important}
 
-.session{
-  position:absolute;
-  z-index:20;
+.sessionLabel{
   color:var(--text);
-  background:rgba(5,5,5,.78);
-  border:1px solid rgba(184,155,94,.22);
+  background:rgba(5,5,5,.82);
+  border:1px solid rgba(184,155,94,.28);
   border-radius:8px;
   padding:8px 10px;
   font-size:12px;
   line-height:1.45;
   letter-spacing:.8px;
+  text-align:center;
+  min-width:96px;
 }
 
-.asia{left:72%;top:47%}
-.london{left:49%;top:35%}
-.us{left:24%;top:42%}
+.sessionLabel.open{
+  border-color:rgba(255,45,45,.7);
+}
 
-.openMark{
-  display:none;
+.openText{
   color:var(--red);
   font-weight:900;
-}
-
-.session.open{
-  border-color:rgba(255,45,45,.65);
-}
-
-.session.open .openMark{
-  display:block;
   animation:redPulse 1s infinite;
 }
 
-.newsPanel{
-  height:480px;
-  overflow:hidden;
+.blink24{
+  animation:redPulse 1s infinite;
 }
 
+@keyframes redPulse{
+  0%{opacity:1;text-shadow:0 0 5px var(--red)}
+  50%{opacity:.25;text-shadow:0 0 20px var(--red)}
+  100%{opacity:1;text-shadow:0 0 5px var(--red)}
+}
+
+.newsPanel{height:480px;overflow:hidden}
 .newsHead,.newsRow{
   display:grid;
   grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
   gap:8px;
   align-items:center;
 }
+.newsHead{padding:10px 0;border-bottom:1px solid #1b1b1b;font-size:11px;color:var(--muted)}
+.newsRow{padding:9px 0;border-bottom:1px solid #181818;font-size:12px}
+.eventCell{font-weight:800;color:var(--text)}
+.impactCell{color:var(--red);font-weight:900}
+.countCell{color:var(--gold);font-weight:900}
+.redCount{color:var(--red)!important}
 
-.newsHead{
-  padding:10px 0;
-  border-bottom:1px solid #1b1b1b;
-  font-size:11px;
-  color:var(--muted);
-}
+.intel{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:14px}
+.intelCard{height:96px}
+.intelTitle{color:var(--text);font-size:12px;font-weight:900;margin-bottom:16px}
+.intelStatus{color:var(--gold);font-size:18px;font-weight:900}
 
-.newsRow{
-  padding:9px 0;
-  border-bottom:1px solid #181818;
-  font-size:12px;
-}
-
-.newsRow .eventCell{
-  font-weight:800;
-  color:var(--text);
-}
-
-.impactCell{
-  color:var(--red);
-  font-weight:900;
-}
-
-.countCell{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.redCount{
-  color:var(--red)!important;
-}
-
-.intel{
-  display:grid;
-  grid-template-columns:repeat(8,1fr);
-  gap:10px;
-  margin-bottom:14px;
-}
-
-.intelCard{
-  height:96px;
-}
-
-.intelTitle{
-  color:var(--text);
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:16px;
-}
-
-.intelStatus{
-  color:var(--gold);
-  font-size:18px;
-  font-weight:900;
-}
-
-.banner{
-  height:58px;
-  overflow:hidden;
-  position:relative;
-  color:var(--text);
-}
-
+.banner{height:58px;overflow:hidden;position:relative;color:var(--text)}
 .bannerInner{
   position:absolute;
   top:13px;
@@ -291,20 +133,8 @@ body{background:var(--bg);color:var(--text);padding:14px}
   align-items:center;
   gap:42px;
 }
-
-.tickerTV{
-  width:340px;
-  height:34px;
-  overflow:hidden;
-}
-
-.green{color:var(--green);font-weight:900}
-.red{color:var(--red);font-weight:900}
-
-@keyframes ticker{
-  from{transform:translateX(100%)}
-  to{transform:translateX(-100%)}
-}
+.tickerTV{width:360px;height:34px;overflow:hidden}
+@keyframes ticker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
 </style>
 </head>
 
@@ -318,13 +148,13 @@ body{background:var(--bg);color:var(--text);padding:14px}
     <div class="tvBox">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
         {
-          "symbol": "OANDA:XAUUSD",
+          "symbol": "FOREXCOM:XAUUSD",
           "width": "100%",
-          "locale": "ja",
+          "isTransparent": true,
           "colorTheme": "dark",
-          "isTransparent": true
+          "locale": "ja"
         }
         </script>
       </div>
@@ -354,22 +184,7 @@ body{background:var(--bg);color:var(--text);padding:14px}
 
   <div class="panel mapPanel">
     <div class="mapTitle">WORLD MONITOR</div>
-
-    <div class="worldFrame">
-      <iframe src="https://www.worldmonitor.app/?lat=-22.9997&lon=12.8906&zoom=1.00&view=global&timeRange=7d&layers=conflicts%2Cbases%2Chotspots%2Cnuclear%2Csanctions%2Cweather%2Ceconomic%2Cwaterways%2Coutages%2Cmilitary%2Cnatural%2CiranAttacks"></iframe>
-    </div>
-
-    <div class="session asia" id="asiaSession">
-      ASIA<br>07:00-15:00<br><span class="openMark">● OPEN</span>
-    </div>
-
-    <div class="session london" id="londonSession">
-      LONDON<br>15:00-21:00<br><span class="openMark">● OPEN</span>
-    </div>
-
-    <div class="session us" id="usSession">
-      US<br>21:00-06:00<br><span class="openMark">● OPEN</span>
-    </div>
+    <div id="map"></div>
   </div>
 
   <div class="panel newsPanel">
@@ -402,16 +217,15 @@ body{background:var(--bg);color:var(--text);padding:14px}
 </div>
 
 <div class="panel banner">
-  <div class="bannerInner" id="tickerText">
+  <div class="bannerInner">
     <span>XAUUSD WAR ROOM</span>
-
     <span class="tickerTV">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
         {
-          "symbol": "OANDA:XAUUSD",
-          "width": 340,
+          "symbol": "FOREXCOM:XAUUSD",
+          "width": 360,
           "isTransparent": true,
           "colorTheme": "dark",
           "locale": "ja"
@@ -419,7 +233,6 @@ body{background:var(--bg);color:var(--text);padding:14px}
         </script>
       </div>
     </span>
-
     <span>HIGH IMPACT NEWS</span>
     <span>REUTERS</span>
     <span>BLOOMBERG</span>
@@ -429,6 +242,8 @@ body{background:var(--bg);color:var(--text);padding:14px}
 </div>
 
 </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 const highImpactEvents=[
@@ -452,26 +267,19 @@ function getEventDate(e){
 
 function countdown(target){
   const diff=target-new Date();
-
   if(diff<-3600000)return null;
   if(diff<0)return"ENDED";
-
   const t=Math.floor(diff/1000);
   const d=Math.floor(t/86400);
   const h=Math.floor((t%86400)/3600);
   const m=Math.floor((t%3600)/60);
   const s=t%60;
-
-  if(d>0){
-    return `${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-  }
-
-  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 function isWithin24h(target){
   const diff=target-new Date();
-  return diff>0 && diff<=86400000;
+  return diff>0&&diff<=86400000;
 }
 
 function renderHighImpact(){
@@ -488,7 +296,7 @@ function renderHighImpact(){
     const cd=countdown(target);
     if(cd===null)return;
 
-    const blink=isWithin24h(target) ? "blink24" : "";
+    const blink=isWithin24h(target)?"blink24":"";
 
     list.innerHTML+=`
       <div class="newsRow ${blink}">
@@ -519,18 +327,8 @@ function renderHighImpact(){
 
 function updateClock(){
   const now=new Date();
-
-  document.getElementById("clock").textContent=
-    now.toLocaleTimeString("ja-JP",{hour12:false});
-
-  document.getElementById("dateText").textContent=
-    now.toLocaleDateString("ja-JP",{
-      year:"numeric",
-      month:"2-digit",
-      day:"2-digit",
-      weekday:"short"
-    });
-
+  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
+  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
   updateSession(now.getHours());
 }
 
@@ -540,41 +338,63 @@ function renderCalendar(){
   const m=now.getMonth();
   const grid=document.getElementById("calendarGrid");
 
-  document.getElementById("monthTitle").textContent=
-    `${y} / ${String(m+1).padStart(2,"0")}`;
-
+  document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
   grid.innerHTML="";
 
-  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
-    grid.innerHTML+=`<div class="calHead">${h}</div>`;
-  });
+  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>grid.innerHTML+=`<div class="calHead">${h}</div>`);
 
   const first=new Date(y,m,1);
   const last=new Date(y,m+1,0);
 
-  for(let i=0;i<first.getDay();i++){
-    grid.innerHTML+=`<div class="calDay"></div>`;
-  }
+  for(let i=0;i<first.getDay();i++)grid.innerHTML+=`<div class="calDay"></div>`;
+  for(let d=1;d<=last.getDate();d++)grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""}">${d}</div>`;
+}
 
-  for(let d=1;d<=last.getDate();d++){
-    grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""}">${d}</div>`;
-  }
+let sessionMarkers={};
+
+function sessionHtml(name,time,isOpen){
+  return `<div class="sessionLabel ${isOpen?'open':''}">
+    ${name}<br>${time}<br>${isOpen?'<span class="openText">● OPEN</span>':''}
+  </div>`;
 }
 
 function updateSession(hour){
-  ["asiaSession","londonSession","usSession"].forEach(id=>{
-    document.getElementById(id).classList.remove("open");
-  });
+  const asiaOpen=hour>=7&&hour<15;
+  const londonOpen=hour>=15&&hour<21;
+  const usOpen=hour>=21||hour<6;
 
-  if(hour>=7&&hour<15){
-    document.getElementById("asiaSession").classList.add("open");
-  }else if(hour>=15&&hour<21){
-    document.getElementById("londonSession").classList.add("open");
-  }else{
-    document.getElementById("usSession").classList.add("open");
+  if(sessionMarkers.asia){
+    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",asiaOpen),iconSize:[110,70]}));
+    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",londonOpen),iconSize:[120,70]}));
+    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",usOpen),iconSize:[110,70]}));
   }
 }
 
+function initMap(){
+  const map=L.map("map",{
+    zoomControl:false,
+    attributionControl:false,
+    dragging:false,
+    scrollWheelZoom:false,
+    doubleClickZoom:false,
+    boxZoom:false,
+    keyboard:false,
+    tap:false
+  }).setView([18,10],2);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:5,
+    minZoom:2
+  }).addTo(map);
+
+  sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",false),iconSize:[110,70]})}).addTo(map);
+  sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",false),iconSize:[120,70]})}).addTo(map);
+  sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",false),iconSize:[110,70]})}).addTo(map);
+
+  setTimeout(()=>map.invalidateSize(),300);
+}
+
+initMap();
 renderCalendar();
 updateClock();
 renderHighImpact();
