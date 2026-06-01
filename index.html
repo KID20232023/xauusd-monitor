@@ -10,277 +10,61 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#050505;
-  color:#e8edf2;
-  font-family:Arial,"Meiryo",sans-serif;
-}
+html,body{width:100%;height:100%;overflow:hidden;background:#050505;color:#e8edf2;font-family:Arial,"Meiryo",sans-serif}
 a{color:inherit;text-decoration:none}
+:root{--line:#222;--gold:#d9a441;--red:#ff3030;--orange:#ff8c1a;--yellow:#ffd54f;--blue:#2f8cff;--purple:#9b4dff;--green:#00e676}
 
-:root{
-  --line:#222;
-  --gold:#d9a441;
-  --red:#ff3030;
-  --orange:#ff8c1a;
-  --yellow:#ffd54f;
-  --blue:#2f8cff;
-  --purple:#9b4dff;
-  --green:#00e676;
-}
-
-.app{
-  height:100vh;
-  display:grid;
-  grid-template-rows:34px 1fr 250px 28px;
-  gap:2px;
-  background:#050505;
-}
-
-.topbar{
-  background:#0b0b0b;
-  border-bottom:1px solid #202020;
-  display:flex;
-  align-items:center;
-  gap:18px;
-  padding:0 10px;
-  font-size:13px;
-}
-
+.app{height:100vh;display:grid;grid-template-rows:34px 1fr 250px 28px;gap:2px;background:#050505}
+.topbar{background:#0b0b0b;border-bottom:1px solid #202020;display:flex;align-items:center;gap:18px;padding:0 10px;font-size:13px}
 .brand{color:#00d0aa;font-weight:900;font-size:17px}
-.centerTitle{
-  margin:auto;
-  background:#111;
-  border:1px solid #8a5d17;
-  color:#f2b84b;
-  border-radius:5px;
-  padding:5px 70px;
-  font-weight:900;
-}
+.centerTitle{margin:auto;background:#111;border:1px solid #8a5d17;color:#f2b84b;border-radius:5px;padding:5px 70px;font-weight:900}
 .live{color:var(--green)}
 
-.main{
-  display:grid;
-  grid-template-columns:155px 1fr;
-  gap:2px;
-  min-height:0;
-}
-
-.sidebar{
-  background:#0c0c0c;
-  border-right:1px solid #222;
-  padding:7px;
-  overflow:hidden;
-}
-
-.sideTitle{
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:6px;
-}
-
-.check{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  border-bottom:1px solid #202020;
-  padding:6px 0;
-  font-size:11px;
-}
+.main{display:grid;grid-template-columns:155px 1fr;gap:2px;min-height:0}
+.sidebar{background:#0c0c0c;border-right:1px solid #222;padding:7px;overflow:hidden}
+.sideTitle{font-size:12px;font-weight:900;margin-bottom:6px}
+.check{display:flex;align-items:center;gap:6px;border-bottom:1px solid #202020;padding:6px 0;font-size:11px}
 .check input{accent-color:#00c878}
 
-.mapArea{
-  display:grid;
-  grid-template-rows:1fr 250px;
-  gap:2px;
-  min-height:0;
-}
+.mapArea{display:grid;grid-template-rows:1fr 250px;gap:2px;min-height:0}
+.mapWrap{position:relative;background:#05070b;border:1px solid #202020;overflow:hidden}
+#map{width:100%;height:100%;background:#05070b}
+.leaflet-container{background:#05070b!important;filter:brightness(1.05) contrast(1.15) saturate(1)}
+.leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
 
-.mapWrap{
-  position:relative;
-  background:#05070b;
-  border:1px solid #202020;
-  overflow:hidden;
-}
+.mapTop{position:absolute;top:10px;left:12px;z-index:500;background:#080808d9;border:1px solid #222;border-radius:4px;padding:6px 10px;font-size:12px}
+.mapClock{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909d9;border:1px solid #222;border-radius:4px;padding:5px 16px;font-size:12px}
+.legend{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909e6;border:1px solid #222;border-radius:4px;padding:7px 14px;font-size:11px}
 
-#map{
-  width:100%;
-  height:100%;
-  background:#05070b;
-}
+.pulse{width:13px;height:13px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor,0 0 30px currentColor,0 0 70px currentColor,0 0 120px currentColor;position:relative}
+.pulse:after{content:"";position:absolute;inset:-22px;border:1px solid currentColor;border-radius:50%;animation:ripple 1.6s infinite}
+@keyframes ripple{from{transform:scale(.3);opacity:1}to{transform:scale(1.8);opacity:0}}
 
-.leaflet-container{
-  background:#05070b!important;
-  filter:brightness(1.05) contrast(1.15) saturate(1);
-}
-.leaflet-control-attribution,
-.leaflet-control-zoom{
-  display:none!important;
-}
+.sessionPulse{width:14px;height:14px;border-radius:50%;background:#00e676;box-shadow:0 0 15px #00e676,0 0 45px #00e676,0 0 95px #00e676;animation:sessionBlink 1s infinite}
+.sessionLabel{background:rgba(0,20,10,.92)!important;color:#00ff88!important;border:1px solid #00ff88!important;border-radius:6px!important;font-size:12px!important;font-weight:900!important;padding:7px 10px!important;box-shadow:0 0 18px rgba(0,255,136,.55)!important;animation:sessionBlink 1s infinite}
+@keyframes sessionBlink{0%,100%{opacity:1}50%{opacity:.35}}
 
-.mapTop{
-  position:absolute;
-  top:10px;
-  left:12px;
-  z-index:500;
-  background:#080808d9;
-  border:1px solid #222;
-  border-radius:4px;
-  padding:6px 10px;
-  font-size:12px;
-}
-
-.mapClock{
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:500;
-  background:#090909d9;
-  border:1px solid #222;
-  border-radius:4px;
-  padding:5px 16px;
-  font-size:12px;
-}
-
-.legend{
-  position:absolute;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:500;
-  background:#090909e6;
-  border:1px solid #222;
-  border-radius:4px;
-  padding:7px 14px;
-  font-size:11px;
-}
-
-.pulse{
-  width:13px;
-  height:13px;
-  border-radius:50%;
-  background:currentColor;
-  box-shadow:
-    0 0 12px currentColor,
-    0 0 30px currentColor,
-    0 0 70px currentColor,
-    0 0 120px currentColor;
-  position:relative;
-}
-
-.pulse:after{
-  content:"";
-  position:absolute;
-  inset:-22px;
-  border:1px solid currentColor;
-  border-radius:50%;
-  animation:ripple 1.6s infinite;
-}
-
-@keyframes ripple{
-  from{transform:scale(.3);opacity:1}
-  to{transform:scale(1.8);opacity:0}
-}
-
-.tooltip{
-  background:#080808e8!important;
-  color:#fff!important;
-  border:1px solid #333!important;
-  border-radius:4px!important;
-  font-size:11px!important;
-  padding:7px 9px!important;
-  box-shadow:0 0 15px #000!important;
-}
+.tooltip{background:#080808e8!important;color:#fff!important;border:1px solid #333!important;border-radius:4px!important;font-size:11px!important;padding:7px 9px!important;box-shadow:0 0 15px #000!important}
 .leaflet-tooltip:before{display:none!important}
 
-.footerPanels{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr;
-  gap:2px;
-}
+.footerPanels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+.panel{background:#0d0d0d;border:1px solid #222;padding:8px;overflow:hidden}
+.panelTitle{font-size:12px;font-weight:900;color:#fff;margin-bottom:8px;display:flex;justify-content:space-between}
 
-.panel,.videoBox{
-  background:#0d0d0d;
-  border:1px solid #222;
-  padding:8px;
-  overflow:hidden;
-}
+.tvBox{height:195px;overflow:hidden}
+.clockBox{height:195px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.clockTime{font-size:44px;font-weight:900;color:#fff;line-height:1}
+.clockDate{font-size:18px;color:#aaa;margin-top:12px}
 
-.panelTitle{
-  font-size:12px;
-  font-weight:900;
-  color:#fff;
-  margin-bottom:8px;
-  display:flex;
-  justify-content:space-between;
-}
+.bottom{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:2px}
+.item{display:block;border-bottom:1px solid #242424;padding:6px 0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-block;padding:1px 5px;border-radius:2px;margin-right:5px;font-weight:900}
+.h{background:#4b1010;color:#ff4d4d}.m{background:#3d2706;color:#ffb13b}.l{background:#06263f;color:#49a3ff}
 
-.videoThumb{
-  height:145px;
-  background:linear-gradient(135deg,#203750,#050505);
-  border:1px solid #333;
-  border-radius:4px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:15px;
-  font-weight:900;
-  color:#fff;
-}
-
-.bottom{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr 1fr;
-  gap:2px;
-}
-
-.item{
-  display:block;
-  border-bottom:1px solid #242424;
-  padding:6px 0;
-  font-size:11px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.badge{
-  display:inline-block;
-  padding:1px 5px;
-  border-radius:2px;
-  margin-right:5px;
-  font-weight:900;
-}
-.h{background:#4b1010;color:#ff4d4d}
-.m{background:#3d2706;color:#ffb13b}
-.l{background:#06263f;color:#49a3ff}
-
-.break{
-  display:flex;
-  align-items:center;
-  overflow:hidden;
-  background:#0a0a0a;
-  border-top:1px solid #222;
-}
-.break b{
-  background:#b00000;
-  color:#fff;
-  padding:8px 18px;
-  font-size:12px;
-}
-.ticker{
-  white-space:nowrap;
-  animation:flow 180s linear infinite;
-  font-size:12px;
-  padding-left:20px;
-}
-@keyframes flow{
-  from{transform:translateX(100%)}
-  to{transform:translateX(-100%)}
-}
+.break{display:flex;align-items:center;overflow:hidden;background:#0a0a0a;border-top:1px solid #222}
+.break b{background:#b00000;color:#fff;padding:8px 18px;font-size:12px}
+.ticker{white-space:nowrap;animation:flow 180s linear infinite;font-size:12px;padding-left:20px}
+@keyframes flow{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
 </style>
 </head>
 
@@ -299,7 +83,6 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <div class="main">
-
     <div class="sidebar">
       <div class="sideTitle">世界情報</div>
       <label class="check"><input type="checkbox" checked> インテリジェントスポット</label>
@@ -316,12 +99,12 @@ a{color:inherit;text-decoration:none}
     </div>
 
     <div class="mapArea">
-
       <div class="mapWrap">
         <div id="map"></div>
         <div class="mapTop">すべて</div>
         <div class="mapClock" id="mapClock">--:--:-- UTC</div>
         <div class="legend">
+          <span style="color:#00e676">● セッション</span>　
           <span style="color:#ff3030">● 高インパクト</span>　
           <span style="color:#ff8c1a">● 地政学</span>　
           <span style="color:#ffd54f">● 経済</span>　
@@ -331,18 +114,51 @@ a{color:inherit;text-decoration:none}
       </div>
 
       <div class="footerPanels">
-        <div class="videoBox">
-          <div class="panelTitle">ライブニュース <span class="live">● ライブ</span></div>
-          <a target="_blank" href="https://www.youtube.com/@BloombergTV/live">
-            <div class="videoThumb">Bloomberg TV Live</div>
-          </a>
+        <div class="panel">
+          <div class="panelTitle">XAUUSD</div>
+          <div class="tvBox">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+              {"symbol":"OANDA:XAUUSD","width":"100%","height":"195","colorTheme":"dark","isTransparent":true,"locale":"ja"}
+              </script>
+            </div>
+          </div>
         </div>
 
-        <div class="panel"><div class="panelTitle">AIインサイト</div><div id="aiNews"></div></div>
-        <div class="panel"><div class="panelTitle">AI検知脅威</div><div id="riskNews"></div></div>
-        <div class="panel"><div class="panelTitle">国別不安定指数</div><div id="hotNews"></div></div>
-      </div>
+        <div class="panel">
+          <div class="panelTitle">HIGH IMPACT NEWS</div>
+          <div class="tvBox">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+              {
+                "symbols":[
+                  {"proName":"OANDA:XAUUSD","title":"XAUUSD"},
+                  {"proName":"TVC:DXY","title":"DXY"},
+                  {"proName":"TVC:US10Y","title":"US10Y"},
+                  {"proName":"FX_IDC:USDJPY","title":"USDJPY"},
+                  {"proName":"BITSTAMP:BTCUSD","title":"BTCUSD"}
+                ],
+                "showSymbolLogo":false,
+                "colorTheme":"dark",
+                "isTransparent":true,
+                "displayMode":"adaptive",
+                "locale":"ja"
+              }
+              </script>
+            </div>
+          </div>
+        </div>
 
+        <div class="panel">
+          <div class="panelTitle">JST CLOCK</div>
+          <div class="clockBox">
+            <div id="jstClock" class="clockTime">--:--:--</div>
+            <div id="jstDate" class="clockDate">----</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -373,6 +189,14 @@ function clock(){
     hour12:false
   }).format(now);
 
+  const date=new Intl.DateTimeFormat("ja-JP",{
+    timeZone:"Asia/Tokyo",
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit",
+    weekday:"short"
+  }).format(now);
+
   const utc=new Intl.DateTimeFormat("en-GB",{
     timeZone:"UTC",
     hour:"2-digit",
@@ -382,6 +206,8 @@ function clock(){
   }).format(now);
 
   document.getElementById("jstTop").textContent=jst;
+  document.getElementById("jstClock").textContent=jst;
+  document.getElementById("jstDate").textContent=date;
   document.getElementById("mapClock").textContent=utc+" UTC";
 }
 setInterval(clock,1000);
@@ -399,10 +225,7 @@ const map=L.map("map",{
 
 L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-  {
-    subdomains:"abcd",
-    maxZoom:19
-  }
+  {subdomains:"abcd",maxZoom:19}
 ).addTo(map);
 
 const colors={
@@ -423,40 +246,65 @@ function add(lat,lng,color,title,body,dir="top",offset=[0,-10]){
 
   const m=L.marker([lat,lng],{icon}).addTo(map);
 
+  m.bindTooltip(`<b>${title}</b><br>${body}`,{
+    permanent:false,
+    direction:dir,
+    offset,
+    className:"tooltip"
+  });
+
+  m.on("click",()=>{
+    window.open("https://news.google.com/search?q="+encodeURIComponent(title+" XAUUSD gold"),"_blank");
+  });
+}
+
+function addSession(lat,lng,title,open,close,dir="top",offset=[0,-10]){
+  const icon=L.divIcon({
+    className:"",
+    html:`<div class="sessionPulse"></div>`,
+    iconSize:[26,26],
+    iconAnchor:[13,13]
+  });
+
+  const m=L.marker([lat,lng],{icon}).addTo(map);
+
   m.bindTooltip(
-    `<b>${title}</b><br>${body}`,
+    `<b>${title}</b><br>OPEN ${open} JST<br>CLOSE ${close} JST`,
     {
-      permanent:false,
+      permanent:true,
       direction:dir,
       offset,
-      className:"tooltip"
+      className:"sessionLabel"
     }
   );
 
   m.on("click",()=>{
-    window.open(
-      "https://news.google.com/search?q="+encodeURIComponent(title+" gold XAUUSD"),
-      "_blank"
-    );
+    window.open("https://www.tradingview.com/symbols/OANDA-XAUUSD/","_blank");
   });
 }
 
-add(50,31,"red","Ukraine Conflict","Conflict Zone","top");
-add(31,45,"orange","Middle East","Geopolitical Risk","right");
-add(39,-77,"blue","Washington DC","FRB / Policy","right");
-add(40,-74,"purple","New York","Market / CPI / NFP","bottom");
-add(51.5,-0.1,"blue","London","Financial Market","top");
-add(35.6,139.7,"purple","Tokyo","Market / Gold","left");
-add(39,116,"yellow","Beijing","China Demand","left");
-add(1.3,103.8,"blue","Singapore","Asia Flow","bottom");
-add(-33,151,"orange","Australia","Resources","top");
-add(31,35,"red","Israel","Conflict Watch","right");
-add(24,54,"orange","UAE","Oil / Gold Flow","bottom");
-add(28,77,"yellow","India","Gold Demand","top");
-add(-23,-46,"orange","Brazil","Commodity Flow","top");
-add(19,-99,"orange","Mexico","Trade / USD","bottom");
-add(48,14,"blue","EU","ECB / Rates","bottom");
-add(55,37,"red","Russia","Sanctions / Energy","top");
+/* 日本語地図説明 */
+add(50,31,"red","ウクライナ","地政学リスク / 戦争リスク","top");
+add(31,45,"orange","中東","地政学リスク / 原油・安全資産","right");
+add(39,-77,"blue","ワシントンDC","FRB / 金融政策 / 金利材料","right");
+add(40,-74,"purple","ニューヨーク","米国市場 / CPI・NFP・ドル材料","bottom");
+add(51.5,-0.1,"blue","ロンドン","欧州市場 / 金融市場 / 出来高","top");
+add(35.6,139.7,"purple","東京","アジア市場 / 円金利 / 東京時間","left");
+add(39,116,"yellow","北京","中国経済 / 金需要 / 中央銀行買い","left");
+add(1.3,103.8,"blue","シンガポール","アジア資金フロー / 市場監視","bottom");
+add(-33,151,"orange","オーストラリア","資源国 / コモディティ材料","top");
+add(31,35,"red","イスラエル","中東紛争 / 安全資産買い","right");
+add(24,54,"orange","UAE","原油・金フロー / 中東市場","bottom");
+add(28,77,"yellow","インド","金需要 / 実需買い","top");
+add(-23,-46,"orange","ブラジル","資源国 / コモディティフロー","top");
+add(19,-99,"orange","メキシコ","貿易・ドル材料","bottom");
+add(48,14,"blue","EU","ECB / 欧州金利 / 経済指標","bottom");
+add(55,37,"red","ロシア","制裁・エネルギー・地政学リスク","top");
+
+/* セッション点滅 */
+addSession(35.6,139.7,"アジアセッション","08:00","17:00","right",[20,0]);
+addSession(51.5,-0.1,"ロンドンセッション","16:00","01:00","top",[0,-18]);
+addSession(40.7,-74,"米国セッション","21:30","06:00","bottom",[0,20]);
 
 const fallback=[
  ["高","ウクライナ情勢、ロシアの攻撃激化で避難指示拡大","https://news.google.com/search?q=Ukraine+war+gold"],
@@ -474,7 +322,7 @@ function render(id,items=fallback){
   `).join("");
 }
 
-["aiNews","riskNews","hotNews","mena","africa","latam","asia","energy"].forEach(id=>render(id));
+["mena","africa","latam","asia","energy"].forEach(id=>render(id));
 
 async function loadNews(){
   try{
@@ -492,9 +340,6 @@ async function loadNews(){
     ]);
 
     if(items.length){
-      render("aiNews",items.slice(0,4));
-      render("riskNews",items.slice(1,5));
-      render("hotNews",items.slice(2,6));
       render("mena",items.slice(0,4));
       render("africa",items.slice(1,5));
       render("latam",items.slice(2,6));
