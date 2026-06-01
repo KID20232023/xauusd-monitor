@@ -82,6 +82,7 @@ a{color:inherit;text-decoration:none}
 .modalText{font-size:15px;line-height:1.8}
 .modalText a{color:#00e676;text-decoration:underline}
 .modalClose{margin-top:16px;background:#101820;border:1px solid #333;color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer}
+.hiddenPanel{display:none!important}
 </style>
 </head>
 
@@ -102,10 +103,10 @@ a{color:inherit;text-decoration:none}
   <div class="main">
     <div class="sidebar">
       <div class="sideTitle">世界情報</div>
-      <label class="check"><input type="checkbox" checked> インテリジェントスポット</label>
-      <label class="check"><input type="checkbox" checked> 紛争地域</label>
-      <label class="check"><input type="checkbox" checked> 重要指標</label>
-      <label class="check"><input type="checkbox" checked> 原油・金利</label>
+      <label class="check"><input id="intelToggle" type="checkbox" checked onchange="toggleIntelligence(this.checked)"> インテリジェントスポット</label>
+      <label class="check"><input id="conflictToggle" type="checkbox" checked onchange="toggleLayer('conflict',this.checked)"> 紛争地域</label>
+      <label class="check"><input id="economicToggle" type="checkbox" checked onchange="toggleLayer('economic',this.checked)"> 重要指標</label>
+      <label class="check"><input id="oilToggle" type="checkbox" checked onchange="toggleLayer('oilrate',this.checked)"> 原油・金利</label>
       <label class="check"><input type="checkbox"> 為替・通貨</label>
       <label class="check"><input type="checkbox"> 供給網</label>
       <label class="check"><input type="checkbox"> AIデータセンター</label>
@@ -135,7 +136,7 @@ a{color:inherit;text-decoration:none}
           <div id="highImpactJP" class="impactBox"></div>
         </div>
 
-        <div class="panel">
+        <div class="panel" id="guidePanel">
           <div class="panelTitle">FLASHPOINT GUIDE</div>
           <div class="guideBox" id="guideBox"></div>
         </div>
@@ -188,9 +189,17 @@ const map=L.map("map",{
 
 L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19}).addTo(map);
 
+const layers={
+  intelligence:L.layerGroup().addTo(map),
+  conflict:L.layerGroup().addTo(map),
+  economic:L.layerGroup().addTo(map),
+  oilrate:L.layerGroup().addTo(map),
+  session:L.layerGroup().addTo(map)
+};
+
 const colors={red:"#ff3030",orange:"#ff8c1a",yellow:"#ffd54f",blue:"#2f8cff",purple:"#9b4dff"};
 
-function add(lat,lng,color,title,body,dir="top",offset=[0,-10]){
+function add(layerName,lat,lng,color,title,body,dir="top",offset=[0,-10]){
   const icon=L.divIcon({
     className:"",
     html:`<div class="pulse" style="color:${colors[color]}"></div>`,
@@ -198,7 +207,7 @@ function add(lat,lng,color,title,body,dir="top",offset=[0,-10]){
     iconAnchor:[12,12]
   });
 
-  const m=L.marker([lat,lng],{icon}).addTo(map);
+  const m=L.marker([lat,lng],{icon}).addTo(layers[layerName]);
 
   m.bindTooltip(`<b>${title}</b><br>${body}`,{
     permanent:false,
@@ -220,7 +229,7 @@ function addSession(lat,lng,title,open,close,dir="top",offset=[0,-10]){
     iconAnchor:[13,13]
   });
 
-  const m=L.marker([lat,lng],{icon}).addTo(map);
+  const m=L.marker([lat,lng],{icon}).addTo(layers.session);
 
   m.bindTooltip(`<b>${title}</b><br>OPEN ${open} JST<br>CLOSE ${close} JST`,{
     permanent:true,
@@ -234,23 +243,72 @@ function addSession(lat,lng,title,open,close,dir="top",offset=[0,-10]){
   });
 }
 
-add(50,31,"red","ウクライナ","地政学リスク / 戦争リスク","top");
-add(31,45,"orange","中東","地政学リスク / 原油・安全資産","right");
-add(39,-77,"blue","ワシントンDC","FRB / 金融政策 / 金利材料","right");
-add(40,-74,"purple","ニューヨーク","米国市場 / CPI・NFP・ドル材料","bottom");
-add(51.5,-0.1,"blue","ロンドン","欧州市場 / 金融市場 / 出来高","top");
-add(35.6,139.7,"purple","東京","アジア市場 / 円金利 / 東京時間","left");
-add(39,116,"yellow","北京","中国経済 / 金需要 / 中央銀行買い","left");
-add(1.3,103.8,"blue","シンガポール","アジア資金フロー / 市場監視","bottom");
-add(-33,151,"orange","オーストラリア","資源国 / コモディティ材料","top");
-add(31,35,"red","イスラエル","中東紛争 / 安全資産買い","right");
-add(24,54,"orange","UAE","原油・金フロー / 中東市場","bottom");
-add(28,77,"yellow","インド","金需要 / 実需買い","top");
-add(-23,-46,"orange","ブラジル","資源国 / コモディティフロー","top");
-add(19,-99,"orange","メキシコ","貿易・ドル材料","bottom");
-add(48,14,"blue","EU","ECB / 欧州金利 / 経済指標","bottom");
-add(55,37,"red","ロシア","制裁・エネルギー・地政学リスク","top");
+function toggleLayer(name,state){
+  if(state){
+    map.addLayer(layers[name]);
+  }else{
+    map.removeLayer(layers[name]);
+  }
+}
 
+function toggleIntelligence(state){
+  const guidePanel=document.getElementById("guidePanel");
+
+  if(state){
+    map.addLayer(layers.intelligence);
+    map.addLayer(layers.session);
+    guidePanel.classList.remove("hiddenPanel");
+
+    document.getElementById("conflictToggle").checked=true;
+    document.getElementById("economicToggle").checked=true;
+    document.getElementById("oilToggle").checked=true;
+
+    map.addLayer(layers.conflict);
+    map.addLayer(layers.economic);
+    map.addLayer(layers.oilrate);
+  }else{
+    map.removeLayer(layers.intelligence);
+    map.removeLayer(layers.session);
+    map.removeLayer(layers.conflict);
+    map.removeLayer(layers.economic);
+    map.removeLayer(layers.oilrate);
+    guidePanel.classList.add("hiddenPanel");
+
+    document.getElementById("conflictToggle").checked=false;
+    document.getElementById("economicToggle").checked=false;
+    document.getElementById("oilToggle").checked=false;
+  }
+}
+
+/* インテリジェントスポット */
+add("intelligence",40,-74,"purple","ニューヨーク","米国市場 / CPI・NFP・ドル材料","bottom");
+add("intelligence",51.5,-0.1,"blue","ロンドン","欧州市場 / 金融市場 / 出来高","top");
+add("intelligence",35.6,139.7,"purple","東京","アジア市場 / 円金利 / 東京時間","left");
+add("intelligence",1.3,103.8,"blue","シンガポール","アジア資金フロー / 市場監視","bottom");
+add("intelligence",25.2,55.3,"orange","ドバイ","中東資金フロー / ゴールド市場","bottom");
+add("intelligence",22.3,114.1,"blue","香港","中国・アジア資金フロー","right");
+
+/* 紛争地域 */
+add("conflict",50,31,"red","ウクライナ","地政学リスク / 戦争リスク","top");
+add("conflict",31,35,"red","イスラエル","中東紛争 / 安全資産買い","right");
+add("conflict",32,53,"orange","イラン","中東緊張 / 原油リスク","right");
+add("conflict",55,37,"red","ロシア","制裁・エネルギー・地政学リスク","top");
+add("conflict",24,121,"orange","台湾","アジア地政学リスク","top");
+
+/* 重要指標 */
+add("economic",39,-77,"blue","ワシントンDC","FRB / 金融政策 / 金利材料","right");
+add("economic",39,116,"yellow","北京","中国経済 / 金需要 / 中央銀行買い","left");
+add("economic",48,14,"blue","EU","ECB / 欧州金利 / 経済指標","bottom");
+
+/* 原油・金利 */
+add("oilrate",31,45,"orange","中東","地政学リスク / 原油・安全資産","right");
+add("oilrate",24,54,"orange","UAE","原油・金フロー / 中東市場","bottom");
+add("oilrate",28,77,"yellow","インド","金需要 / 実需買い","top");
+add("oilrate",-33,151,"orange","オーストラリア","資源国 / コモディティ材料","top");
+add("oilrate",-23,-46,"orange","ブラジル","資源国 / コモディティフロー","top");
+add("oilrate",19,-99,"orange","メキシコ","貿易・ドル材料","bottom");
+
+/* セッション */
 addSession(35.6,139.7,"アジアセッション","08:00","17:00","right",[20,0]);
 addSession(51.5,-0.1,"ロンドンセッション","16:00","01:00","top",[0,-18]);
 addSession(40.7,-74,"米国セッション","21:30","06:00","bottom",[0,20]);
