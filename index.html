@@ -4,404 +4,511 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XAUUSD WAR ROOM</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#050505;
-  --panel:#0b0b0b;
-  --panel2:#111;
-  --border:#202020;
-  --text:#8a8a8a;
-  --muted:#5c5c5c;
-  --gold:#b89b5e;
-  --green:#00ff88;
-  --red:#ff2d2d;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{background:var(--bg);color:var(--text);padding:14px}
-
-.wrap{max-width:1780px;margin:0 auto}
-.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:12px;padding:14px}
-
-.top{display:grid;grid-template-columns:1fr 1.55fr 1.25fr;gap:14px;margin-bottom:14px}
-.label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:800;margin-bottom:8px}
-
-.tvBox{height:145px;overflow:hidden}
-
-.clockCal{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px}
-.clock{font-size:42px;font-weight:900;color:var(--text)}
-.date{margin-top:8px;font-size:14px;color:var(--text)}
-
-.monthTitle{text-align:center;font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}
-.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.calHead,.calDay{text-align:center;font-size:11px;color:var(--text);padding:5px 0}
-.calHead{color:var(--muted)}
-.today{background:rgba(255,45,45,.14);border:1px solid rgba(255,45,45,.35);border-radius:6px}
-
-.todayTopList{height:130px;overflow:hidden}
-.todayItem{border-bottom:1px solid #181818;padding:8px 0;font-size:12px}
-.todayMain{display:grid;grid-template-columns:62px 1fr 78px;gap:8px;align-items:center}
-.todayDate{color:var(--gold);font-weight:900}
-.todayEvent{color:var(--text);font-weight:900}
-.todayCount{color:var(--red);font-weight:900;text-align:right}
-.todaySub{color:var(--muted);margin-top:5px;font-size:11px}
-
-.main{display:grid;grid-template-columns:52% 48%;gap:14px;margin-bottom:14px}
-.mapPanel{height:480px;position:relative;overflow:hidden}
-.mapTitle{position:absolute;top:14px;left:16px;z-index:50;color:var(--text);font-size:13px;font-weight:800;letter-spacing:1px}
-
-#map{
-  position:absolute;
-  left:14px;
-  right:14px;
-  top:48px;
-  bottom:14px;
-  border:1px solid #171717;
-  border-radius:10px;
-  overflow:hidden;
-  background:#050505;
-}
-
-.leaflet-control-attribution,
-.leaflet-control-zoom{display:none!important}
-
-.sessionLabel{
-  color:var(--text);
-  background:rgba(5,5,5,.82);
-  border:1px solid rgba(184,155,94,.28);
-  border-radius:8px;
-  padding:8px 10px;
-  font-size:12px;
-  line-height:1.45;
-  letter-spacing:.8px;
-  text-align:center;
-  min-width:96px;
-}
-
-.sessionLabel.open{
-  border-color:rgba(255,45,45,.7);
-}
-
-.openText{
-  color:var(--red);
-  font-weight:900;
-  animation:redPulse 1s infinite;
-}
-
-.blink24{
-  animation:redPulse 1s infinite;
-}
-
-@keyframes redPulse{
-  0%{opacity:1;text-shadow:0 0 5px var(--red)}
-  50%{opacity:.25;text-shadow:0 0 20px var(--red)}
-  100%{opacity:1;text-shadow:0 0 5px var(--red)}
-}
-
-.newsPanel{height:480px;overflow:hidden}
-.newsHead,.newsRow{
-  display:grid;
-  grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
-  gap:8px;
-  align-items:center;
-}
-.newsHead{padding:10px 0;border-bottom:1px solid #1b1b1b;font-size:11px;color:var(--muted)}
-.newsRow{padding:9px 0;border-bottom:1px solid #181818;font-size:12px}
-.eventCell{font-weight:800;color:var(--text)}
-.impactCell{color:var(--red);font-weight:900}
-.countCell{color:var(--gold);font-weight:900}
-.redCount{color:var(--red)!important}
-
-.intel{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:14px}
-.intelCard{height:96px}
-.intelTitle{color:var(--text);font-size:12px;font-weight:900;margin-bottom:16px}
-.intelStatus{color:var(--gold);font-size:18px;font-weight:900}
-
-.banner{height:58px;overflow:hidden;position:relative;color:var(--text)}
-.bannerInner{
-  position:absolute;
-  top:13px;
-  white-space:nowrap;
-  animation:ticker 42s linear infinite;
-  color:var(--text);
-  font-size:13px;
-  letter-spacing:1.1px;
-  display:flex;
-  align-items:center;
-  gap:42px;
-}
-.tickerTV{width:360px;height:34px;overflow:hidden}
-@keyframes ticker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+  :root {
+    --gold: #C9A84C;
+    --gold-bright: #F0C040;
+    --gold-dim: #7A5F28;
+    --gold-ultra: #FFD700;
+    --bg-void: #020202;
+    --bg-deep: #080806;
+    --bg-panel: #0D0D0A;
+    --bg-card: #111108;
+    --border-gold: rgba(201,168,76,0.3);
+    --border-gold-bright: rgba(201,168,76,0.7);
+    --red: #FF3B3B;
+    --green: #00FF88;
+    --red-dim: rgba(255,59,59,0.15);
+    --green-dim: rgba(0,255,136,0.1);
+    --text-primary: #F5EDD4;
+    --text-secondary: #9A8A60;
+    --text-dim: #4A4030;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 30% 60% at 0% 50%, rgba(201,168,76,0.02) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 60% at 100% 50%, rgba(201,168,76,0.02) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    padding: 12px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 10px;
+    min-height: 100vh;
+  }
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    border-bottom: 1px solid var(--border-gold);
+    padding-bottom: 10px;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .system-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--gold-dim); letter-spacing: 4px; }
+  .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 8px; color: var(--gold); line-height: 1; text-shadow: 0 0 30px rgba(201,168,76,0.3); }
+  .subtitle { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-secondary); letter-spacing: 6px; }
+  .header-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .price-main { font-family: 'Bebas Neue', sans-serif; font-size: 72px; line-height: 1; letter-spacing: 2px; transition: color 0.3s; }
+  .price-main.up { color: var(--green); text-shadow: 0 0 20px rgba(0,255,136,0.4); }
+  .price-main.down { color: var(--red); text-shadow: 0 0 20px rgba(255,59,59,0.4); }
+  .price-change { font-family: 'Share Tech Mono', monospace; font-size: 14px; letter-spacing: 2px; }
+  .price-change.up { color: var(--green); }
+  .price-change.down { color: var(--red); }
+  .price-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 4px; }
+  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .clock { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--gold); letter-spacing: 4px; line-height: 1; }
+  .clock-date { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-secondary); letter-spacing: 3px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); display: inline-block; animation: pulse 2s infinite; }
+  .live-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--green); letter-spacing: 3px; display: flex; align-items: center; gap: 6px; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .price-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border-gold); padding: 10px 14px; position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .stat-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 3px; margin-bottom: 4px; }
+  .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--gold-bright); line-height: 1; }
+  .stat-value.up { color: var(--green); }
+  .stat-value.down { color: var(--red); }
+  .stat-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-secondary); margin-top: 2px; }
+  .main-grid { display: grid; grid-template-columns: 280px 1fr 300px; gap: 10px; }
+  .panel { background: var(--bg-panel); border: 1px solid var(--border-gold); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+  .panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-bright), transparent); }
+  .panel-header { padding: 8px 14px; border-bottom: 1px solid var(--border-gold); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 4px; color: var(--gold); }
+  .panel-badge { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; border: 1px solid var(--border-gold); padding: 2px 6px; }
+  .panel-body { padding: 10px; flex: 1; overflow-y: auto; }
+  .panel-body::-webkit-scrollbar { width: 2px; }
+  .panel-body::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+  .session-item { padding: 10px 0; border-bottom: 1px solid rgba(201,168,76,0.1); display: flex; flex-direction: column; gap: 4px; }
+  .session-item:last-child { border-bottom: none; }
+  .session-top { display: flex; justify-content: space-between; align-items: center; }
+  .session-name { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px; color: var(--text-primary); }
+  .session-status { font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 8px; letter-spacing: 2px; }
+  .session-status.open { color: var(--green); border: 1px solid rgba(0,255,136,0.4); background: rgba(0,255,136,0.05); }
+  .session-status.closed { color: var(--text-dim); border: 1px solid var(--text-dim); }
+  .session-time { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-secondary); letter-spacing: 2px; }
+  .session-bar-bg { height: 2px; background: rgba(201,168,76,0.1); border-radius: 1px; overflow: hidden; }
+  .session-bar-fill { height: 100%; background: var(--gold); border-radius: 1px; transition: width 1s linear; }
+  .session-bar-fill.open { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .vol-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(201,168,76,0.07); font-family: 'Share Tech Mono', monospace; font-size: 11px; }
+  .vol-label { color: var(--text-secondary); width: 30px; letter-spacing: 1px; }
+  .vol-bar-bg { flex: 1; height: 3px; background: rgba(201,168,76,0.1); position: relative; }
+  .vol-bar-fill { height: 100%; background: var(--gold); transition: width 1s; }
+  .vol-val { color: var(--gold-bright); width: 40px; text-align: right; }
+  .center-panel { display: flex; flex-direction: column; gap: 10px; }
+  .watchlist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .watch-card { background: var(--bg-card); border: 1px solid var(--border-gold); padding: 10px 12px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+  .watch-card:hover { border-color: var(--gold); }
+  .watch-card.highlight { border-color: var(--gold-bright); background: rgba(201,168,76,0.04); }
+  .watch-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); }
+  .wc-symbol { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 2px; color: var(--text-secondary); margin-bottom: 2px; }
+  .wc-price { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; line-height: 1; }
+  .wc-price.up { color: var(--green); }
+  .wc-price.down { color: var(--red); }
+  .wc-price.neu { color: var(--gold-bright); }
+  .wc-chg { font-family: 'Share Tech Mono', monospace; font-size: 10px; margin-top: 2px; }
+  .wc-chg.up { color: var(--green); }
+  .wc-chg.down { color: var(--red); }
+  .news-feed { display: flex; flex-direction: column; gap: 0; }
+  .news-item { padding: 10px 0; border-bottom: 1px solid rgba(201,168,76,0.1); display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; transition: background 0.2s; }
+  .news-item:hover { background: rgba(201,168,76,0.03); }
+  .news-impact { font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 5px; letter-spacing: 1px; margin-top: 2px; white-space: nowrap; }
+  .news-impact.high { color: var(--red); border: 1px solid rgba(255,59,59,0.5); background: rgba(255,59,59,0.08); }
+  .news-impact.med { color: var(--gold); border: 1px solid rgba(201,168,76,0.4); background: rgba(201,168,76,0.05); }
+  .news-impact.low { color: var(--text-dim); border: 1px solid var(--text-dim); }
+  .news-headline { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.3; letter-spacing: 0.5px; }
+  .news-meta { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); margin-top: 3px; letter-spacing: 1px; }
+  .news-time { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-secondary); white-space: nowrap; letter-spacing: 1px; }
+  .event-item { padding: 10px 0; border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .event-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .event-name { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; flex: 1; margin-right: 8px; }
+  .event-tag { font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 5px; letter-spacing: 1px; }
+  .event-tag.high { color: var(--red); border: 1px solid rgba(255,59,59,0.5); background: rgba(255,59,59,0.08); }
+  .event-tag.med { color: var(--gold); border: 1px solid rgba(201,168,76,0.4); }
+  .event-vals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 4px; }
+  .event-val-box { background: rgba(201,168,76,0.04); border: 1px solid rgba(201,168,76,0.12); padding: 4px 6px; text-align: center; }
+  .event-val-lbl { font-family: 'Share Tech Mono', monospace; font-size: 8px; color: var(--text-dim); letter-spacing: 1px; }
+  .event-val-num { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--gold-bright); }
+  .event-date { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-secondary); letter-spacing: 2px; }
+  .alert-bar { background: var(--bg-card); border: 1px solid var(--border-gold); border-top: 1px solid var(--gold-bright); display: flex; align-items: center; overflow: hidden; height: 32px; }
+  .alert-label { background: var(--gold); color: var(--bg-void); font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 3px; padding: 0 14px; height: 100%; display: flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
+  .ticker-wrap { flex: 1; overflow: hidden; height: 100%; display: flex; align-items: center; }
+  .ticker-inner { display: flex; animation: ticker 40s linear infinite; white-space: nowrap; }
+  .ticker-item { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-secondary); padding: 0 30px; letter-spacing: 1px; border-right: 1px solid var(--border-gold); }
+  .ticker-item .hi { color: var(--gold-bright); }
+  .ticker-item .up { color: var(--green); }
+  .ticker-item .dn { color: var(--red); }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .flag-card { background: var(--bg-card); border: 1px solid var(--border-gold); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .flag-name { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 3px; color: var(--text-secondary); }
+  .flag-watch { font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 6px; letter-spacing: 2px; animation: watchBlink 3s ease-in-out infinite; }
+  @keyframes watchBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  * { scrollbar-width: thin; scrollbar-color: var(--gold-dim) transparent; }
 </style>
 </head>
-
 <body>
-<div class="wrap">
+<div class="wrapper">
 
-<div class="top">
+  <header class="header">
+    <div class="header-left">
+      <span class="system-label">▸ TACTICAL COMMAND CENTER</span>
+      <div class="main-title">XAUUSD</div>
+      <span class="subtitle">GOLD / US DOLLAR · SPOT MARKET</span>
+    </div>
+    <div class="header-center">
+      <span class="price-label">SPOT PRICE · USD/OZ</span>
+      <div class="price-main down" id="mainPrice">4,485.64</div>
+      <div class="price-change down" id="mainChange">▼ 54.53 (−1.20%)</div>
+      <div class="live-label"><span class="status-dot"></span>LIVE FEED</div>
+    </div>
+    <div class="header-right">
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="clock-date" id="clockDate">JST / TOKYO</div>
+    </div>
+  </header>
 
-  <div class="panel">
-    <div class="label">XAUUSD</div>
-    <div class="tvBox">
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {
-          "symbol": "FOREXCOM:XAUUSD",
-          "width": "100%",
-          "isTransparent": true,
-          "colorTheme": "dark",
-          "locale": "ja"
-        }
-        </script>
+  <div class="price-row">
+    <div class="stat-card">
+      <div class="stat-label">◆ DAY HIGH</div>
+      <div class="stat-value" id="dayHigh">4,542.10</div>
+      <div class="stat-sub">+1.24% FROM OPEN</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">◆ DAY LOW</div>
+      <div class="stat-value" id="dayLow">4,481.30</div>
+      <div class="stat-sub">−0.12% FROM OPEN</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">◆ BID / ASK</div>
+      <div class="stat-value" id="bidAsk">4,485.20 / 4,486.10</div>
+      <div class="stat-sub">SPREAD: 0.90</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">◆ 52W HIGH</div>
+      <div class="stat-value up">4,801.50</div>
+      <div class="stat-sub">−315.86 FROM HIGH</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">◆ 52W LOW</div>
+      <div class="stat-value">3,167.20</div>
+      <div class="stat-sub">+1,318.44 FROM LOW</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">◆ ATR(14)</div>
+      <div class="stat-value" id="atr">42.8</div>
+      <div class="stat-sub">DAILY RANGE AVG</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="panel" style="flex:1;">
+        <div class="panel-header">
+          <span class="panel-title">MARKET SESSIONS</span>
+          <span class="panel-badge" id="sessionBadge">JST</span>
+        </div>
+        <div class="panel-body" id="sessionPanel"></div>
+      </div>
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="panel-header">
+          <span class="panel-title">INTRADAY VOLATILITY</span>
+          <span class="panel-badge">ATR BASED</span>
+        </div>
+        <div class="panel-body" id="volPanel"></div>
+      </div>
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="panel-header">
+          <span class="panel-title">CORRELATIONS</span>
+          <span class="panel-badge">LIVE</span>
+        </div>
+        <div class="panel-body" id="corrPanel"></div>
       </div>
     </div>
-  </div>
 
-  <div class="panel clockCal">
-    <div>
-      <div class="label">JST CLOCK</div>
-      <div class="clock" id="clock">00:00:00</div>
-      <div class="date" id="dateText">----</div>
-    </div>
-    <div>
-      <div class="monthTitle" id="monthTitle">----</div>
-      <div class="calGrid" id="calendarGrid"></div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="label">TODAY HIGH IMPACT</div>
-    <div class="todayTopList" id="todayImpactTop"></div>
-  </div>
-
-</div>
-
-<div class="main">
-
-  <div class="panel mapPanel">
-    <div class="mapTitle">WORLD MONITOR</div>
-    <div id="map"></div>
-  </div>
-
-  <div class="panel newsPanel">
-    <div class="label">HIGH IMPACT NEWS</div>
-
-    <div class="newsHead">
-      <div>DATE</div>
-      <div>TIME</div>
-      <div>EVENT</div>
-      <div>IMPACT</div>
-      <div>予想</div>
-      <div>前回</div>
-      <div>COUNT</div>
-    </div>
-
-    <div id="highImpactList"></div>
-  </div>
-
-</div>
-
-<div class="intel">
-  <div class="panel intelCard"><div class="intelTitle">MIDDLE EAST</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">RED SEA</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">UKRAINE</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">TAIWAN</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">FED</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">CENTRAL BANK</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">ENERGY</div><div class="intelStatus">WATCH</div></div>
-  <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
-</div>
-
-<div class="panel banner">
-  <div class="bannerInner">
-    <span>XAUUSD WAR ROOM</span>
-    <span class="tickerTV">
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-        {
-          "symbol": "FOREXCOM:XAUUSD",
-          "width": 360,
-          "isTransparent": true,
-          "colorTheme": "dark",
-          "locale": "ja"
-        }
-        </script>
+    <div class="center-panel">
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="panel-header">
+          <span class="panel-title">RELATED INSTRUMENTS</span>
+          <span class="panel-badge" id="wlTime">--:--</span>
+        </div>
+        <div class="panel-body">
+          <div class="watchlist-grid" id="watchlistGrid"></div>
+        </div>
       </div>
-    </span>
-    <span>HIGH IMPACT NEWS</span>
-    <span>REUTERS</span>
-    <span>BLOOMBERG</span>
-    <span>FOREXLIVE</span>
-    <span>XAUUSD WAR ROOM</span>
+      <div class="panel" style="flex:1;min-height:0;">
+        <div class="panel-header">
+          <span class="panel-title">MARKET INTELLIGENCE</span>
+          <span class="panel-badge" id="newsCount">0 ITEMS</span>
+        </div>
+        <div class="panel-body" id="newsPanel"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="panel" style="flex:1;">
+        <div class="panel-header">
+          <span class="panel-title">HIGH IMPACT EVENTS</span>
+          <span class="panel-badge">UPCOMING</span>
+        </div>
+        <div class="panel-body" id="eventsPanel"></div>
+      </div>
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="panel-header">
+          <span class="panel-title">GEOPOLITICAL WATCH</span>
+          <span class="panel-badge">MONITOR</span>
+        </div>
+        <div class="panel-body" id="geoPanel"></div>
+      </div>
+    </div>
+
   </div>
-</div>
+
+  <div class="alert-bar">
+    <div class="alert-label">▸ INTEL</div>
+    <div class="ticker-wrap">
+      <div class="ticker-inner" id="tickerInner"></div>
+    </div>
+  </div>
 
 </div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-const highImpactEvents=[
-  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
-  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.4%",previous:"2.6%"},
-  {date:"2026-06-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"49.8",previous:"48.7"},
-  {date:"2026-06-01",time:"23:00",currency:"USD",event:"JOLTS Job Openings",impact:"HIGH",forecast:"7.45M",previous:"7.19M"},
+const BASE_PRICE = 4485.64;
+let currentPrice = BASE_PRICE;
 
-  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
-  {date:"2026-06-12",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
-  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"}
+const watchlist = [
+  { sym: 'XAG/USD', base: 33.42, dp: 2 },
+  { sym: 'DXY',     base: 99.84, dp: 2 },
+  { sym: 'US10Y',   base: 4.512, dp: 3 },
+  { sym: 'WTI',     base: 61.22, dp: 2 },
+  { sym: 'GDX',     base: 54.18, dp: 2 },
+  { sym: 'BTC/USD', base: 105440, dp: 0 },
 ];
 
-function getEventDate(e){
-  const [y,m,d]=e.date.split("-").map(Number);
-  const [hh,mm]=e.time.split(":").map(Number);
-  return new Date(y,m-1,d,hh,mm,0,0);
-}
+const events = [
+  { name: 'USD ADP Employment',    date: '06-03', time: '21:15 JST', impact: 'HIGH', prev: '102K',  fore: '115K',  act: '—' },
+  { name: 'USD Non-Farm Payrolls', date: '06-05', time: '21:30 JST', impact: 'HIGH', prev: '177K',  fore: '138K',  act: '—' },
+  { name: 'USD CPI m/m',           date: '06-11', time: '21:30 JST', impact: 'HIGH', prev: '0.3%',  fore: '0.2%',  act: '—' },
+  { name: 'USD PPI m/m',           date: '06-12', time: '21:30 JST', impact: 'HIGH', prev: '-0.1%', fore: '0.2%',  act: '—' },
+  { name: 'FOMC Rate Decision',    date: '06-18', time: '03:00 JST', impact: 'HIGH', prev: '4.50%', fore: '4.50%', act: '—' },
+];
 
-function countdown(target){
-  const diff=target-new Date();
-  if(diff<-3600000)return null;
-  if(diff<0)return"ENDED";
-  const t=Math.floor(diff/1000);
-  const d=Math.floor(t/86400);
-  const h=Math.floor((t%86400)/3600);
-  const m=Math.floor((t%3600)/60);
-  const s=t%60;
-  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-}
+const newsItems = [
+  { time: '04:18', impact: 'high', src: 'REUTERS',   headline: 'Gold slides as dollar firms on strong manufacturing data from Philadelphia Fed survey' },
+  { time: '03:52', impact: 'high', src: 'BLOOMBERG', headline: 'Fed officials signal patience on rate cuts; Powell reiterates data-dependency at policy panel' },
+  { time: '03:31', impact: 'med',  src: 'FOREXLIVE', headline: 'XAU/USD hits session low near 4,480 support; bears eye next target at 4,450 level' },
+  { time: '02:45', impact: 'med',  src: 'REUTERS',   headline: 'China PBOC adds to gold reserves for fourth consecutive month, bullion analysts note' },
+  { time: '02:12', impact: 'low',  src: 'KITCO',     headline: 'Silver outperforming gold on industrial demand; gold-silver ratio dips below 134' },
+  { time: '01:55', impact: 'high', src: 'BLOOMBERG', headline: 'Middle East tensions ease slightly as diplomatic channels reopen; risk sentiment improves' },
+  { time: '01:20', impact: 'med',  src: 'CNBC',      headline: 'ETF outflows from SPDR Gold Shares accelerate amid profit-taking after recent ATH test' },
+];
 
-function isWithin24h(target){
-  const diff=target-new Date();
-  return diff>0&&diff<=86400000;
-}
+const geoItems = [
+  { name: 'MIDDLE EAST',   level: 'ELEVATED', color: 'var(--red)' },
+  { name: 'RED SEA',       level: 'WATCH',    color: 'var(--gold)' },
+  { name: 'UKRAINE',       level: 'WATCH',    color: 'var(--gold)' },
+  { name: 'TAIWAN STRAIT', level: 'MONITOR',  color: 'var(--text-secondary)' },
+  { name: 'FED POLICY',    level: 'WATCH',    color: 'var(--gold)' },
+  { name: 'SANCTIONS',     level: 'ACTIVE',   color: 'var(--red)' },
+];
 
-function renderHighImpact(){
-  const list=document.getElementById("highImpactList");
-  const todayBox=document.getElementById("todayImpactTop");
-  list.innerHTML="";
-  todayBox.innerHTML="";
+const tickerItems = [
+  'XAU/USD <span class="dn">▼ 4,485.64 (−1.20%)</span>',
+  'XAG/USD <span class="dn">▼ 33.42 (−0.54%)</span>',
+  'DXY <span class="up">▲ 99.84 (+0.38%)</span>',
+  'US 10Y YIELD <span class="up">▲ 4.512%</span>',
+  'EUR/USD <span class="dn">▼ 1.0821 (−0.29%)</span>',
+  'USD/JPY <span class="up">▲ 148.92 (+0.22%)</span>',
+  'WTI CRUDE <span class="dn">▼ 61.22 (−0.87%)</span>',
+  'COMEX GOLD JUL25 <span class="dn">▼ 4,492.10 (−1.14%)</span>',
+  'NEXT FOMC <span class="hi">06-18</span> · RATE HOLD EXPECTED 96.2%',
+  'ATR(14) <span class="hi">42.8 PTS</span> · VOLATILITY: MODERATE',
+];
 
-  const now=new Date();
-  const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+const sessions = [
+  { name: 'SYDNEY',   open: 6,  close: 15 },
+  { name: 'TOKYO',    open: 8,  close: 17 },
+  { name: 'LONDON',   open: 16, close: 1  },
+  { name: 'NEW YORK', open: 22, close: 7  },
+];
 
-  highImpactEvents.forEach(e=>{
-    const target=getEventDate(e);
-    const cd=countdown(target);
-    if(cd===null)return;
-
-    const blink=isWithin24h(target)?"blink24":"";
-
-    list.innerHTML+=`
-      <div class="newsRow ${blink}">
-        <div>${e.date.slice(5)}</div>
-        <div>${e.time}</div>
-        <div class="eventCell">${e.currency} ${e.event}</div>
-        <div class="impactCell">${e.impact}</div>
-        <div>${e.forecast}</div>
-        <div>${e.previous}</div>
-        <div class="countCell ${blink}">${cd}</div>
-      </div>
-    `;
-
-    if(e.date===today){
-      todayBox.innerHTML+=`
-        <div class="todayItem ${blink}">
-          <div class="todayMain">
-            <div class="todayDate">${e.date.slice(5)}<br>${e.time}</div>
-            <div class="todayEvent">${e.currency} ${e.event}</div>
-            <div class="todayCount">${cd}</div>
-          </div>
-          <div class="todaySub">予想 ${e.forecast} / 前回 ${e.previous}</div>
-        </div>
-      `;
-    }
-  });
-}
-
-function updateClock(){
-  const now=new Date();
-  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
-  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
-  updateSession(now.getHours());
-}
-
-function renderCalendar(){
-  const now=new Date();
-  const y=now.getFullYear();
-  const m=now.getMonth();
-  const grid=document.getElementById("calendarGrid");
-
-  document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
-  grid.innerHTML="";
-
-  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>grid.innerHTML+=`<div class="calHead">${h}</div>`);
-
-  const first=new Date(y,m,1);
-  const last=new Date(y,m+1,0);
-
-  for(let i=0;i<first.getDay();i++)grid.innerHTML+=`<div class="calDay"></div>`;
-  for(let d=1;d<=last.getDate();d++)grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""}">${d}</div>`;
-}
-
-let sessionMarkers={};
-
-function sessionHtml(name,time,isOpen){
-  return `<div class="sessionLabel ${isOpen?'open':''}">
-    ${name}<br>${time}<br>${isOpen?'<span class="openText">● OPEN</span>':''}
-  </div>`;
-}
-
-function updateSession(hour){
-  const asiaOpen=hour>=7&&hour<15;
-  const londonOpen=hour>=15&&hour<21;
-  const usOpen=hour>=21||hour<6;
-
-  if(sessionMarkers.asia){
-    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",asiaOpen),iconSize:[110,70]}));
-    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",londonOpen),iconSize:[120,70]}));
-    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",usOpen),iconSize:[110,70]}));
+function getSessionProgress(open, close) {
+  const now = new Date();
+  const h = now.getHours() + now.getMinutes() / 60;
+  let isOpen = false, progress = 0;
+  if (open < close) {
+    isOpen = h >= open && h < close;
+    if (isOpen) progress = (h - open) / (close - open) * 100;
+  } else {
+    isOpen = h >= open || h < close;
+    if (isOpen) progress = h >= open
+      ? (h - open) / (24 - open + close) * 100
+      : (24 - open + h) / (24 - open + close) * 100;
   }
+  return { isOpen, progress: Math.min(100, Math.max(0, progress)) };
 }
 
-function initMap(){
-  const map=L.map("map",{
-    zoomControl:false,
-    attributionControl:false,
-    dragging:false,
-    scrollWheelZoom:false,
-    doubleClickZoom:false,
-    boxZoom:false,
-    keyboard:false,
-    tap:false
-  }).setView([18,10],2);
-
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
-    maxZoom:5,
-    minZoom:2
-  }).addTo(map);
-
-  sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",false),iconSize:[110,70]})}).addTo(map);
-  sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",false),iconSize:[120,70]})}).addTo(map);
-  sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",false),iconSize:[110,70]})}).addTo(map);
-
-  setTimeout(()=>map.invalidateSize(),300);
+function renderSessions() {
+  document.getElementById('sessionPanel').innerHTML = sessions.map(s => {
+    const { isOpen, progress } = getSessionProgress(s.open, s.close);
+    const fh = h => `${String(h % 24).padStart(2,'0')}:00`;
+    return `<div class="session-item">
+      <div class="session-top">
+        <span class="session-name">${s.name}</span>
+        <span class="session-status ${isOpen ? 'open' : 'closed'}">${isOpen ? '● OPEN' : '○ CLOSED'}</span>
+      </div>
+      <div class="session-time">${fh(s.open)} – ${fh(s.close)} JST</div>
+      <div class="session-bar-bg">
+        <div class="session-bar-fill ${isOpen ? 'open' : ''}" style="width:${isOpen ? progress : 0}%"></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-initMap();
-renderCalendar();
-updateClock();
-renderHighImpact();
+function renderVol() {
+  const vols = [{l:'1H',v:18},{l:'4H',v:38},{l:'1D',v:42},{l:'1W',v:55}];
+  document.getElementById('volPanel').innerHTML = vols.map(v =>
+    `<div class="vol-item">
+      <span class="vol-label">${v.l}</span>
+      <div class="vol-bar-bg"><div class="vol-bar-fill" style="width:${v.v/60*100}%"></div></div>
+      <span class="vol-val">${v.v}</span>
+    </div>`).join('');
+}
 
-setInterval(updateClock,1000);
-setInterval(renderHighImpact,1000);
+function renderCorr() {
+  const corrs = [{s:'DXY',v:-0.82},{s:'XAG',v:0.91},{s:'US10Y',v:-0.67},{s:'WTI',v:0.44}];
+  document.getElementById('corrPanel').innerHTML = corrs.map(c => {
+    const col = c.v > 0 ? 'var(--green)' : 'var(--red)';
+    return `<div class="vol-item">
+      <span class="vol-label">${c.s}</span>
+      <div class="vol-bar-bg">
+        <div style="position:absolute;top:0;bottom:0;width:${Math.abs(c.v)*100}%;background:${col};opacity:0.8;${c.v<0?'right:0':'left:0'}"></div>
+      </div>
+      <span class="vol-val" style="color:${col};font-size:10px;">${c.v>0?'+':''}${c.v.toFixed(2)}</span>
+    </div>`;
+  }).join('');
+}
+
+let watchPrices = watchlist.map(w => ({...w, price: w.base}));
+
+function renderWatchlist() {
+  document.getElementById('watchlistGrid').innerHTML = watchPrices.map((w, i) => {
+    const chg = w.price - w.base;
+    const pct = chg / w.base * 100;
+    const dir = chg >= 0 ? 'up' : 'down';
+    const fmt = v => w.dp === 0 ? Math.round(v).toLocaleString() : v.toFixed(w.dp);
+    return `<div class="watch-card ${i===0?'highlight':''}">
+      <div class="wc-symbol">${w.sym}</div>
+      <div class="wc-price ${dir}">${fmt(w.price)}</div>
+      <div class="wc-chg ${dir}">${chg>=0?'▲':'▼'} ${Math.abs(pct).toFixed(2)}%</div>
+    </div>`;
+  }).join('');
+  const n = new Date();
+  document.getElementById('wlTime').textContent =
+    `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')} JST`;
+}
+
+function renderNews() {
+  document.getElementById('newsCount').textContent = `${newsItems.length} ITEMS`;
+  document.getElementById('newsPanel').innerHTML = `<div class="news-feed">${newsItems.map(n =>
+    `<div class="news-item">
+      <span class="news-impact ${n.impact}">${n.impact.toUpperCase()}</span>
+      <div>
+        <div class="news-headline">${n.headline}</div>
+        <div class="news-meta">▸ ${n.src}</div>
+      </div>
+      <span class="news-time">${n.time}</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderEvents() {
+  document.getElementById('eventsPanel').innerHTML = events.map(e =>
+    `<div class="event-item">
+      <div class="event-top">
+        <span class="event-name">${e.name}</span>
+        <span class="event-tag ${e.impact.toLowerCase()}">${e.impact}</span>
+      </div>
+      <div class="event-date">${e.date} · ${e.time}</div>
+      <div class="event-vals">
+        <div class="event-val-box"><div class="event-val-lbl">PREV</div><div class="event-val-num">${e.prev}</div></div>
+        <div class="event-val-box"><div class="event-val-lbl">FORE</div><div class="event-val-num">${e.fore}</div></div>
+        <div class="event-val-box"><div class="event-val-lbl">ACT</div><div class="event-val-num">${e.act}</div></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGeo() {
+  document.getElementById('geoPanel').innerHTML = geoItems.map(g =>
+    `<div class="flag-card">
+      <span class="flag-name">${g.name}</span>
+      <span class="flag-watch" style="color:${g.color};border:1px solid ${g.color};">${g.level}</span>
+    </div>`).join('');
+}
+
+function renderTicker() {
+  const html = tickerItems.map(t => `<span class="ticker-item">${t}</span>`).join('');
+  document.getElementById('tickerInner').innerHTML = html + html;
+}
+
+function updateClock() {
+  const n = new Date(), p = v => String(v).padStart(2,'0');
+  document.getElementById('clock').textContent = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  document.getElementById('clockDate').textContent =
+    `${n.getFullYear()}/${p(n.getMonth()+1)}/${p(n.getDate())} (${days[n.getDay()]}) JST`;
+}
+
+function updatePrice() {
+  currentPrice = Math.max(4400, Math.min(4600, currentPrice + (Math.random()-0.502)*1.2));
+  const chg = currentPrice - BASE_PRICE;
+  const pct = chg / BASE_PRICE * 100;
+  const dir = chg >= 0 ? 'up' : 'down';
+  document.getElementById('mainPrice').textContent = currentPrice.toFixed(2);
+  document.getElementById('mainPrice').className = `price-main ${dir}`;
+  document.getElementById('mainChange').textContent =
+    `${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)} (${chg>=0?'+':''}${pct.toFixed(2)}%)`;
+  document.getElementById('mainChange').className = `price-change ${dir}`;
+  document.getElementById('bidAsk').textContent =
+    `${(currentPrice-0.45).toFixed(2)} / ${(currentPrice+0.45).toFixed(2)}`;
+  const dh = parseFloat(document.getElementById('dayHigh').textContent.replace(',',''));
+  const dl = parseFloat(document.getElementById('dayLow').textContent.replace(',',''));
+  if (currentPrice > dh) document.getElementById('dayHigh').textContent = currentPrice.toFixed(2);
+  if (currentPrice < dl) document.getElementById('dayLow').textContent = currentPrice.toFixed(2);
+  watchPrices = watchPrices.map(w => ({...w, price: Math.max(w.base*0.9, w.price+(Math.random()-0.5)*0.3)}));
+  renderWatchlist();
+}
+
+renderSessions(); renderVol(); renderCorr(); renderWatchlist();
+renderNews(); renderEvents(); renderGeo(); renderTicker(); updateClock();
+setInterval(updateClock, 1000);
+setInterval(updatePrice, 1800);
+setInterval(renderSessions, 60000);
 </script>
-
 </body>
 </html>
