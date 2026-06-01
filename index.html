@@ -56,14 +56,19 @@ a{color:inherit;text-decoration:none}
 .impactBox{height:175px;overflow-y:auto;font-size:12px;padding-right:4px}
 .impactItem{display:grid;grid-template-columns:36px 1fr 95px;gap:8px;border-bottom:1px solid #242424;padding:7px 0;align-items:center;cursor:pointer}
 .impactItem:hover{background:#101820}
-.impactBadge{background:#4b1010;color:#ff4d4d;font-weight:900;text-align:center;border-radius:3px;padding:2px 0}
+.impactBadge{background:#4b1010!important;color:#ff4d4d!important;font-weight:900;text-align:center;border-radius:3px;padding:2px 0}
 .impactTime{color:#aaa;text-align:right;font-size:11px}
 
 .guideBox{height:175px;overflow-y:auto;font-size:12px;line-height:1.65;padding-right:4px}
 .guideBox button{width:100%;background:none;border:0;color:#e8edf2;text-align:left;border-bottom:1px solid #242424;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-size:12px;padding:3px 0}
 .guideBox button:hover{color:#00e676}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;box-shadow:0 0 10px currentColor}
-.dot.green{background:#00e676;color:#00e676}.dot.red{background:#ff3030;color:#ff3030}.dot.orange{background:#ff8c1a;color:#ff8c1a}.dot.blue{background:#2f8cff;color:#2f8cff}.dot.purple{background:#9b4dff;color:#9b4dff}.dot.yellow{background:#ffd54f;color:#ffd54f}
+.dot.green{background:#00e676;color:#00e676}
+.dot.red{background:#ff3030;color:#ff3030}
+.dot.orange{background:#ff8c1a;color:#ff8c1a}
+.dot.blue{background:#2f8cff;color:#2f8cff}
+.dot.purple{background:#9b4dff;color:#9b4dff}
+.dot.yellow{background:#ffd54f;color:#ffd54f}
 
 .bottom{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:2px}
 .item{display:block;border-bottom:1px solid #242424;padding:6px 0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -78,7 +83,19 @@ a{color:inherit;text-decoration:none}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:99999}
 .modal.show{display:flex}
 .modalCard{width:min(650px,90vw);background:#080f18;border:1px solid #00e676;border-radius:10px;padding:20px;box-shadow:0 0 45px rgba(0,255,136,.35)}
+.modalCard.green{border-color:#00e676;box-shadow:0 0 45px rgba(0,255,136,.35)}
+.modalCard.red{border-color:#ff3030;box-shadow:0 0 45px rgba(255,48,48,.35)}
+.modalCard.orange{border-color:#ff8c1a;box-shadow:0 0 45px rgba(255,140,26,.35)}
+.modalCard.blue{border-color:#2f8cff;box-shadow:0 0 45px rgba(47,140,255,.35)}
+.modalCard.purple{border-color:#9b4dff;box-shadow:0 0 45px rgba(155,77,255,.35)}
+.modalCard.yellow{border-color:#ffd54f;box-shadow:0 0 45px rgba(255,213,79,.35)}
 .modalTitle{font-size:24px;font-weight:900;color:#00e676;margin-bottom:12px}
+.modalTitle.green{color:#00e676}
+.modalTitle.red{color:#ff3030}
+.modalTitle.orange{color:#ff8c1a}
+.modalTitle.blue{color:#2f8cff}
+.modalTitle.purple{color:#9b4dff}
+.modalTitle.yellow{color:#ffd54f}
 .modalText{font-size:15px;line-height:1.8}
 .modalText a{color:#00e676;text-decoration:underline}
 .modalClose{margin-top:16px;background:#101820;border:1px solid #333;color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer}
@@ -160,7 +177,7 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <div id="modal" class="modal" onclick="closeModal()">
-  <div class="modalCard" onclick="event.stopPropagation()">
+  <div id="modalCard" class="modalCard" onclick="event.stopPropagation()">
     <div id="modalTitle" class="modalTitle"></div>
     <div id="modalText" class="modalText"></div>
     <button class="modalClose" onclick="closeModal()">閉じる</button>
@@ -257,26 +274,27 @@ function toggleIntelligence(state){
   if(state){
     map.addLayer(layers.intelligence);
     map.addLayer(layers.session);
-    guidePanel.classList.remove("hiddenPanel");
+    map.addLayer(layers.conflict);
+    map.addLayer(layers.economic);
+    map.addLayer(layers.oilrate);
 
     document.getElementById("conflictToggle").checked=true;
     document.getElementById("economicToggle").checked=true;
     document.getElementById("oilToggle").checked=true;
 
-    map.addLayer(layers.conflict);
-    map.addLayer(layers.economic);
-    map.addLayer(layers.oilrate);
+    guidePanel.classList.remove("hiddenPanel");
   }else{
     map.removeLayer(layers.intelligence);
     map.removeLayer(layers.session);
     map.removeLayer(layers.conflict);
     map.removeLayer(layers.economic);
     map.removeLayer(layers.oilrate);
-    guidePanel.classList.add("hiddenPanel");
 
     document.getElementById("conflictToggle").checked=false;
     document.getElementById("economicToggle").checked=false;
     document.getElementById("oilToggle").checked=false;
+
+    guidePanel.classList.add("hiddenPanel");
   }
 }
 
@@ -408,7 +426,13 @@ function showImpact(i){
   const events = monthlyEvents.sort((a,b)=>new Date(a.date)-new Date(b.date));
   const e = events[i];
 
-  document.getElementById("modalTitle").textContent = e.title;
+  const card=document.getElementById("modalCard");
+  const title=document.getElementById("modalTitle");
+
+  card.className="modalCard red";
+  title.className="modalTitle red";
+
+  title.textContent = e.title;
 
   document.getElementById("modalText").innerHTML = `
     <b>発表日時</b><br>
@@ -444,8 +468,15 @@ document.getElementById("guideBox").innerHTML=guides.map((g,i)=>`
 `).join("");
 
 function openGuide(i){
-  document.getElementById("modalTitle").textContent=guides[i][1];
+  const card=document.getElementById("modalCard");
+  const title=document.getElementById("modalTitle");
+
+  card.className="modalCard "+guides[i][0];
+  title.className="modalTitle "+guides[i][0];
+
+  title.textContent=guides[i][1];
   document.getElementById("modalText").textContent=guides[i][2];
+
   document.getElementById("modal").classList.add("show");
 }
 
