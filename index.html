@@ -1,359 +1,261 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>XAUUSD WAR ROOM</title>
-
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-background:#050505;
-color:white;
-font-family:Arial,sans-serif;
-}
-
-.app{
-height:100vh;
-display:grid;
-grid-template-rows:
-50px
-1fr
-220px
-35px;
-gap:2px;
-background:#050505;
-}
-
-.topbar{
-background:#0b0b0b;
-display:flex;
-align-items:center;
-padding:0 15px;
-border-bottom:1px solid #222;
-}
-
-.logo{
-font-size:20px;
-font-weight:900;
-color:#f7c15b;
-}
-
-.live{
-margin-left:20px;
-color:#00ff66;
-font-weight:900;
-}
-
-.time{
-margin-left:auto;
-font-size:13px;
-}
-
-.main{
-display:grid;
-grid-template-columns:
-180px
-1fr;
-gap:2px;
-}
-
-.sidebar{
-background:#0b0b0b;
-padding:10px;
-overflow:auto;
-border-right:1px solid #222;
-}
-
-.sidebar h3{
-font-size:12px;
-margin-bottom:10px;
-color:#999;
-}
-
-.item{
-padding:8px;
-font-size:12px;
-border-bottom:1px solid #1a1a1a;
-}
-
-.mapArea{
-display:grid;
-grid-template-rows:
-1fr
-180px;
-gap:2px;
-}
-
-.mapWrap{
-position:relative;
-background:black;
-}
-
-#map{
-width:100%;
-height:100%;
-}
-
-.legend{
-position:absolute;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-z-index:999;
-background:#111;
-padding:8px 12px;
-font-size:11px;
-border-radius:4px;
-border:1px solid #333;
-}
-
-.infoRow{
-display:grid;
-grid-template-columns:
-400px
-1fr;
-gap:2px;
-}
-
-.panel{
-background:#0b0b0b;
-border:1px solid #222;
-overflow:auto;
-}
-
-.panelTitle{
-height:35px;
-display:flex;
-align-items:center;
-padding-left:10px;
-font-size:12px;
-font-weight:900;
-border-bottom:1px solid #222;
-}
-
-#selectedInfo{
-padding:15px;
-line-height:1.8;
-}
-
-.videoRow{
-display:grid;
-grid-template-columns:
-repeat(4,1fr);
-gap:2px;
-}
-
-.video{
-background:#0b0b0b;
-border:1px solid #222;
-}
-
-.videoTitle{
-height:30px;
-display:flex;
-align-items:center;
-padding-left:10px;
-font-size:12px;
-font-weight:900;
-border-bottom:1px solid #222;
-}
-
-.breaking{
-background:#0b0b0b;
-display:flex;
-align-items:center;
-}
-
-.breakingTitle{
-background:#b30000;
-padding:8px 15px;
-font-size:12px;
-font-weight:900;
-}
-
-.ticker{
-padding-left:20px;
-font-size:12px;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#050505;color:#fff;font-family:Arial,"Meiryo",sans-serif}
+.app{height:100vh;display:grid;grid-template-rows:36px 1fr 190px 28px;background:#050505;gap:2px}
+.top{background:#0a0a0a;border-bottom:1px solid #222;display:flex;align-items:center;padding:0 10px;gap:14px}
+.logo{font-weight:900;color:#f7c15b;font-size:17px}
+.live{color:#00ff66;font-weight:900}
+.clock{margin-left:auto;font-size:12px;font-weight:900}
+.main{display:grid;grid-template-columns:155px 1fr;gap:2px;min-height:0}
+.side{background:#0b0b0b;border-right:1px solid #222;padding:8px;font-size:12px}
+.side h4{font-size:11px;color:#aaa;margin-bottom:8px}
+.side div{padding:6px 0;border-bottom:1px solid #1d1d1d}
+.mapArea{display:grid;grid-template-rows:1fr 170px;gap:2px;min-height:0}
+.mapBox{position:relative;background:#050505;border:1px solid #222;overflow:hidden}
+#map{width:100%;height:100%;background:#050505}
+.leaflet-container{background:#050505!important}
+.leaflet-tile-pane{filter:brightness(1.35) contrast(1.15) saturate(.9)}
+.leaflet-control-attribution{display:none!important}
+.leaflet-control-zoom a{background:#111!important;color:#fff!important;border-bottom:1px solid #333!important}
+.mapTitle{position:absolute;top:8px;left:10px;z-index:999;background:#090909e8;border:1px solid #333;padding:6px 10px;font-size:11px;font-weight:900}
+.legend{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:999;background:#080808e8;border:1px solid #333;padding:6px 10px;font-size:10px;border-radius:4px;white-space:nowrap}
+.infoRow{display:grid;grid-template-columns:380px 1fr;gap:2px}
+.panel{background:#0b0b0b;border:1px solid #222;overflow:auto}
+.panelTitle{height:30px;border-bottom:1px solid #222;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:900}
+#impactList,#selectedInfo{padding:8px;font-size:12px;line-height:1.6}
+.impactItem{padding:7px;border-bottom:1px solid #222;cursor:pointer}
+.impactItem:hover{background:#151515}
+.videoRow{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.video{background:#0b0b0b;border:1px solid #222;overflow:hidden}
+.videoTitle{height:26px;border-bottom:1px solid #222;font-size:11px;font-weight:900;display:flex;align-items:center;padding-left:8px}
+.video iframe{width:100%;height:164px;border:0;background:#000}
+.breaking{background:#090909;border-top:1px solid #222;display:flex;align-items:center;overflow:hidden}
+.breaking b{background:#b00000;padding:7px 14px;font-size:12px}
+.ticker{white-space:nowrap;padding-left:18px;font-size:12px;animation:flow 150s linear infinite}
+@keyframes flow{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.pulse{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor,0 0 24px currentColor,0 0 48px currentColor;position:relative}
+.pulse:after{content:"";position:absolute;inset:-9px;border:1px solid currentColor;border-radius:50%;animation:ripple 1.6s infinite}
+@keyframes ripple{from{transform:scale(.4);opacity:1}to{transform:scale(1.8);opacity:0}}
+.label{background:#090909e8!important;border:1px solid #444!important;color:#fff!important;font-size:10px!important;font-weight:900!important;padding:3px 6px!important;border-radius:3px!important;box-shadow:0 0 10px #000!important}
+.leaflet-tooltip:before{display:none!important}
+.sessionLabel{background:#061018e8!important;border:1px solid currentColor!important;color:#fff!important;font-size:11px!important;font-weight:900!important;padding:6px 8px!important;border-radius:5px!important}
+.sessionArea{animation:none}
+.warnArea{animation:blink 1s infinite}
+.alertArea{animation:blink .3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:99999}
+.modal.show{display:flex}
+.modalBox{width:min(680px,90vw);background:#081018;border:1px solid #333;border-radius:10px;padding:18px}
+.modalTitle{font-size:22px;font-weight:900;margin-bottom:12px;color:#f7c15b}
+.modalBody{line-height:1.8;font-size:14px}
+.modalBox button{margin-top:15px;background:#111;color:#fff;border:1px solid #333;padding:8px 14px;cursor:pointer}
 </style>
 </head>
 
 <body>
-
 <div class="app">
+  <div class="top">
+    <div class="logo">XAUUSD WAR ROOM</div>
+    <div class="live">● LIVE</div>
+    <div>GLOBAL INTELLIGENCE</div>
+    <div class="clock" id="clock">JST</div>
+  </div>
 
-<div class="topbar">
+  <div class="main">
+    <div class="side">
+      <h4>WORLD FILTER</h4>
+      <div>🔵 アジア</div>
+      <div>🟠 ロンドン</div>
+      <div>🟣 米国</div>
+      <div>🔴 重要指標</div>
+      <div>🩵 中央銀行</div>
+      <div>🟡 市場</div>
+      <div>🟢 AI・半導体</div>
+      <div>🟤 原油・資源</div>
+      <div>🤍 安全資産</div>
+    </div>
 
-<div class="logo">
-XAUUSD WAR ROOM
+    <div class="mapArea">
+      <div class="mapBox">
+        <div id="map"></div>
+        <div class="mapTitle">GLOBAL VIEW</div>
+        <div class="legend">
+          🔵アジア　🟠ロンドン　🟣米国　🔴重要指標　🩵中央銀行　🟡市場　🟢AI　🟤原油　🤍安全資産
+        </div>
+      </div>
+
+      <div class="infoRow">
+        <div class="panel">
+          <div class="panelTitle">🔴 重要指標 COUNTDOWN</div>
+          <div id="impactList"></div>
+        </div>
+        <div class="panel">
+          <div class="panelTitle">🌍 SELECTED INFO</div>
+          <div id="selectedInfo">光っている場所を選択してください</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="videoRow">
+    <div class="video"><div class="videoTitle">BLOOMBERG LIVE</div><iframe src="https://www.youtube.com/embed/gCNeDWCI0vo" allowfullscreen></iframe></div>
+    <div class="video"><div class="videoTitle">REUTERS LIVE</div><iframe src="https://www.youtube.com/embed/0E4xkA2n6d8" allowfullscreen></iframe></div>
+    <div class="video"><div class="videoTitle">CNBC LIVE</div><iframe src="https://www.youtube.com/embed/9NyxcX3rhQs" allowfullscreen></iframe></div>
+    <div class="video"><div class="videoTitle">GOLD NEWS</div><iframe src="https://www.youtube.com/embed/lNYcviXK4rg" allowfullscreen></iframe></div>
+  </div>
+
+  <div class="breaking">
+    <b>BREAKING NEWS</b>
+    <div class="ticker">XAUUSD / CPI / NFP / FOMC / FRB / GEOPOLITICAL / GOLD FLOW / BTC / AI WATCH</div>
+  </div>
 </div>
 
-<div class="live">
-● LIVE
-</div>
-
-<div class="time" id="clock">
-JST
-</div>
-
-</div>
-
-<div class="main">
-
-<div class="sidebar">
-
-<h3>WORLD FILTER</h3>
-
-<div class="item">🔵 アジア</div>
-<div class="item">🟠 ロンドン</div>
-<div class="item">🟣 米国</div>
-
-<div class="item">🔴 重要指標</div>
-<div class="item">🩵 中央銀行</div>
-
-<div class="item">🟡 市場</div>
-
-<div class="item">🟢 AI・半導体</div>
-
-<div class="item">🟤 原油・資源</div>
-
-<div class="item">🤍 安全資産</div>
-
-</div>
-
-<div class="mapArea">
-
-<div class="mapWrap">
-
-<div id="map"></div>
-
-<div class="legend">
-
-🔵アジア
-
-🟠ロンドン
-
-🟣米国
-
-🔴重要指標
-
-🩵中央銀行
-
-🟡市場
-
-🟢AI
-
-🟤原油
-
-🤍安全資産
-
-</div>
-
-</div>
-
-<div class="infoRow">
-
-<div class="panel">
-
-<div class="panelTitle">
-🔴 重要指標 COUNTDOWN
-</div>
-
-<div id="impactCountdown">
-Loading...
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="panelTitle">
-🌍 SELECTED INFO
-</div>
-
-<div id="selectedInfo">
-
-光っている場所を選択してください
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="videoRow">
-
-<div class="video">
-<div class="videoTitle">
-BLOOMBERG
-</div>
-</div>
-
-<div class="video">
-<div class="videoTitle">
-REUTERS
-</div>
-</div>
-
-<div class="video">
-<div class="videoTitle">
-CNBC
-</div>
-</div>
-
-<div class="video">
-<div class="videoTitle">
-GOLD NEWS
-</div>
-</div>
-
-</div>
-
-<div class="breaking">
-
-<div class="breakingTitle">
-BREAKING NEWS
-</div>
-
-<div class="ticker">
-XAUUSD WAR ROOM ONLINE
-</div>
-
-</div>
-
+<div id="modal" class="modal" onclick="closeModal()">
+  <div class="modalBox" onclick="event.stopPropagation()">
+    <div id="modalTitle" class="modalTitle"></div>
+    <div id="modalBody" class="modalBody"></div>
+    <button onclick="closeModal()">CLOSE</button>
+  </div>
 </div>
 
 <script>
+function updateClock(){
+  const now=new Date();
+  document.getElementById("clock").textContent=
+    new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",weekday:"short",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(now)+" JST";
+}
+setInterval(updateClock,1000);updateClock();
 
-const map=L.map('map').setView([20,15],2);
+const map=L.map("map",{
+  zoomControl:true,
+  attributionControl:false,
+  minZoom:2,
+  maxZoom:5,
+  zoomSnap:.25,
+  worldCopyJump:false,
+  maxBounds:[[-85,-180],[85,180]]
+}).setView([22,0],2.05);
 
-L.tileLayer(
-'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-).addTo(map);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19}).addTo(map);
 
+const colors={
+  asia:"#2f8cff",
+  london:"#ff8c1a",
+  us:"#9b4dff",
+  impact:"#ff3030",
+  cb:"#7ee7ff",
+  market:"#ffd54f",
+  ai:"#00e676",
+  energy:"#8b5a2b",
+  safe:"#ffffff"
+};
+
+function setInfo(title,body){
+  document.getElementById("selectedInfo").innerHTML=`<h3>${title}</h3><br>${body}`;
+}
+function openModal(title,body){
+  document.getElementById("modalTitle").innerHTML=title;
+  document.getElementById("modalBody").innerHTML=body;
+  document.getElementById("modal").classList.add("show");
+}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+
+function addPoint(lat,lng,key,title,body){
+  const icon=L.divIcon({
+    className:"",
+    html:`<div class="pulse" style="color:${colors[key]}"></div>`,
+    iconSize:[20,20],
+    iconAnchor:[10,10]
+  });
+  const m=L.marker([lat,lng],{icon}).addTo(map);
+  m.bindTooltip(`<b>${title}</b>`,{permanent:true,direction:"top",offset:[0,-13],className:"label"});
+  m.on("mouseover",()=>setInfo(title,body));
+  m.on("click",()=>openModal(title,body));
+}
+
+function addSession(lat,lng,key,title,open,close,radius){
+  const circle=L.circle([lat,lng],{
+    radius,
+    color:colors[key],
+    fillColor:colors[key],
+    fillOpacity:.12,
+    weight:2
+  }).addTo(map);
+  const body=`OPEN ${open} JST<br>CLOSE ${close} JST<br>NEXT OPEN 自動計算予定<br><br>OPEN中：常時発光<br>60分前：赤点滅<br>15分前：赤高速点滅`;
+  circle.bindTooltip(`<b>${title}</b><br>OPEN ${open}<br>CLOSE ${close}`,{permanent:true,direction:"center",className:"sessionLabel"});
+  circle.on("mouseover",()=>setInfo(title,body));
+  circle.on("click",()=>openModal(title,body));
+}
+
+addSession(36,138,"asia","🔵 ASIA SESSION","08:00","17:00",900000);
+addSession(54,-2,"london","🟠 LONDON SESSION","16:00","01:00",850000);
+addSession(39,-98,"us","🟣 US SESSION","21:30","06:00",1700000);
+
+addPoint(39,-77,"cb","🩵 FRB","政策金利・FOMC・FRB発言。<br>XAUUSD：金利低下なら強気 / タカ派なら下落圧力。");
+addPoint(50.1,8.6,"cb","🩵 ECB","欧州金融政策。<br>ユーロ・ドル相対でXAUUSDへ波及。");
+addPoint(35.6,139.7,"cb","🩵 BOJ","日銀・円金利。<br>USDJPYとアジア時間の値動きに影響。");
+addPoint(39.9,116.4,"cb","🩵 PBOC","中国人民銀行。<br>中国景気・金需要・中央銀行買いに影響。");
+
+addPoint(40.7,-74,"market","🟡 NY","米国市場。DXY・米10年債・BTC・AI株・XAUUSDの中心。");
+addPoint(51.5,-0.1,"market","🟡 LONDON CITY","欧州市場。出来高増加、XAUUSD方向感が出やすい。");
+addPoint(22.3,114.1,"market","🟡 HONG KONG","中国・アジア資金フロー。金需要とリスクオン/オフ監視。");
+addPoint(1.3,103.8,"market","🟡 SINGAPORE","安全資産・アジア資金・ゴールドフロー監視。");
+
+addPoint(50,31,"impact","🔴 UKRAINE","地政学リスク。<br>XAUUSD：安全資産買いで上昇要因。<br>原油・USDにも影響。");
+addPoint(31,35,"impact","🔴 ISRAEL","中東リスク。<br>XAUUSD：強気 / 原油：上昇圧力 / BTC：リスクオフ注意。");
+addPoint(32,53,"impact","🔴 IRAN","原油・ホルムズ海峡リスク。<br>金・原油に強い影響。");
+addPoint(24,121,"impact","🔴 TAIWAN","アジア地政学リスク。<br>半導体・AI・BTC・金に影響。");
+
+addPoint(37.4,-122.1,"ai","🟢 NVIDIA / AI","AI需要・半導体・NASDAQ。<br>BTC：リスクオンで強気。XAUUSD：中立〜リスク次第。");
+addPoint(47.6,-122.3,"ai","🟢 MICROSOFT / OPENAI","AI投資・クラウド需要。<br>NASDAQとBTCのリスクオン材料。");
+addPoint(24,121,"ai","🟢 TSMC","半導体供給網。<br>台湾リスクとAI需要の中心。");
+
+addPoint(24,54,"energy","🟤 UAE","原油・金フロー。<br>中東資金とコモディティ市場に影響。");
+addPoint(24,45,"energy","🟤 SAUDI / OPEC","OPEC・原油供給。<br>インフレ経由でXAUUSDに影響。");
+addPoint(26,51,"energy","🟤 QATAR","天然ガス・エネルギー供給。<br>欧州インフレ材料。");
+
+addPoint(47,8,"safe","🤍 SWISS","安全資産フロー。<br>金・CHF・リスクオフ監視。");
+addPoint(1.3,103.8,"safe","🤍 SAFE HAVEN FLOW","金ETF・中央銀行買い・安全資産需要。<br>XAUUSD強気材料。");
+
+const events=[
+ {t:"CPI",d:"2026-06-10T21:30:00+09:00",b:"米消費者物価指数。上振れはドル高・金利上昇でXAUUSD下落圧力。下振れは上昇材料。"},
+ {t:"NFP",d:"2026-06-06T21:30:00+09:00",b:"米雇用統計。強い雇用はドル高・金利上昇、弱い雇用は金買い材料。"},
+ {t:"FOMC",d:"2026-06-18T03:00:00+09:00",b:"政策金利発表。利下げ示唆ならXAUUSD上昇、タカ派なら下落圧力。"},
+ {t:"PCE",d:"2026-06-25T21:30:00+09:00",b:"FRB重視インフレ指標。利下げ期待に直結。"},
+ {t:"ISM",d:"2026-06-03T23:00:00+09:00",b:"景況感指標。強ければドル高、弱ければ金買い材料。"}
+];
+
+function cd(date){
+  const diff=new Date(date)-new Date();
+  if(diff<=0)return"終了";
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor(diff%86400000/3600000);
+  const m=Math.floor(diff%3600000/60000);
+  return `${d}D ${h}H ${m}M`;
+}
+function renderEvents(){
+  document.getElementById("impactList").innerHTML=events.map((e,i)=>`
+    <div class="impactItem" onclick="showEvent(${i})">
+      🔴 <b>${e.t}</b><br>${cd(e.d)}
+    </div>
+  `).join("");
+}
+function showEvent(i){
+  const e=events[i];
+  const body=`発表日時：${e.d}<br>残り：${cd(e.d)}<br><br>${e.b}`;
+  setInfo("🔴 "+e.t,body);
+  openModal("🔴 "+e.t,body);
+}
+setInterval(renderEvents,60000);renderEvents();
 </script>
-
 </body>
 </html>
