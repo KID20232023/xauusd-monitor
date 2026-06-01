@@ -15,10 +15,12 @@ a{color:inherit;text-decoration:none}
 :root{--line:#222;--gold:#d9a441;--red:#ff3030;--orange:#ff8c1a;--yellow:#ffd54f;--blue:#2f8cff;--purple:#9b4dff;--green:#00e676}
 
 .app{height:100vh;display:grid;grid-template-rows:34px 1fr 235px 28px;gap:2px;background:#050505}
-.topbar{background:#0b0b0b;border-bottom:1px solid #202020;display:flex;align-items:center;gap:18px;padding:0 10px;font-size:13px}
+
+.topbar{background:#0b0b0b;border-bottom:1px solid #202020;display:flex;align-items:center;gap:16px;padding:0 10px;font-size:13px}
 .brand{color:#00d0aa;font-weight:900;font-size:17px}
+.live{color:var(--green);font-weight:900}
 .centerTitle{margin:auto;background:#111;border:1px solid #8a5d17;color:#f2b84b;border-radius:5px;padding:5px 70px;font-weight:900}
-.live{color:var(--green)}
+#topJstTime{color:#fff;font-size:13px;font-weight:800;margin-left:-8px}
 
 .main{display:grid;grid-template-columns:155px 1fr;gap:2px;min-height:0}
 .sidebar{background:#0c0c0c;border-right:1px solid #222;padding:7px;overflow:hidden}
@@ -33,7 +35,6 @@ a{color:inherit;text-decoration:none}
 .leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
 
 .mapTop{position:absolute;top:10px;left:12px;z-index:500;background:#080808d9;border:1px solid #222;border-radius:4px;padding:6px 10px;font-size:12px}
-.mapClock{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909d9;border:1px solid #222;border-radius:4px;padding:5px 16px;font-size:12px}
 .legend{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:500;background:#090909e6;border:1px solid #222;border-radius:4px;padding:7px 14px;font-size:11px}
 
 .pulse{width:13px;height:13px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor,0 0 30px currentColor,0 0 70px currentColor,0 0 120px currentColor;position:relative}
@@ -47,18 +48,22 @@ a{color:inherit;text-decoration:none}
 .tooltip{background:#080808e8!important;color:#fff!important;border:1px solid #333!important;border-radius:4px!important;font-size:11px!important;padding:7px 9px!important;box-shadow:0 0 15px #000!important}
 .leaflet-tooltip:before{display:none!important}
 
-.footerPanels{display:grid;grid-template-columns:1fr 1.45fr 1fr;gap:2px}
+.footerPanels{display:grid;grid-template-columns:.9fr 1.35fr 1.15fr;gap:2px}
 .panel{background:#0d0d0d;border:1px solid #222;padding:8px;overflow:hidden}
 .panelTitle{font-size:12px;font-weight:900;color:#fff;margin-bottom:6px}
 
-.xauusdBox{height:165px;overflow:hidden}
-.xauusdBox .tradingview-widget-container{transform:scale(.72);transform-origin:top left;width:138%!important}
+.xauusdBox{height:175px;overflow:hidden}
+.xauusdBox .tradingview-widget-container{transform:scale(.70);transform-origin:top left;width:143%!important}
 
-.newsBox{height:185px;overflow:hidden}
+.impactBox{height:175px;overflow:hidden;font-size:12px}
+.impactItem{display:grid;grid-template-columns:36px 1fr 95px;gap:8px;border-bottom:1px solid #242424;padding:7px 0;align-items:center}
+.impactBadge{background:#4b1010;color:#ff4d4d;font-weight:900;text-align:center;border-radius:3px;padding:2px 0}
+.impactTime{color:#aaa;text-align:right;font-size:11px}
 
-.clockBox{height:165px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.clockTime{font-size:28px;font-weight:900;color:#fff;line-height:1}
-.clockDate{font-size:13px;color:#aaa;margin-top:8px}
+.guideBox{height:175px;overflow:hidden;font-size:12px;line-height:1.65}
+.guideBox div{border-bottom:1px solid #242424;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;box-shadow:0 0 10px currentColor}
+.dot.green{background:#00e676;color:#00e676}.dot.red{background:#ff3030;color:#ff3030}.dot.orange{background:#ff8c1a;color:#ff8c1a}.dot.blue{background:#2f8cff;color:#2f8cff}.dot.purple{background:#9b4dff;color:#9b4dff}.dot.yellow{background:#ffd54f;color:#ffd54f}
 
 .bottom{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:2px}
 .item{display:block;border-bottom:1px solid #242424;padding:6px 0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -67,7 +72,7 @@ a{color:inherit;text-decoration:none}
 
 .break{display:flex;align-items:center;overflow:hidden;background:#0a0a0a;border-top:1px solid #222}
 .break b{background:#b00000;color:#fff;padding:8px 18px;font-size:12px}
-.ticker{white-space:nowrap;animation:flow 180s linear infinite;font-size:12px;padding-left:20px}
+.ticker{white-space:nowrap;animation:flow 240s linear infinite;font-size:12px;padding-left:20px}
 @keyframes flow{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
 </style>
 </head>
@@ -81,8 +86,8 @@ a{color:inherit;text-decoration:none}
     <span>v2.1.4</span>
     <span class="live">● ライブ</span>
     <span>グローバル</span>
+    <span id="topJstTime">----</span>
     <div class="centerTitle">XAUUSD WAR ROOM</div>
-    <span>更新中 <span id="jstTop">--:--:--</span> JST</span>
     <span class="live">● 自動更新</span>
   </div>
 
@@ -106,7 +111,6 @@ a{color:inherit;text-decoration:none}
       <div class="mapWrap">
         <div id="map"></div>
         <div class="mapTop">すべて</div>
-        <div class="mapClock" id="mapClock">--:--:-- UTC</div>
         <div class="legend">
           <span style="color:#00e676">● セッション</span>　
           <span style="color:#ff3030">● 高インパクト</span>　
@@ -132,30 +136,20 @@ a{color:inherit;text-decoration:none}
 
         <div class="panel">
           <div class="panelTitle">HIGH IMPACT NEWS</div>
-          <div class="newsBox">
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-              {
-                "feedMode":"symbol",
-                "symbol":"OANDA:XAUUSD",
-                "colorTheme":"dark",
-                "isTransparent":true,
-                "displayMode":"compact",
-                "width":"100%",
-                "height":"185",
-                "locale":"ja"
-              }
-              </script>
-            </div>
-          </div>
+          <div id="highImpactJP" class="impactBox"></div>
         </div>
 
         <div class="panel">
-          <div class="panelTitle">JST CLOCK</div>
-          <div class="clockBox">
-            <div id="jstClock" class="clockTime">--:--:--</div>
-            <div id="jstDate" class="clockDate">----</div>
+          <div class="panelTitle">FLASHPOINT GUIDE</div>
+          <div class="guideBox">
+            <div><span class="dot green"></span>アジアセッション　OPEN 08:00 / CLOSE 17:00 JST</div>
+            <div><span class="dot green"></span>ロンドンセッション　OPEN 16:00 / CLOSE 01:00 JST</div>
+            <div><span class="dot green"></span>米国セッション　OPEN 21:30 / CLOSE 06:00 JST</div>
+            <div><span class="dot red"></span>ウクライナ　地政学リスク / 戦争リスク</div>
+            <div><span class="dot orange"></span>中東　原油 / 安全資産買い</div>
+            <div><span class="dot blue"></span>ワシントンDC　FRB / 金利材料</div>
+            <div><span class="dot purple"></span>ニューヨーク　CPI / NFP / ドル材料</div>
+            <div><span class="dot yellow"></span>北京　中国金需要 / 中央銀行買い</div>
           </div>
         </div>
       </div>
@@ -197,18 +191,7 @@ function clock(){
     weekday:"short"
   }).format(now);
 
-  const utc=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"UTC",
-    hour:"2-digit",
-    minute:"2-digit",
-    second:"2-digit",
-    hour12:false
-  }).format(now);
-
-  document.getElementById("jstTop").textContent=jst;
-  document.getElementById("jstClock").textContent=jst;
-  document.getElementById("jstDate").textContent=date;
-  document.getElementById("mapClock").textContent=utc+" UTC";
+  document.getElementById("topJstTime").textContent=date+" "+jst+" JST";
 }
 setInterval(clock,1000);
 clock();
@@ -283,7 +266,6 @@ function addSession(lat,lng,title,open,close,dir="top",offset=[0,-10]){
   });
 }
 
-/* 日本語地図説明 */
 add(50,31,"red","ウクライナ","地政学リスク / 戦争リスク","top");
 add(31,45,"orange","中東","地政学リスク / 原油・安全資産","right");
 add(39,-77,"blue","ワシントンDC","FRB / 金融政策 / 金利材料","right");
@@ -301,16 +283,54 @@ add(19,-99,"orange","メキシコ","貿易・ドル材料","bottom");
 add(48,14,"blue","EU","ECB / 欧州金利 / 経済指標","bottom");
 add(55,37,"red","ロシア","制裁・エネルギー・地政学リスク","top");
 
-/* セッション点滅 */
 addSession(35.6,139.7,"アジアセッション","08:00","17:00","right",[20,0]);
 addSession(51.5,-0.1,"ロンドンセッション","16:00","01:00","top",[0,-18]);
 addSession(40.7,-74,"米国セッション","21:30","06:00","bottom",[0,20]);
 
+function nextEvent(month,day,hour,minute){
+  const now=new Date();
+  let y=now.getFullYear();
+  let d=new Date(y,month-1,day,hour,minute,0);
+  if(d<now)d=new Date(y+1,month-1,day,hour,minute,0);
+  return d;
+}
+
+function fmtCountdown(d){
+  const diff=d-new Date();
+  const days=Math.floor(diff/86400000);
+  const hrs=Math.floor(diff%86400000/3600000);
+  const mins=Math.floor(diff%3600000/60000);
+  if(days>0)return `あと ${days}日 ${hrs}時間`;
+  if(hrs>0)return `あと ${hrs}時間 ${mins}分`;
+  return `あと ${mins}分`;
+}
+
+function loadHighImpactJP(){
+  const events=[
+    {date:nextEvent(6,2,21,30),name:"米CPI（消費者物価指数）"},
+    {date:nextEvent(6,3,21,15),name:"米ADP雇用統計"},
+    {date:nextEvent(6,6,21,30),name:"米雇用統計（NFP）"},
+    {date:nextEvent(6,12,3,0),name:"FOMC政策金利発表"},
+    {date:nextEvent(6,18,3,0),name:"FRB議長発言 / FOMC関連"}
+  ].sort((a,b)=>a.date-b.date);
+
+  document.getElementById("highImpactJP").innerHTML=events.map(e=>{
+    const date=new Intl.DateTimeFormat("ja-JP",{month:"2-digit",day:"2-digit",weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false}).format(e.date);
+    return `<a class="impactItem" target="_blank" href="https://www.tradingview.com/economic-calendar/">
+      <span class="impactBadge">高</span>
+      <span>${date}　${e.name}</span>
+      <span class="impactTime">${fmtCountdown(e.date)}</span>
+    </a>`;
+  }).join("");
+}
+loadHighImpactJP();
+setInterval(loadHighImpactJP,60000);
+
 const fallback=[
  ["高","ウクライナ情勢、ロシアの攻撃激化で避難指示拡大","https://news.google.com/search?q=Ukraine+war+gold"],
- ["高","米CPIが予想以上に上昇、金価格に影響","https://news.google.com/search?q=US+CPI+gold"],
- ["中","中東情勢の緊迫化で安全資産としての金需要が高まる","https://news.google.com/search?q=Middle+East+gold"],
- ["中","FRB高官、利下げ判断はデータ次第と発言","https://news.google.com/search?q=FRB+gold"],
+ ["高","米CPI発表を控え金価格は高値圏で推移","https://news.google.com/search?q=US+CPI+gold"],
+ ["中","中東情勢の緊迫化で安全資産買いが継続","https://news.google.com/search?q=Middle+East+gold"],
+ ["中","FRB発言で米金利とドルに注目","https://news.google.com/search?q=FRB+gold"],
  ["低","世界の金ETF、前日比で資金流入","https://news.google.com/search?q=gold+ETF+inflows"]
 ];
 
