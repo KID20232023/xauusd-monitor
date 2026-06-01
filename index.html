@@ -7,69 +7,304 @@
 
 <style>
 :root{
-  --bg:#050505;--panel:#0b0b0b;--panel2:#101010;--border:#202020;
-  --text:#8a8a8a;--muted:#5f5f5f;--gold:#b89b5e;--green:#00ff88;--red:#ff2d2d;
+  --bg:#050505;
+  --panel:#0b0b0b;
+  --panel2:#101010;
+  --border:#202020;
+  --text:#8a8a8a;
+  --muted:#5f5f5f;
+  --gold:#b89b5e;
+  --green:#00ff88;
+  --red:#ff2d2d;
 }
+
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{background:var(--bg);color:var(--text);padding:14px}
 .wrap{max-width:1780px;margin:0 auto}
-.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:12px;padding:14px}
-.top{display:grid;grid-template-columns:1fr 1.55fr 1.25fr;gap:14px;margin-bottom:14px}
-.label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:700;margin-bottom:8px}
-.price{color:var(--green);font-size:44px;font-weight:900}
-.change{color:var(--green);font-size:18px;margin-top:4px;font-weight:800}
-.small{color:var(--muted);font-size:11px;margin-top:8px}
-.clockCal{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px}
-.clock{font-size:42px;font-weight:900;color:var(--text)}
-.date{margin-top:8px;font-size:14px;color:var(--text)}
-.monthTitle{text-align:center;font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px}
-.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.calHead,.calDay{text-align:center;font-size:11px;color:var(--text);padding:5px 0}
+
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+}
+
+.top{
+  display:grid;
+  grid-template-columns:1fr 1.55fr 1.25fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.label{
+  font-size:11px;
+  color:var(--text);
+  letter-spacing:1.3px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.tvBox{
+  height:145px;
+  overflow:hidden;
+}
+
+.clockCal{
+  display:grid;
+  grid-template-columns:.8fr 1.2fr;
+  gap:18px;
+}
+
+.clock{
+  font-size:42px;
+  font-weight:900;
+  color:var(--text);
+}
+
+.date{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--text);
+}
+
+.monthTitle{
+  text-align:center;
+  font-size:13px;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:8px;
+}
+
+.calGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+
+.calHead,.calDay{
+  text-align:center;
+  font-size:11px;
+  color:var(--text);
+  padding:5px 0;
+}
+
 .calHead{color:var(--muted)}
-.today{background:rgba(255,45,45,.14);border:1px solid rgba(255,45,45,.35);border-radius:6px}
-.todayTopList{height:130px;overflow:hidden}
-.todayItem{border-bottom:1px solid #181818;padding:8px 0;font-size:12px}
-.todayMain{display:grid;grid-template-columns:62px 1fr 78px;gap:8px;align-items:center}
+
+.today{
+  background:rgba(255,45,45,.14);
+  border:1px solid rgba(255,45,45,.35);
+  border-radius:6px;
+}
+
+.todayTopList{
+  height:130px;
+  overflow:hidden;
+}
+
+.todayItem{
+  border-bottom:1px solid #181818;
+  padding:8px 0;
+  font-size:12px;
+}
+
+.todayMain{
+  display:grid;
+  grid-template-columns:62px 1fr 78px;
+  gap:8px;
+  align-items:center;
+}
+
 .todayDate{color:var(--gold);font-weight:900}
 .todayEvent{color:var(--text);font-weight:900}
 .todayCount{color:var(--red);font-weight:900;text-align:right}
 .todaySub{color:var(--muted);margin-top:5px;font-size:11px}
-.main{display:grid;grid-template-columns:52% 48%;gap:14px;margin-bottom:14px}
-.mapPanel{height:480px;position:relative;overflow:hidden}
-.mapTitle{position:absolute;top:14px;left:16px;z-index:5;color:var(--text);font-size:13px;font-weight:800;letter-spacing:1px}
-.worldMap{
-  position:absolute;left:14px;right:14px;top:48px;bottom:14px;border:1px solid #171717;border-radius:10px;overflow:hidden;
-  background:
-  radial-gradient(circle at 26% 45%,rgba(184,155,94,.26),transparent 8%),
-  radial-gradient(circle at 49% 41%,rgba(184,155,94,.28),transparent 8%),
-  radial-gradient(circle at 72% 48%,rgba(184,155,94,.20),transparent 8%),
-  url("https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg");
-  background-size:cover;background-position:center;filter:grayscale(1) brightness(.62) contrast(1.15);
+
+.blink24{
+  animation:redPulse 1s infinite;
 }
-.session{position:absolute;z-index:10;color:var(--text);background:rgba(5,5,5,.78);border:1px solid rgba(184,155,94,.22);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.45;letter-spacing:.8px}
+
+@keyframes redPulse{
+  0%{opacity:1;text-shadow:0 0 4px var(--red)}
+  50%{opacity:.35;text-shadow:0 0 18px var(--red)}
+  100%{opacity:1;text-shadow:0 0 4px var(--red)}
+}
+
+.main{
+  display:grid;
+  grid-template-columns:52% 48%;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.mapPanel{
+  height:480px;
+  position:relative;
+  overflow:hidden;
+}
+
+.mapTitle{
+  position:absolute;
+  top:14px;
+  left:16px;
+  z-index:5;
+  color:var(--text);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+.worldFrame{
+  position:absolute;
+  left:14px;
+  right:14px;
+  top:48px;
+  bottom:14px;
+  border:1px solid #171717;
+  border-radius:10px;
+  overflow:hidden;
+  background:#050505;
+}
+
+.worldFrame iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  filter:brightness(.78) contrast(1.1) saturate(.85);
+}
+
+.session{
+  position:absolute;
+  z-index:20;
+  color:var(--text);
+  background:rgba(5,5,5,.78);
+  border:1px solid rgba(184,155,94,.22);
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:12px;
+  line-height:1.45;
+  letter-spacing:.8px;
+}
+
 .asia{left:72%;top:47%}
 .london{left:49%;top:35%}
 .us{left:24%;top:42%}
-.openMark{display:none;color:var(--red);font-weight:900}
-.session.open{border-color:rgba(255,45,45,.65)}
-.session.open .openMark{display:block;animation:redBlink 1s infinite}
-@keyframes redBlink{0%{opacity:1;text-shadow:0 0 5px var(--red)}50%{opacity:.25;text-shadow:0 0 20px var(--red)}100%{opacity:1;text-shadow:0 0 5px var(--red)}}
-.newsPanel{height:480px;overflow:hidden}
-.newsHead,.newsRow{display:grid;grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;gap:8px;align-items:center}
-.newsHead{padding:10px 0;border-bottom:1px solid #1b1b1b;font-size:11px;color:var(--muted)}
-.newsRow{padding:9px 0;border-bottom:1px solid #181818;font-size:12px}
-.newsRow .eventCell{font-weight:800;color:var(--text)}
-.impactCell,.redCount{color:var(--red)!important;font-weight:900}
-.countCell{color:var(--gold);font-weight:900}
-.intel{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:14px}
-.intelCard{height:96px}
-.intelTitle{color:var(--text);font-size:12px;font-weight:900;margin-bottom:16px}
-.intelStatus{color:var(--gold);font-size:18px;font-weight:900}
-.banner{height:58px;overflow:hidden;position:relative;color:var(--text)}
-.bannerInner{position:absolute;top:19px;white-space:nowrap;animation:ticker 35s linear infinite;color:var(--text);font-size:13px;letter-spacing:1.1px}
-.bannerInner span{margin-right:50px}
-.green{color:var(--green);font-weight:900}.red{color:var(--red);font-weight:900}
-@keyframes ticker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+
+.openMark{
+  display:none;
+  color:var(--red);
+  font-weight:900;
+}
+
+.session.open{
+  border-color:rgba(255,45,45,.65);
+}
+
+.session.open .openMark{
+  display:block;
+  animation:redPulse 1s infinite;
+}
+
+.newsPanel{
+  height:480px;
+  overflow:hidden;
+}
+
+.newsHead,.newsRow{
+  display:grid;
+  grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
+  gap:8px;
+  align-items:center;
+}
+
+.newsHead{
+  padding:10px 0;
+  border-bottom:1px solid #1b1b1b;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.newsRow{
+  padding:9px 0;
+  border-bottom:1px solid #181818;
+  font-size:12px;
+}
+
+.newsRow .eventCell{
+  font-weight:800;
+  color:var(--text);
+}
+
+.impactCell{
+  color:var(--red);
+  font-weight:900;
+}
+
+.countCell{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.redCount{
+  color:var(--red)!important;
+}
+
+.intel{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.intelCard{
+  height:96px;
+}
+
+.intelTitle{
+  color:var(--text);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:16px;
+}
+
+.intelStatus{
+  color:var(--gold);
+  font-size:18px;
+  font-weight:900;
+}
+
+.banner{
+  height:58px;
+  overflow:hidden;
+  position:relative;
+  color:var(--text);
+}
+
+.bannerInner{
+  position:absolute;
+  top:13px;
+  white-space:nowrap;
+  animation:ticker 42s linear infinite;
+  color:var(--text);
+  font-size:13px;
+  letter-spacing:1.1px;
+  display:flex;
+  align-items:center;
+  gap:42px;
+}
+
+.tickerTV{
+  width:340px;
+  height:34px;
+  overflow:hidden;
+}
+
+.green{color:var(--green);font-weight:900}
+.red{color:var(--red);font-weight:900}
+
+@keyframes ticker{
+  from{transform:translateX(100%)}
+  to{transform:translateX(-100%)}
+}
 </style>
 </head>
 
@@ -77,11 +312,23 @@ body{background:var(--bg);color:var(--text);padding:14px}
 <div class="wrap">
 
 <div class="top">
+
   <div class="panel">
     <div class="label">XAUUSD</div>
-    <div class="price" id="xauPrice">CONNECTING</div>
-    <div class="change" id="xauChange">----</div>
-    <div class="small" id="xauUpdated">REALTIME DATA</div>
+    <div class="tvBox">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+        {
+          "symbol": "OANDA:XAUUSD",
+          "width": "100%",
+          "locale": "ja",
+          "colorTheme": "dark",
+          "isTransparent": true
+        }
+        </script>
+      </div>
+    </div>
   </div>
 
   <div class="panel clockCal">
@@ -100,25 +347,47 @@ body{background:var(--bg);color:var(--text);padding:14px}
     <div class="label">TODAY HIGH IMPACT</div>
     <div class="todayTopList" id="todayImpactTop"></div>
   </div>
+
 </div>
 
 <div class="main">
+
   <div class="panel mapPanel">
     <div class="mapTitle">WORLD MONITOR</div>
-    <div class="worldMap"></div>
 
-    <div class="session asia" id="asiaSession">ASIA<br>07:00-15:00<br><span class="openMark">● OPEN</span></div>
-    <div class="session london" id="londonSession">LONDON<br>15:00-21:00<br><span class="openMark">● OPEN</span></div>
-    <div class="session us" id="usSession">US<br>21:00-06:00<br><span class="openMark">● OPEN</span></div>
+    <div class="worldFrame">
+      <iframe src="https://www.worldmonitor.app/?lat=-22.9997&lon=12.8906&zoom=1.00&view=global&timeRange=7d&layers=conflicts%2Cbases%2Chotspots%2Cnuclear%2Csanctions%2Cweather%2Ceconomic%2Cwaterways%2Coutages%2Cmilitary%2Cnatural%2CiranAttacks"></iframe>
+    </div>
+
+    <div class="session asia" id="asiaSession">
+      ASIA<br>07:00-15:00<br><span class="openMark">● OPEN</span>
+    </div>
+
+    <div class="session london" id="londonSession">
+      LONDON<br>15:00-21:00<br><span class="openMark">● OPEN</span>
+    </div>
+
+    <div class="session us" id="usSession">
+      US<br>21:00-06:00<br><span class="openMark">● OPEN</span>
+    </div>
   </div>
 
   <div class="panel newsPanel">
     <div class="label">HIGH IMPACT NEWS</div>
+
     <div class="newsHead">
-      <div>DATE</div><div>TIME</div><div>EVENT</div><div>IMPACT</div><div>予想</div><div>前回</div><div>COUNT</div>
+      <div>DATE</div>
+      <div>TIME</div>
+      <div>EVENT</div>
+      <div>IMPACT</div>
+      <div>予想</div>
+      <div>前回</div>
+      <div>COUNT</div>
     </div>
+
     <div id="highImpactList"></div>
   </div>
+
 </div>
 
 <div class="intel">
@@ -132,48 +401,42 @@ body{background:var(--bg);color:var(--text);padding:14px}
   <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
 </div>
 
-<div class="panel banner"><div class="bannerInner" id="tickerText"></div></div>
+<div class="panel banner">
+  <div class="bannerInner" id="tickerText">
+    <span>XAUUSD WAR ROOM</span>
+
+    <span class="tickerTV">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+        {
+          "symbol": "OANDA:XAUUSD",
+          "width": 340,
+          "isTransparent": true,
+          "colorTheme": "dark",
+          "locale": "ja"
+        }
+        </script>
+      </div>
+    </span>
+
+    <span>HIGH IMPACT NEWS</span>
+    <span>REUTERS</span>
+    <span>BLOOMBERG</span>
+    <span>FOREXLIVE</span>
+    <span>XAUUSD WAR ROOM</span>
+  </div>
+</div>
 
 </div>
 
 <script>
-let currentXauText="XAUUSD NO DATA";
-
-async function updateXAUUSD(){
-  const url="https://api.allorigins.win/raw?url="+encodeURIComponent("https://query1.finance.yahoo.com/v8/finance/chart/XAUUSD=X?interval=1m&range=1d");
-  try{
-    const res=await fetch(url,{cache:"no-store"});
-    const data=await res.json();
-    const result=data.chart.result[0];
-    const meta=result.meta;
-    const price=Number(meta.regularMarketPrice);
-    const prev=Number(meta.previousClose);
-    const change=price-prev;
-    const percent=(change/prev)*100;
-    renderXAU(price,change,percent);
-  }catch(e){
-    document.getElementById("xauPrice").textContent="NO DATA";
-    document.getElementById("xauChange").textContent="API ERROR";
-    currentXauText="XAUUSD NO DATA";
-    renderTicker();
-  }
-}
-
-function renderXAU(price,change,percent){
-  const p=price.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-  const sign=change>=0?"+":"";
-  document.getElementById("xauPrice").textContent=p;
-  document.getElementById("xauChange").textContent=`${sign}${change.toFixed(2)}  ${sign}${percent.toFixed(2)}%`;
-  document.getElementById("xauUpdated").textContent="Last Update "+new Date().toLocaleTimeString("ja-JP",{hour12:false});
-  currentXauText=`XAUUSD ${p} ${sign}${change.toFixed(2)} (${sign}${percent.toFixed(2)}%)`;
-  renderTicker();
-}
-
 const highImpactEvents=[
   {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
   {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.4%",previous:"2.6%"},
   {date:"2026-06-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"49.8",previous:"48.7"},
   {date:"2026-06-01",time:"23:00",currency:"USD",event:"JOLTS Job Openings",impact:"HIGH",forecast:"7.45M",previous:"7.19M"},
+
   {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
@@ -186,85 +449,139 @@ function getEventDate(e){
   const [hh,mm]=e.time.split(":").map(Number);
   return new Date(y,m-1,d,hh,mm,0,0);
 }
+
 function countdown(target){
   const diff=target-new Date();
+
   if(diff<-3600000)return null;
   if(diff<0)return"ENDED";
-  const t=Math.floor(diff/1000),d=Math.floor(t/86400),h=Math.floor((t%86400)/3600),m=Math.floor((t%3600)/60),s=t%60;
-  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+  const t=Math.floor(diff/1000);
+  const d=Math.floor(t/86400);
+  const h=Math.floor((t%86400)/3600);
+  const m=Math.floor((t%3600)/60);
+  const s=t%60;
+
+  if(d>0){
+    return `${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  }
+
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function isWithin24h(target){
+  const diff=target-new Date();
+  return diff>0 && diff<=86400000;
 }
 
 function renderHighImpact(){
   const list=document.getElementById("highImpactList");
   const todayBox=document.getElementById("todayImpactTop");
-  list.innerHTML="";todayBox.innerHTML="";
+  list.innerHTML="";
+  todayBox.innerHTML="";
+
   const now=new Date();
   const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
 
   highImpactEvents.forEach(e=>{
-    const cd=countdown(getEventDate(e));
+    const target=getEventDate(e);
+    const cd=countdown(target);
     if(cd===null)return;
 
+    const blink=isWithin24h(target) ? "blink24" : "";
+
     list.innerHTML+=`
-      <div class="newsRow">
-        <div>${e.date.slice(5)}</div><div>${e.time}</div>
+      <div class="newsRow ${blink}">
+        <div>${e.date.slice(5)}</div>
+        <div>${e.time}</div>
         <div class="eventCell">${e.currency} ${e.event}</div>
         <div class="impactCell">${e.impact}</div>
-        <div>${e.forecast}</div><div>${e.previous}</div>
-        <div class="countCell">${cd}</div>
-      </div>`;
+        <div>${e.forecast}</div>
+        <div>${e.previous}</div>
+        <div class="countCell ${blink}">${cd}</div>
+      </div>
+    `;
 
     if(e.date===today){
       todayBox.innerHTML+=`
-        <div class="todayItem">
+        <div class="todayItem ${blink}">
           <div class="todayMain">
             <div class="todayDate">${e.date.slice(5)}<br>${e.time}</div>
             <div class="todayEvent">${e.currency} ${e.event}</div>
             <div class="todayCount">${cd}</div>
           </div>
           <div class="todaySub">予想 ${e.forecast} / 前回 ${e.previous}</div>
-        </div>`;
+        </div>
+      `;
     }
   });
-  renderTicker();
 }
 
 function updateClock(){
   const now=new Date();
-  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
-  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
+
+  document.getElementById("clock").textContent=
+    now.toLocaleTimeString("ja-JP",{hour12:false});
+
+  document.getElementById("dateText").textContent=
+    now.toLocaleDateString("ja-JP",{
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      weekday:"short"
+    });
+
   updateSession(now.getHours());
 }
+
 function renderCalendar(){
-  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),grid=document.getElementById("calendarGrid");
-  document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+  const grid=document.getElementById("calendarGrid");
+
+  document.getElementById("monthTitle").textContent=
+    `${y} / ${String(m+1).padStart(2,"0")}`;
+
   grid.innerHTML="";
-  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>grid.innerHTML+=`<div class="calHead">${h}</div>`);
-  const first=new Date(y,m,1),last=new Date(y,m+1,0);
-  for(let i=0;i<first.getDay();i++)grid.innerHTML+=`<div class="calDay"></div>`;
-  for(let d=1;d<=last.getDate();d++)grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""}">${d}</div>`;
-}
-function updateSession(hour){
-  ["asiaSession","londonSession","usSession"].forEach(id=>document.getElementById(id).classList.remove("open"));
-  if(hour>=7&&hour<15)document.getElementById("asiaSession").classList.add("open");
-  else if(hour>=15&&hour<21)document.getElementById("londonSession").classList.add("open");
-  else document.getElementById("usSession").classList.add("open");
-}
-function renderTicker(){
-  document.getElementById("tickerText").innerHTML=`
-    <span>XAUUSD WAR ROOM</span>
-    <span class="green">${currentXauText}</span>
-    <span>HIGH IMPACT NEWS</span>
-    <span>REUTERS</span>
-    <span>BLOOMBERG</span>
-    <span>FOREXLIVE</span>
-    <span class="green">${currentXauText}</span>`;
+
+  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
+    grid.innerHTML+=`<div class="calHead">${h}</div>`;
+  });
+
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
+
+  for(let i=0;i<first.getDay();i++){
+    grid.innerHTML+=`<div class="calDay"></div>`;
+  }
+
+  for(let d=1;d<=last.getDate();d++){
+    grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""}">${d}</div>`;
+  }
 }
 
-renderCalendar();updateClock();renderHighImpact();updateXAUUSD();
+function updateSession(hour){
+  ["asiaSession","londonSession","usSession"].forEach(id=>{
+    document.getElementById(id).classList.remove("open");
+  });
+
+  if(hour>=7&&hour<15){
+    document.getElementById("asiaSession").classList.add("open");
+  }else if(hour>=15&&hour<21){
+    document.getElementById("londonSession").classList.add("open");
+  }else{
+    document.getElementById("usSession").classList.add("open");
+  }
+}
+
+renderCalendar();
+updateClock();
+renderHighImpact();
+
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
-setInterval(updateXAUUSD,5000);
 </script>
+
 </body>
 </html>
