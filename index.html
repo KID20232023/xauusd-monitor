@@ -18,14 +18,10 @@
   --gold:#b89b5e;
   --green:#00ff88;
   --red:#ff2d2d;
+  --white:#d8d8d8;
 }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
 html,body{
   width:100%;
@@ -40,7 +36,7 @@ html,body{
   height:100vh;
   padding:8px;
   display:grid;
-  grid-template-rows:150px 1fr 245px;
+  grid-template-rows:150px 1fr 250px;
   gap:8px;
 }
 
@@ -66,10 +62,7 @@ html,body{
   margin-bottom:6px;
 }
 
-.tvBox{
-  height:120px;
-  overflow:hidden;
-}
+.tvBox{height:120px;overflow:hidden}
 
 .clockCal{
   display:grid;
@@ -178,9 +171,7 @@ html,body{
   min-height:0;
 }
 
-.mapPanel{
-  position:relative;
-}
+.mapPanel{position:relative}
 
 .mapTitle{
   position:absolute;
@@ -206,14 +197,11 @@ html,body{
 }
 
 .leaflet-control-attribution,
-.leaflet-control-zoom{
-  display:none!important;
-}
+.leaflet-control-zoom{display:none!important}
 
 .sessionLabel{
-  color:var(--text);
   background:rgba(5,5,5,.86);
-  border:1px solid rgba(184,155,94,.28);
+  border:1px solid rgba(184,155,94,.24);
   border-radius:8px;
   padding:7px 9px;
   font-size:12px;
@@ -221,10 +209,12 @@ html,body{
   letter-spacing:.8px;
   text-align:center;
   min-width:112px;
+  color:#6f6f6f;
 }
 
 .sessionLabel.open{
-  border-color:rgba(255,45,45,.75);
+  color:var(--white);
+  border-color:rgba(255,255,255,.55);
 }
 
 .sessionTime,
@@ -285,12 +275,10 @@ html,body{
   min-height:0;
 }
 
-.newsPanel{
-  overflow:hidden;
-}
+.newsPanel{overflow:hidden}
 
 .newsTable{
-  height:100%;
+  height:150px;
   overflow-y:auto;
   padding-right:4px;
 }
@@ -317,6 +305,17 @@ html,body{
   padding:8px 0;
   border-bottom:1px solid #181818;
   font-size:12px;
+  cursor:pointer;
+}
+
+.newsRow:hover,
+.newsRow.selected{
+  background:rgba(184,155,94,.08);
+}
+
+.dateCell,.timeCell{
+  color:var(--green);
+  font-weight:900;
 }
 
 .eventCell{
@@ -334,16 +333,33 @@ html,body{
   font-weight:900;
 }
 
-.redCount{
-  color:var(--red)!important;
+.redCount{color:var(--red)!important}
+
+.blink24{animation:redPulse 1s infinite}
+
+.eventDetail{
+  height:82px;
+  margin-top:8px;
+  border-top:1px solid #181818;
+  padding-top:8px;
+  font-size:12px;
+  color:var(--text);
+  overflow-y:auto;
 }
 
-.blink24{
-  animation:redPulse 1s infinite;
+.eventDetailTitle{
+  color:var(--gold);
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.eventDetailText{
+  color:var(--text);
+  line-height:1.45;
 }
 
 .headlineScroll{
-  height:205px;
+  height:220px;
   overflow-y:auto;
   padding-right:4px;
 }
@@ -352,6 +368,12 @@ html,body{
   border-bottom:1px solid #181818;
   padding:7px 0;
   font-size:12px;
+  cursor:pointer;
+}
+
+.headlineItem:hover,
+.headlineItem.selected{
+  background:rgba(184,155,94,.08);
 }
 
 .headlineTop{
@@ -460,30 +482,12 @@ html,body{
     <div class="panel">
       <div class="label">MARKET STATUS</div>
       <div class="statusGrid">
-        <div class="statusBox">
-          <div class="statusTitle">SAFE HAVEN</div>
-          <div class="statusValue green">ACTIVE</div>
-        </div>
-        <div class="statusBox">
-          <div class="statusTitle">HIGH IMPACT</div>
-          <div class="statusValue red">WATCH</div>
-        </div>
-        <div class="statusBox">
-          <div class="statusTitle">NEWS ALERT</div>
-          <div class="statusValue">STANDBY</div>
-        </div>
-        <div class="statusBox">
-          <div class="statusTitle">SESSION</div>
-          <div class="statusValue green" id="topSession">----</div>
-        </div>
-        <div class="statusBox">
-          <div class="statusTitle">VOLATILITY</div>
-          <div class="statusValue">ELEVATED</div>
-        </div>
-        <div class="statusBox">
-          <div class="statusTitle">UPDATE</div>
-          <div class="statusValue green">AUTO</div>
-        </div>
+        <div class="statusBox"><div class="statusTitle">SAFE HAVEN</div><div class="statusValue green">ACTIVE</div></div>
+        <div class="statusBox"><div class="statusTitle">HIGH IMPACT</div><div class="statusValue red">WATCH</div></div>
+        <div class="statusBox"><div class="statusTitle">NEWS ALERT</div><div class="statusValue">STANDBY</div></div>
+        <div class="statusBox"><div class="statusTitle">SESSION</div><div class="statusValue green" id="topSession">----</div></div>
+        <div class="statusBox"><div class="statusTitle">VOLATILITY</div><div class="statusValue">ELEVATED</div></div>
+        <div class="statusBox"><div class="statusTitle">UPDATE</div><div class="statusValue green">AUTO</div></div>
       </div>
     </div>
 
@@ -532,6 +536,10 @@ html,body{
         </div>
         <div id="highImpactList"></div>
       </div>
+      <div class="eventDetail" id="eventDetail">
+        <div class="eventDetailTitle">EVENT DETAIL</div>
+        <div class="eventDetailText">指標を押すと説明を表示します。</div>
+      </div>
     </div>
 
     <div class="panel">
@@ -547,61 +555,40 @@ html,body{
 
 <script>
 const highImpactEvents=[
-  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
-  {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6"},
-  {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6"},
+  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K",detail:"ADP雇用統計。NFP前の雇用先行指標。強ければドル買い・金売り圧力、弱ければ金買い材料になりやすい。"},
+  {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6",detail:"米サービス業の景況感。50超えは拡大。強い数字は利下げ後退、金には重し。"},
+  {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6",detail:"ISM非製造業。米景気とインフレ圧力を見る重要指標。XAUUSDは発表直後に大きく動きやすい。"},
 
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K",detail:"米雇用統計NFP。最重要指標。予想より強いとドル高・金下落、弱いと金上昇になりやすい。"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%",detail:"失業率。雇用の弱さが出ると利下げ観測が強まり、金買い材料になりやすい。"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"平均時給。賃金インフレを見る指標。高いとインフレ懸念、金は乱高下しやすい。"},
 
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"コアCPI。食品・エネルギー除くインフレ指標。FRB政策に直結し、金への影響が大きい。"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%",detail:"CPI前月比。インフレ加速ならドル高・金売り、鈍化なら金買いになりやすい。"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%",detail:"CPI前年比。インフレトレンド確認。XAUUSDは発表後の初動と戻しに注意。"},
 
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---",detail:"新規失業保険申請件数。雇用悪化が見えると金買い材料になりやすい。"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%",detail:"生産者物価指数。企業側インフレ。CPIへの先行材料として注目。"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%",detail:"コアPPI。物価圧力の確認。強いと利下げ観測後退、金には売り圧力。"},
 
-  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2"},
-  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Inflation Expectations",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
-  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Core Retail Sales m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
-
-  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
-  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-06-18",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-06-24",time:"23:00",currency:"USD",event:"New Home Sales",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-06-25",time:"21:30",currency:"USD",event:"Final GDP q/q",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-06-25",time:"21:30",currency:"USD",event:"Unemployment Claims",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
-  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"},
-  {date:"2026-06-26",time:"23:00",currency:"USD",event:"Revised UoM Consumer Sentiment",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-07-01",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-07-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-07-02",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-07-02",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"---",previous:"---"}
+  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2",detail:"ミシガン消費者信頼感。景気心理とインフレ期待に反応しやすい。"},
+  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%",detail:"小売売上高。米消費の強さを示す。強いとドル買い、金売りになりやすい。"},
+  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%",detail:"FOMC政策金利。金利見通しと声明文でXAUUSDが大きく動く。"},
+  {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---",detail:"FRB議長会見。発言内容で金利見通しが変わり、金が急変動しやすい。"},
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%",detail:"FRBが重視するインフレ指標。CPI以上に政策判断へ影響する場合がある。"}
 ];
 
 let headlines=[
-  {id:"h1",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false},
-  {id:"h2",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false},
-  {id:"h3",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false},
-  {id:"h4",source:"MARKET",region:"US",text:"XAUUSD sensitivity elevated into high impact US data.",breaking:false},
-  {id:"h5",source:"DXY",region:"US",text:"Dollar strength remains a key pressure factor for gold.",breaking:false},
-  {id:"h6",source:"US10Y",region:"US",text:"Treasury yield movement watched closely by gold traders.",breaking:false},
-  {id:"h7",source:"OIL",region:"ENERGY",text:"Energy headlines remain important for inflation expectations.",breaking:false},
-  {id:"h8",source:"MIDDLE EAST",region:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true},
-  {id:"h9",source:"UKRAINE",region:"UKRAINE",text:"Ukraine conflict headlines remain on gold desk watch.",breaking:false},
-  {id:"h10",source:"TAIWAN",region:"TAIWAN",text:"Taiwan Strait risk remains on geopolitical watchlist.",breaking:false},
-  {id:"h11",source:"TRUMP",region:"US",text:"Trump comments monitored for tariff and dollar impact.",breaking:false},
-  {id:"h12",source:"POWELL",region:"FED",text:"Powell remarks remain critical for rate expectations.",breaking:false}
+  {id:"h1",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false,detail:"FRB高官発言。利下げ時期・インフレ認識・雇用認識に注目。"},
+  {id:"h2",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false,detail:"ホワイトハウス発言。地政学・通商・制裁関連は金に影響。"},
+  {id:"h3",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false,detail:"米金利の動き。実質金利上昇は金に重し。"},
+  {id:"h4",source:"MARKET",region:"US",text:"XAUUSD sensitivity elevated into high impact US data.",breaking:false,detail:"重要指標前は流動性低下と急変動に注意。"},
+  {id:"h5",source:"DXY",region:"US",text:"Dollar strength remains a key pressure factor for gold.",breaking:false,detail:"DXY上昇はXAUUSDの下押し要因。"},
+  {id:"h6",source:"US10Y",region:"US",text:"Treasury yield movement watched closely by gold traders.",breaking:false,detail:"10年債利回りの急変動は金価格に直結しやすい。"},
+  {id:"h7",source:"OIL",region:"ENERGY",text:"Energy headlines remain important for inflation expectations.",breaking:false,detail:"原油上昇はインフレ再燃懸念につながる。"},
+  {id:"h8",source:"MIDDLE EAST",region:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true,detail:"中東リスクは安全資産需要を高め、金買い材料になりやすい。"},
+  {id:"h9",source:"UKRAINE",region:"UKRAINE",text:"Ukraine conflict headlines remain on gold desk watch.",breaking:false,detail:"ウクライナ情勢はエネルギー・地政学リスクに影響。"},
+  {id:"h10",source:"TAIWAN",region:"TAIWAN",text:"Taiwan Strait risk remains on geopolitical watchlist.",breaking:false,detail:"台湾海峡リスクはリスクオフ材料。"}
 ];
 
 const regionMap={
@@ -624,7 +611,6 @@ const videoUrls={
 
 function setVideo(type){
   document.getElementById("videoFrame").src=videoUrls[type];
-
   ["sky","dw","abc","nbc","cspan"].forEach(x=>{
     document.getElementById("btn-"+x).classList.toggle("active",x===type);
   });
@@ -638,16 +624,13 @@ function getEventDate(e){
 
 function countdown(target){
   const diff=target-new Date();
-
   if(diff<-3600000)return null;
   if(diff<0)return"ENDED";
-
   const t=Math.floor(diff/1000);
   const d=Math.floor(t/86400);
   const h=Math.floor((t%86400)/3600);
   const m=Math.floor((t%3600)/60);
   const s=t%60;
-
   return d>0
     ?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
     :`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
@@ -665,16 +648,15 @@ function renderHighImpact(){
   [...highImpactEvents]
     .map(e=>({...e,target:getEventDate(e)}))
     .sort((a,b)=>a.target-b.target)
-    .forEach(e=>{
+    .forEach((e,i)=>{
       const cd=countdown(e.target);
       if(cd===null)return;
-
       const blink=isWithin24h(e.target)?"blink24":"";
 
       list.innerHTML+=`
-        <div class="newsRow ${blink}">
-          <div>${e.date.slice(5)}</div>
-          <div>${e.time}</div>
+        <div class="newsRow ${blink}" onclick="selectEvent(${i}, this)">
+          <div class="dateCell">${e.date.slice(5)}</div>
+          <div class="timeCell">${e.time}</div>
           <div class="eventCell">${e.currency} ${e.event}</div>
           <div class="impactCell">${e.impact}</div>
           <div>${e.forecast}</div>
@@ -685,12 +667,26 @@ function renderHighImpact(){
     });
 }
 
+function selectEvent(index, el){
+  document.querySelectorAll(".newsRow").forEach(r=>r.classList.remove("selected"));
+  el.classList.add("selected");
+
+  const e=highImpactEvents[index];
+  document.getElementById("eventDetail").innerHTML=`
+    <div class="eventDetailTitle">${e.currency} ${e.event}</div>
+    <div class="eventDetailText">
+      DATE ${e.date} / TIME ${e.time}<br>
+      予想 ${e.forecast} / 前回 ${e.previous}<br>
+      GOLD IMPACT: ${e.detail}
+    </div>
+  `;
+}
+
 function renderCalendar(){
   const now=new Date();
   const y=now.getFullYear();
   const m=now.getMonth();
   const grid=document.getElementById("calendarGrid");
-
   document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
   grid.innerHTML="";
 
@@ -723,18 +719,8 @@ function renderCalendar(){
 
 function updateClock(){
   const now=new Date();
-
-  document.getElementById("clock").textContent=
-    now.toLocaleTimeString("ja-JP",{hour12:false});
-
-  document.getElementById("dateText").textContent=
-    now.toLocaleDateString("ja-JP",{
-      year:"numeric",
-      month:"2-digit",
-      day:"2-digit",
-      weekday:"short"
-    });
-
+  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
+  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
   updateSession(now);
 }
 
@@ -754,73 +740,34 @@ function sessionHtml(name,time,isOpen,cd){
 
 function getSessionState(now){
   const h=now.getHours();
-
   if(h>=7&&h<15)return{open:"ASIA",nextHour:15};
   if(h>=15&&h<21)return{open:"LONDON",nextHour:21};
-
   return{open:"US",nextHour:7};
 }
 
 function updateSession(now){
   const state=getSessionState(now);
-
   const target=new Date(now);
   target.setHours(state.nextHour,0,0,0);
   if(target<=now)target.setDate(target.getDate()+1);
-
   const cd=countdown(target);
 
   document.getElementById("topSession").textContent=state.open;
 
   if(sessionMarkers.asia){
-    sessionMarkers.asia.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd),
-      iconSize:[120,88]
-    }));
-
-    sessionMarkers.london.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd),
-      iconSize:[125,88]
-    }));
-
-    sessionMarkers.us.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("US","21:00-06:00",state.open==="US",cd),
-      iconSize:[120,88]
-    }));
+    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd),iconSize:[120,88]}));
+    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd),iconSize:[125,88]}));
+    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",state.open==="US",cd),iconSize:[120,88]}));
   }
 }
 
 function initMap(){
-  map=L.map("map",{
-    zoomControl:false,
-    attributionControl:false,
-    dragging:false,
-    scrollWheelZoom:false,
-    doubleClickZoom:false,
-    boxZoom:false,
-    keyboard:false,
-    tap:false
-  }).setView([20,10],2);
+  map=L.map("map",{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,tap:false}).setView([20,10],2);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:5,minZoom:2}).addTo(map);
 
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
-    maxZoom:5,
-    minZoom:2
-  }).addTo(map);
-
-  sessionMarkers.us=L.marker([39,-98],{
-    icon:L.divIcon({className:"",html:"",iconSize:[120,88]})
-  }).addTo(map);
-
-  sessionMarkers.london=L.marker([51,-1],{
-    icon:L.divIcon({className:"",html:"",iconSize:[125,88]})
-  }).addTo(map);
-
-  sessionMarkers.asia=L.marker([35,120],{
-    icon:L.divIcon({className:"",html:"",iconSize:[120,88]})
-  }).addTo(map);
+  sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
+  sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:"",iconSize:[125,88]})}).addTo(map);
+  sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
 
   setTimeout(()=>map.invalidateSize(),300);
 }
@@ -830,27 +777,13 @@ function triggerMapAlert(item){
   if(!r||!map)return;
 
   const point=L.marker([r.lat,r.lng],{
-    icon:L.divIcon({
-      className:"",
-      html:`<div class="flashPoint"></div>`,
-      iconSize:[24,24]
-    })
+    icon:L.divIcon({className:"",html:`<div class="flashPoint"></div>`,iconSize:[24,24]})
   }).addTo(map);
 
-  const popup=L.popup({
-    closeButton:false,
-    autoClose:false,
-    className:""
-  })
-  .setLatLng([r.lat,r.lng])
-  .setContent(`
-    <div class="alertPopup">
-      <b>BREAKING</b><br>
-      ${item.region}<br>
-      ${item.text}
-    </div>
-  `)
-  .openOn(map);
+  const popup=L.popup({closeButton:false,autoClose:false,className:""})
+    .setLatLng([r.lat,r.lng])
+    .setContent(`<div class="alertPopup"><b>BREAKING</b><br>${item.region}<br>${item.text}</div>`)
+    .openOn(map);
 
   setTimeout(()=>{
     map.removeLayer(point);
@@ -860,9 +793,8 @@ function triggerMapAlert(item){
 
 function renderHeadlines(){
   const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
-
-  const html=headlines.map(h=>`
-    <div class="headlineItem">
+  const html=headlines.map((h,i)=>`
+    <div class="headlineItem" onclick="selectHeadline(${i}, this)">
       <div class="headlineTop">
         <div class="headlineTime">${h.time||now}</div>
         <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
@@ -874,13 +806,21 @@ function renderHeadlines(){
   document.getElementById("headlineList").innerHTML=html;
 }
 
+function selectHeadline(index, el){
+  document.querySelectorAll(".headlineItem").forEach(r=>r.classList.remove("selected"));
+  el.classList.add("selected");
+
+  const h=headlines[index];
+  if(h.breaking){
+    triggerMapAlert(h);
+  }
+}
+
 async function loadHeadlines(){
   try{
     const res=await fetch("./headlines.json?t="+Date.now(),{cache:"no-store"});
-
     if(res.ok){
       const data=await res.json();
-
       if(Array.isArray(data)){
         data.forEach(item=>{
           if(item.breaking&&item.id&&!seenBreakingIds.has(item.id)){
@@ -888,7 +828,6 @@ async function loadHeadlines(){
             triggerMapAlert(item);
           }
         });
-
         headlines=data;
       }
     }
