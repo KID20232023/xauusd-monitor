@@ -169,7 +169,7 @@ html,body{
 
 .main{
   display:grid;
-  grid-template-columns:52% 48%;
+  grid-template-columns:65% 35%;
   gap:8px;
   min-height:0;
 }
@@ -231,55 +231,63 @@ html,body{
   animation:redPulse 1s infinite;
 }
 
-.videoPanel{
-  position:relative;
-  background:#050505;
+.alertDetailPanel{
+  display:grid;
+  grid-template-rows:34% 66%;
+  gap:8px;
+  min-height:0;
 }
 
-.videoTools{
-  position:absolute;
-  top:8px;
-  left:10px;
-  right:10px;
-  z-index:10;
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
+.nowAlertBox,
+.eventDetailBox{
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(160,160,160,.16);
+  border-radius:8px;
+  padding:10px;
+  overflow-y:auto;
 }
 
-.videoTools button{
-  background:#111;
-  border:1px solid #333;
+.alertTitle{
+  color:var(--red);
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.alertText{
   color:var(--text);
-  font-size:11px;
-  padding:5px 8px;
-  border-radius:6px;
-  cursor:pointer;
+  font-size:13px;
+  line-height:1.5;
 }
 
-.videoTools button.active{
-  border-color:var(--gold);
-  color:var(--gold);
+.detailRow{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #181818;
+  padding:7px 0;
+  font-size:12px;
 }
 
-.videoFrame{
-  width:100%;
-  height:100%;
-  border:0;
-  border-radius:10px;
-  filter:brightness(.9) contrast(1.05);
-}
-
-.videoNote{
-  position:absolute;
-  right:12px;
-  bottom:10px;
+.detailRow span{
   color:var(--muted);
-  font-size:10px;
-  z-index:5;
-  background:rgba(0,0,0,.45);
-  padding:4px 6px;
-  border-radius:5px;
+}
+
+.detailRow b{
+  color:var(--green);
+}
+
+.detailBlock{
+  margin-top:12px;
+  padding-top:10px;
+  border-top:1px solid #181818;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.detailLabel{
+  color:var(--gold);
+  font-weight:900;
+  margin-bottom:5px;
 }
 
 .bottom{
@@ -505,22 +513,55 @@ html,body{
       <div id="map"></div>
     </div>
 
-    <div class="panel videoPanel">
-      <div class="videoTools">
-        <button onclick="setVideo(0)" id="videoBtn0" class="active">LIVE 1</button>
-        <button onclick="setVideo(1)" id="videoBtn1">LIVE 2</button>
-        <button onclick="setVideo(2)" id="videoBtn2">LIVE 3</button>
-        <button onclick="setVideo(3)" id="videoBtn3">LIVE 4</button>
+    <div class="panel alertDetailPanel">
+      <div class="nowAlertBox">
+        <div class="label">NOW ALERT</div>
+        <div id="nowAlertContent">
+          <div class="alertTitle">MIDDLE EAST</div>
+          <div class="alertText">
+            Regional headlines remain important for safe-haven demand.
+          </div>
+        </div>
       </div>
 
-      <iframe
-        id="videoFrame"
-        class="videoFrame"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen>
-      </iframe>
+      <div class="eventDetailBox">
+        <div class="label">EVENT DETAIL</div>
 
-      <div class="videoNote">AUTO RELOAD / AUTO SWITCH</div>
+        <div class="detailRow">
+          <span>TIME</span>
+          <b id="detailTime">--:-- JST</b>
+        </div>
+
+        <div class="detailRow">
+          <span>SOURCE</span>
+          <b id="detailSource">RSS / NEWS</b>
+        </div>
+
+        <div class="detailRow">
+          <span>REGION</span>
+          <b id="detailRegion">MIDDLE EAST</b>
+        </div>
+
+        <div class="detailRow">
+          <span>IMPACT</span>
+          <b class="red" id="detailImpact">HIGH</b>
+        </div>
+
+        <div class="detailBlock">
+          <div class="detailLabel">EVENT</div>
+          <div id="detailEvent">Regional headlines remain important for safe-haven demand.</div>
+        </div>
+
+        <div class="detailBlock">
+          <div class="detailLabel">XAUUSD</div>
+          <div id="detailGold">BULLISH / Risk Off → Gold Demand ↑</div>
+        </div>
+
+        <div class="detailBlock">
+          <div class="detailLabel">SCENARIO</div>
+          <div id="detailScenario">地政学リスク上昇 → 安全資産買い → XAUUSD上昇警戒。</div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -600,28 +641,6 @@ const regionMap={
   "ENERGY":{lat:26,lng:50}
 };
 
-const videoUrls=[
-  "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&playsinline=1",
-  "https://www.youtube.com/embed/GE_SfNVNyqk?autoplay=1&mute=1&controls=1&playsinline=1",
-  "https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1&mute=1&controls=1&playsinline=1",
-  "https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1&controls=1&playsinline=1"
-];
-
-let currentVideoIndex=0;
-
-function setVideo(index){
-  currentVideoIndex=index;
-  document.getElementById("videoFrame").src=videoUrls[index]+"&reload="+Date.now();
-  for(let i=0;i<videoUrls.length;i++){
-    document.getElementById("videoBtn"+i).classList.toggle("active",i===index);
-  }
-}
-
-function autoRotateVideo(){
-  currentVideoIndex=(currentVideoIndex+1)%videoUrls.length;
-  setVideo(currentVideoIndex);
-}
-
 function getEventDate(e){
   const [y,m,d]=e.date.split("-").map(Number);
   const [hh,mm]=e.time.split(":").map(Number);
@@ -681,6 +700,13 @@ function selectEvent(index,el){
       予想 ${e.forecast} / 前回 ${e.previous}<br>
       XAUUSD IMPACT: ${e.detail}
     </div>`;
+  updateMainDetail({
+    source:e.currency,
+    region:"US",
+    text:e.event,
+    detail:e.detail,
+    breaking:true
+  });
 }
 
 function renderCalendar(){
@@ -765,6 +791,25 @@ function triggerMapAlert(item){
   setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},15000);
 }
 
+function updateMainDetail(item){
+  const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
+
+  document.getElementById("nowAlertContent").innerHTML=`
+    <div class="alertTitle">${item.source}</div>
+    <div class="alertText">${item.text}</div>
+  `;
+
+  document.getElementById("detailTime").textContent=now+" JST";
+  document.getElementById("detailSource").textContent=item.source;
+  document.getElementById("detailRegion").textContent=item.region;
+  document.getElementById("detailImpact").textContent=item.breaking?"HIGH":"WATCH";
+  document.getElementById("detailEvent").textContent=item.text;
+  document.getElementById("detailGold").textContent=item.breaking?"BULLISH / Risk Off → Gold Demand ↑":"WATCH";
+  document.getElementById("detailScenario").textContent=item.detail || "XAUUSDに影響する可能性があるため監視。";
+
+  if(item.breaking) triggerMapAlert(item);
+}
+
 function renderHeadlines(){
   const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
   const html=headlines.map((h,i)=>`
@@ -797,14 +842,14 @@ function selectHeadline(index,el){
   document.getElementById("headlineDetail").innerHTML=`
     <div class="detailTitle">${h.source}</div>
     <div class="detailText">${h.text}<br>XAUUSD IMPACT: ${h.detail}</div>`;
-  if(h.breaking)triggerMapAlert(h);
+  updateMainDetail(h);
 }
 
 function selectBreaking(index,el){
   document.querySelectorAll(".breakingItem").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
   const h=headlines.filter(x=>x.breaking)[index];
-  triggerMapAlert(h);
+  updateMainDetail(h);
 }
 
 async function loadHeadlines(){
@@ -817,6 +862,7 @@ async function loadHeadlines(){
           if(item.breaking&&item.id&&!seenBreakingIds.has(item.id)){
             seenBreakingIds.add(item.id);
             triggerMapAlert(item);
+            updateMainDetail(item);
           }
         });
         headlines=data;
@@ -831,14 +877,12 @@ renderCalendar();
 renderHighImpact();
 updateClock();
 renderHeadlines();
-setVideo(0);
+updateMainDetail(headlines.find(h=>h.breaking) || headlines[0]);
 
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(renderCalendar,30000);
 setInterval(loadHeadlines,5000);
-setInterval(()=>setVideo(currentVideoIndex),300000);
-setInterval(autoRotateVideo,900000);
 </script>
 
 </body>
