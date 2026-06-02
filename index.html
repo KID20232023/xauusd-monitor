@@ -4,362 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XAUUSD WAR ROOM</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
-  --bg:#050505;
-  --panel:#0b0b0b;
-  --panel2:#101010;
-  --border:#202020;
-  --text:#8a8a8a;
-  --muted:#5f5f5f;
-  --gold:#b89b5e;
-  --green:#00ff88;
-  --red:#ff2d2d;
+  --bg:#050505;--panel:#0b0b0b;--panel2:#101010;--border:#202020;
+  --text:#8a8a8a;--muted:#5f5f5f;--gold:#b89b5e;--green:#00ff88;--red:#ff2d2d;
 }
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+.wrap{width:100vw;height:100vh;padding:8px;display:grid;grid-template-rows:150px 1fr 240px;gap:8px}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:10px;padding:10px;overflow:hidden}
+.top{display:grid;grid-template-columns:.9fr 1.45fr 1.65fr;gap:8px}
+.label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:800;margin-bottom:6px}
+.tvBox{height:120px;overflow:hidden}
+.clockCal{display:grid;grid-template-columns:.7fr 1.3fr;gap:10px}
+.clock{font-size:40px;font-weight:900;color:var(--green);line-height:1}
+.date{margin-top:8px;font-size:13px;color:var(--text)}
+.monthTitle{text-align:center;font-size:12px;font-weight:800;color:var(--text);margin-bottom:4px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.calHead,.calDay{position:relative;text-align:center;font-size:10px;color:var(--text);padding:3px 0}
+.calHead{color:var(--muted)}
+.today{background:rgba(255,45,45,.14);border-radius:5px}
+.eventDot::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:eventBlink 1.2s infinite}
+@keyframes eventBlink{0%{opacity:1}50%{opacity:.25}100%{opacity:1}}
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
-}
+.headlineScroll{height:118px;overflow-y:auto;padding-right:4px}
+.headlineItem{border-bottom:1px solid #181818;padding:7px 0;font-size:12px}
+.headlineTop{display:grid;grid-template-columns:56px 86px 1fr;gap:8px;align-items:center}
+.headlineTime{color:var(--green);font-weight:900}
+.headlineSource{color:var(--gold);font-weight:900}
+.headlineText{color:var(--text);font-weight:700}
+.breaking{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
 
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:var(--bg);
-  color:var(--text);
-}
+.main{display:grid;grid-template-columns:52% 48%;gap:8px;min-height:0}
+.mapPanel{position:relative}
+.mapTitle{position:absolute;top:12px;left:14px;z-index:50;color:var(--text);font-size:13px;font-weight:800;letter-spacing:1px}
+#map{position:absolute;left:12px;right:12px;top:42px;bottom:12px;border:1px solid #171717;border-radius:10px;overflow:hidden;background:#050505}
+.leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
 
-.wrap{
-  width:100vw;
-  height:100vh;
-  padding:8px;
-  display:grid;
-  grid-template-rows:150px 1fr 240px;
-  gap:8px;
-}
+.sessionLabel{color:var(--text);background:rgba(5,5,5,.86);border:1px solid rgba(184,155,94,.28);border-radius:8px;padding:7px 9px;font-size:12px;line-height:1.45;letter-spacing:.8px;text-align:center;min-width:112px}
+.sessionLabel.open{border-color:rgba(255,45,45,.75)}
+.sessionTime,.sessionCountdown{color:var(--green);font-weight:900}
+.openText{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
 
-.panel{
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px;
-  overflow:hidden;
-}
+.alertPopup{background:rgba(5,5,5,.92);border:1px solid rgba(255,45,45,.8);border-radius:8px;color:var(--text);padding:9px 12px;min-width:180px;box-shadow:0 0 22px rgba(255,45,45,.35)}
+.alertPopup b{color:var(--red)}
+.flashPoint{width:22px;height:22px;border-radius:50%;background:var(--red);box-shadow:0 0 25px var(--red);animation:mapFlash 1s infinite}
+@keyframes mapFlash{0%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.25}100%{transform:scale(1);opacity:1}}
 
-.top{
-  display:grid;
-  grid-template-columns:0.9fr 1.6fr 1.5fr;
-  gap:8px;
-}
+.blink24{animation:redPulse 1s infinite}
+@keyframes redPulse{0%{opacity:1;text-shadow:0 0 5px var(--red)}50%{opacity:.25;text-shadow:0 0 20px var(--red)}100%{opacity:1;text-shadow:0 0 5px var(--red)}}
 
-.label{
-  font-size:11px;
-  color:var(--text);
-  letter-spacing:1.3px;
-  font-weight:800;
-  margin-bottom:6px;
-}
+.videoPanel{position:relative;overflow:hidden}
+.videoTools{position:absolute;top:8px;left:10px;right:10px;z-index:10;display:flex;gap:6px}
+.videoTools button{background:#111;border:1px solid #333;color:var(--text);font-size:11px;padding:5px 8px;border-radius:6px;cursor:pointer}
+.videoTools button.active{border-color:var(--gold);color:var(--gold)}
+.videoFrame{width:100%;height:100%;border:0;border-radius:10px;filter:brightness(.85) contrast(1.05)}
 
-.tvBox{
-  height:120px;
-  overflow:hidden;
-}
+.newsPanel{overflow:hidden}
+.newsTable{height:100%;overflow-y:auto;padding-right:4px}
+.newsHead,.newsRow{display:grid;grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;gap:8px;align-items:center}
+.newsHead{padding:8px 0;border-bottom:1px solid #1b1b1b;font-size:11px;color:var(--muted);position:sticky;top:0;background:#0b0b0b;z-index:5}
+.newsRow{padding:8px 0;border-bottom:1px solid #181818;font-size:12px}
+.eventCell{font-weight:800;color:var(--text)}
+.impactCell{color:var(--red);font-weight:900}
+.countCell{color:var(--gold);font-weight:900}
+.redCount{color:var(--red)!important}
 
-.clockCal{
-  display:grid;
-  grid-template-columns:.7fr 1.3fr;
-  gap:10px;
-}
-
-.clock{
-  font-size:40px;
-  font-weight:900;
-  color:var(--green);
-  line-height:1;
-}
-
-.date{
-  margin-top:8px;
-  font-size:13px;
-  color:var(--text);
-}
-
-.monthTitle{
-  text-align:center;
-  font-size:12px;
-  font-weight:800;
-  color:var(--text);
-  margin-bottom:4px;
-}
-
-.calGrid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:2px;
-}
-
-.calHead,
-.calDay{
-  position:relative;
-  text-align:center;
-  font-size:10px;
-  color:var(--text);
-  padding:3px 0;
-}
-
-.calHead{
-  color:var(--muted);
-}
-
-.today{
-  background:rgba(255,45,45,.14);
-  border-radius:5px;
-}
-
-.eventDot::after{
-  content:"";
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--gold);
-  box-shadow:0 0 8px var(--gold);
-  animation:eventBlink 1.2s infinite;
-}
-
-@keyframes eventBlink{
-  0%{opacity:1}
-  50%{opacity:.25}
-  100%{opacity:1}
-}
-
-.headlinesPanel{
-  overflow:hidden;
-}
-
-.headlineScroll{
-  height:118px;
-  overflow-y:auto;
-  padding-right:4px;
-}
-
-.headlineItem{
-  border-bottom:1px solid #181818;
-  padding:7px 0;
-  font-size:12px;
-}
-
-.headlineTop{
-  display:grid;
-  grid-template-columns:56px 86px 1fr;
-  gap:8px;
-  align-items:center;
-}
-
-.headlineTime{
-  color:var(--green);
-  font-weight:900;
-}
-
-.headlineSource{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.headlineText{
-  color:var(--text);
-  font-weight:700;
-}
-
-.breaking{
-  color:var(--red);
-  font-weight:900;
-  animation:redPulse 1s infinite;
-}
-
-.main{
-  display:grid;
-  grid-template-columns:52% 48%;
-  gap:8px;
-  min-height:0;
-}
-
-.mapPanel{
-  position:relative;
-}
-
-.mapTitle{
-  position:absolute;
-  top:12px;
-  left:14px;
-  z-index:50;
-  color:var(--text);
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-
-#map{
-  position:absolute;
-  left:12px;
-  right:12px;
-  top:42px;
-  bottom:12px;
-  border:1px solid #171717;
-  border-radius:10px;
-  overflow:hidden;
-  background:#050505;
-}
-
-.leaflet-control-attribution,
-.leaflet-control-zoom{
-  display:none!important;
-}
-
-.sessionLabel{
-  color:var(--text);
-  background:rgba(5,5,5,.86);
-  border:1px solid rgba(184,155,94,.28);
-  border-radius:8px;
-  padding:7px 9px;
-  font-size:12px;
-  line-height:1.45;
-  letter-spacing:.8px;
-  text-align:center;
-  min-width:112px;
-}
-
-.sessionLabel.open{
-  border-color:rgba(255,45,45,.75);
-}
-
-.sessionTime,
-.sessionCountdown{
-  color:var(--green);
-  font-weight:900;
-}
-
-.openText{
-  color:var(--red);
-  font-weight:900;
-  animation:redPulse 1s infinite;
-}
-
-.blink24{
-  animation:redPulse 1s infinite;
-}
-
-@keyframes redPulse{
-  0%{opacity:1;text-shadow:0 0 5px var(--red)}
-  50%{opacity:.25;text-shadow:0 0 20px var(--red)}
-  100%{opacity:1;text-shadow:0 0 5px var(--red)}
-}
-
-.newsPanel{
-  overflow:hidden;
-}
-
-.newsTable{
-  height:calc(100% - 34px);
-  overflow-y:auto;
-  padding-right:4px;
-}
-
-.newsHead,
-.newsRow{
-  display:grid;
-  grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
-  gap:8px;
-  align-items:center;
-}
-
-.newsHead{
-  padding:8px 0;
-  border-bottom:1px solid #1b1b1b;
-  font-size:11px;
-  color:var(--muted);
-  position:sticky;
-  top:0;
-  background:#0b0b0b;
-  z-index:5;
-}
-
-.newsRow{
-  padding:8px 0;
-  border-bottom:1px solid #181818;
-  font-size:12px;
-}
-
-.eventCell{
-  font-weight:800;
-  color:var(--text);
-}
-
-.impactCell{
-  color:var(--red);
-  font-weight:900;
-}
-
-.countCell{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.redCount{
-  color:var(--red)!important;
-}
-
-.bottom{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-  min-height:0;
-}
-
-.youtubeBox iframe{
-  width:100%;
-  height:100%;
-  border:0;
-  border-radius:10px;
-  filter:brightness(.82) contrast(1.05);
-}
-
-.youtubeLabel{
-  position:absolute;
-  z-index:10;
-  top:10px;
-  left:12px;
-  font-size:11px;
-  font-weight:900;
-  color:var(--text);
-  letter-spacing:1.2px;
-}
-
-.youtubeBox{
-  position:relative;
-}
-
-::-webkit-scrollbar{
-  width:6px;
-}
-
-::-webkit-scrollbar-track{
-  background:#090909;
-}
-
-::-webkit-scrollbar-thumb{
-  background:#2b2b2b;
-  border-radius:10px;
-}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#090909}
+::-webkit-scrollbar-thumb{background:#2b2b2b;border-radius:10px}
 </style>
 </head>
 
@@ -367,20 +83,13 @@ html,body{
 <div class="wrap">
 
   <div class="top">
-
     <div class="panel">
       <div class="label">XAUUSD</div>
       <div class="tvBox">
         <div class="tradingview-widget-container">
           <div class="tradingview-widget-container__widget"></div>
           <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-          {
-            "symbol":"OANDA:XAUUSD",
-            "width":"100%",
-            "isTransparent":true,
-            "colorTheme":"dark",
-            "locale":"ja"
-          }
+          {"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}
           </script>
         </div>
       </div>
@@ -392,76 +101,50 @@ html,body{
         <div class="clock" id="clock">00:00:00</div>
         <div class="date" id="dateText">----</div>
       </div>
-
       <div>
         <div class="monthTitle" id="monthTitle">----</div>
         <div class="calGrid" id="calendarGrid"></div>
       </div>
     </div>
 
-    <div class="panel headlinesPanel">
+    <div class="panel">
       <div class="label">LIVE HEADLINES</div>
       <div class="headlineScroll" id="topHeadlineList"></div>
     </div>
-
   </div>
 
   <div class="main">
-
     <div class="panel mapPanel">
       <div class="mapTitle">WORLD MONITOR</div>
       <div id="map"></div>
     </div>
 
+    <div class="panel videoPanel">
+      <div class="videoTools">
+        <button onclick="setVideo('bloomberg')" id="btn-bloomberg" class="active">BLOOMBERG</button>
+        <button onclick="setVideo('cnbc')" id="btn-cnbc">CNBC</button>
+        <button onclick="setVideo('usnews')" id="btn-usnews">US NEWS</button>
+        <button onclick="setVideo('fed')" id="btn-fed">FED</button>
+      </div>
+      <iframe id="videoFrame" class="videoFrame" src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&controls=1&loop=1&playlist=jfKfPfyJRdk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="bottom">
     <div class="panel newsPanel">
       <div class="label">HIGH IMPACT NEWS</div>
-
       <div class="newsTable">
         <div class="newsHead">
-          <div>DATE</div>
-          <div>TIME</div>
-          <div>EVENT</div>
-          <div>IMPACT</div>
-          <div>予想</div>
-          <div>前回</div>
-          <div>COUNT</div>
+          <div>DATE</div><div>TIME</div><div>EVENT</div><div>IMPACT</div><div>予想</div><div>前回</div><div>COUNT</div>
         </div>
-
         <div id="highImpactList"></div>
       </div>
     </div>
 
-  </div>
-
-  <div class="bottom">
-
-    <div class="panel youtubeBox">
-      <div class="youtubeLabel">BLOOMBERG LIVE</div>
-      <iframe
-        src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&controls=1&loop=1&playlist=jfKfPfyJRdk"
-        allow="autoplay; encrypted-media"
-        allowfullscreen>
-      </iframe>
+    <div class="panel">
+      <div class="label">LIVE HEADLINES / SPEECH ALERT</div>
+      <div class="headlineScroll" id="bottomHeadlineList" style="height:200px"></div>
     </div>
-
-    <div class="panel youtubeBox">
-      <div class="youtubeLabel">CNBC LIVE</div>
-      <iframe
-        src="https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&loop=1&playlist=9Auq9mYxFEE"
-        allow="autoplay; encrypted-media"
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <div class="panel youtubeBox">
-      <div class="youtubeLabel">US NEWS / SPEECH</div>
-      <iframe
-        src="https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1&controls=1"
-        allow="autoplay; encrypted-media"
-        allowfullscreen>
-      </iframe>
-    </div>
-
   </div>
 
 </div>
@@ -473,283 +156,178 @@ const highImpactEvents=[
   {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
   {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6"},
   {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6"},
-
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
-
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
-
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
-
   {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2"},
-  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Inflation Expectations",impact:"HIGH",forecast:"---",previous:"---"},
-
   {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
-  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Core Retail Sales m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
-
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
   {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-06-18",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-06-24",time:"23:00",currency:"USD",event:"New Home Sales",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-06-25",time:"21:30",currency:"USD",event:"Final GDP q/q",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-06-25",time:"21:30",currency:"USD",event:"Unemployment Claims",impact:"HIGH",forecast:"---",previous:"---"},
-
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
-  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"},
-  {date:"2026-06-26",time:"23:00",currency:"USD",event:"Revised UoM Consumer Sentiment",impact:"HIGH",forecast:"---",previous:"---"},
-
-  {date:"2026-07-01",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-07-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-07-02",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"---",previous:"---"},
-  {date:"2026-07-02",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"---",previous:"---"}
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"}
 ];
 
-const headlines=[
-  {source:"FED",text:"Fed speaker comments monitored for rate-cut timing."},
-  {source:"WHITE HOUSE",text:"US administration comments watched for geopolitical risk."},
-  {source:"TREASURY",text:"Treasury yield move remains key driver for gold."},
-  {source:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true},
-  {source:"MARKET",text:"XAUUSD sensitivity elevated into high impact US data."},
-  {source:"BLOOMBERG",text:"Dollar and yields remain key short-term drivers for gold."},
-  {source:"CNBC",text:"US equity sentiment watched during New York session."},
-  {source:"REUTERS",text:"Energy and geopolitical headlines remain in focus."}
+let headlines=[
+  {id:"h1",time:"",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false},
+  {id:"h2",time:"",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false},
+  {id:"h3",time:"",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false},
+  {id:"h4",time:"",source:"MARKET",region:"US",text:"XAUUSD sensitivity elevated into high impact US data.",breaking:false}
 ];
+
+const regionMap={
+  "MIDDLE EAST":{lat:31,lng:35},
+  "RED SEA":{lat:19,lng:38},
+  "UKRAINE":{lat:49,lng:32},
+  "TAIWAN":{lat:23.7,lng:121},
+  "US":{lat:39,lng:-98},
+  "FED":{lat:38.9,lng:-77},
+  "ENERGY":{lat:26,lng:50}
+};
+
+const videoUrls={
+  bloomberg:"https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&controls=1&loop=1&playlist=jfKfPfyJRdk",
+  cnbc:"https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&loop=1&playlist=9Auq9mYxFEE",
+  usnews:"https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1&controls=1",
+  fed:"https://www.youtube.com/embed/live_stream?channel=UCQqHEDX9iN2uYofX_YJdR5A&autoplay=1&mute=1&controls=1"
+};
+
+function setVideo(type){
+  document.getElementById("videoFrame").src=videoUrls[type];
+  ["bloomberg","cnbc","usnews","fed"].forEach(x=>{
+    document.getElementById("btn-"+x).classList.toggle("active",x===type);
+  });
+}
 
 function getEventDate(e){
   const [y,m,d]=e.date.split("-").map(Number);
   const [hh,mm]=e.time.split(":").map(Number);
   return new Date(y,m-1,d,hh,mm,0,0);
 }
-
 function countdown(target){
   const diff=target-new Date();
-
   if(diff<-3600000)return null;
   if(diff<0)return"ENDED";
-
-  const t=Math.floor(diff/1000);
-  const d=Math.floor(t/86400);
-  const h=Math.floor((t%86400)/3600);
-  const m=Math.floor((t%3600)/60);
-  const s=t%60;
-
-  return d>0
-    ?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
-    :`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  const t=Math.floor(diff/1000),d=Math.floor(t/86400),h=Math.floor((t%86400)/3600),m=Math.floor((t%3600)/60),s=t%60;
+  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
-
 function isWithin24h(target){
   const diff=target-new Date();
   return diff>0&&diff<=86400000;
 }
-
 function renderHighImpact(){
   const list=document.getElementById("highImpactList");
   list.innerHTML="";
-
-  const now=new Date();
-  const nextMonthLimit=new Date(now.getFullYear(),now.getMonth()+2,0,23,59,59);
-
-  [...highImpactEvents]
-    .map(e=>({...e,target:getEventDate(e)}))
-    .filter(e=>e.target<=nextMonthLimit)
-    .sort((a,b)=>a.target-b.target)
-    .forEach(e=>{
-      const cd=countdown(e.target);
-      if(cd===null)return;
-
-      const blink=isWithin24h(e.target)?"blink24":"";
-
-      list.innerHTML+=`
-        <div class="newsRow ${blink}">
-          <div>${e.date.slice(5)}</div>
-          <div>${e.time}</div>
-          <div class="eventCell">${e.currency} ${e.event}</div>
-          <div class="impactCell">${e.impact}</div>
-          <div>${e.forecast}</div>
-          <div>${e.previous}</div>
-          <div class="countCell ${blink?"redCount":""}">${cd}</div>
-        </div>
-      `;
-    });
+  [...highImpactEvents].map(e=>({...e,target:getEventDate(e)})).sort((a,b)=>a.target-b.target).forEach(e=>{
+    const cd=countdown(e.target);
+    if(cd===null)return;
+    const blink=isWithin24h(e.target)?"blink24":"";
+    list.innerHTML+=`
+      <div class="newsRow ${blink}">
+        <div>${e.date.slice(5)}</div><div>${e.time}</div>
+        <div class="eventCell">${e.currency} ${e.event}</div>
+        <div class="impactCell">${e.impact}</div><div>${e.forecast}</div><div>${e.previous}</div>
+        <div class="countCell ${blink?"redCount":""}">${cd}</div>
+      </div>`;
+  });
 }
-
 function renderCalendar(){
-  const now=new Date();
-  const y=now.getFullYear();
-  const m=now.getMonth();
-  const grid=document.getElementById("calendarGrid");
-
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),grid=document.getElementById("calendarGrid");
   document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
   grid.innerHTML="";
-
-  const eventDays=new Set(
-    highImpactEvents.map(e=>{
-      const d=new Date(e.date+"T00:00:00");
-      return d.getFullYear()===y&&d.getMonth()===m?d.getDate():null;
-    }).filter(Boolean)
-  );
-
-  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
-    grid.innerHTML+=`<div class="calHead">${h}</div>`;
-  });
-
-  const first=new Date(y,m,1);
-  const last=new Date(y,m+1,0);
-
+  const eventDays=new Set(highImpactEvents.map(e=>{
+    const d=new Date(e.date+"T00:00:00");
+    return d.getFullYear()===y&&d.getMonth()===m?d.getDate():null;
+  }).filter(Boolean));
+  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>grid.innerHTML+=`<div class="calHead">${h}</div>`);
+  const first=new Date(y,m,1),last=new Date(y,m+1,0);
   for(let i=0;i<first.getDay();i++)grid.innerHTML+=`<div class="calDay"></div>`;
-
-  for(let d=1;d<=last.getDate();d++){
-    grid.innerHTML+=`
-      <div class="calDay ${d===now.getDate()?"today":""} ${eventDays.has(d)?"eventDot":""}">
-        ${d}
-      </div>
-    `;
-  }
+  for(let d=1;d<=last.getDate();d++)grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""} ${eventDays.has(d)?"eventDot":""}">${d}</div>`;
 }
-
 function updateClock(){
   const now=new Date();
-
-  document.getElementById("clock").textContent=
-    now.toLocaleTimeString("ja-JP",{hour12:false});
-
-  document.getElementById("dateText").textContent=
-    now.toLocaleDateString("ja-JP",{
-      year:"numeric",
-      month:"2-digit",
-      day:"2-digit",
-      weekday:"short"
-    });
-
+  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
+  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
   updateSession(now);
 }
 
-let sessionMarkers={};
-
+let map,sessionMarkers={},activeAlerts=[];
+function sessionHtml(name,time,isOpen,cd){
+  return `<div class="sessionLabel ${isOpen?"open":""}">${name}<br><span class="sessionTime">${time}</span><br>${isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`}</div>`;
+}
 function getSessionState(now){
   const h=now.getHours();
-
-  if(h>=7&&h<15){
-    return{open:"ASIA",next:"LONDON",nextHour:15};
-  }
-
-  if(h>=15&&h<21){
-    return{open:"LONDON",next:"US",nextHour:21};
-  }
-
-  return{open:"US",next:"ASIA",nextHour:7};
+  if(h>=7&&h<15)return{open:"ASIA",nextHour:15};
+  if(h>=15&&h<21)return{open:"LONDON",nextHour:21};
+  return{open:"US",nextHour:7};
 }
-
-function nextSessionCountdown(now,nextHour){
-  const target=new Date(now);
-  target.setHours(nextHour,0,0,0);
-
-  if(target<=now){
-    target.setDate(target.getDate()+1);
-  }
-
-  return countdown(target);
-}
-
-function sessionHtml(name,time,isOpen,cd){
-  return `
-    <div class="sessionLabel ${isOpen?"open":""}">
-      ${name}<br>
-      <span class="sessionTime">${time}</span><br>
-      ${isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`}
-    </div>
-  `;
-}
-
 function updateSession(now){
-  const state=getSessionState(now);
-  const cd=nextSessionCountdown(now,state.nextHour);
-
-  const asiaOpen=state.open==="ASIA";
-  const londonOpen=state.open==="LONDON";
-  const usOpen=state.open==="US";
-
+  const state=getSessionState(now),target=new Date(now);
+  target.setHours(state.nextHour,0,0,0);
+  if(target<=now)target.setDate(target.getDate()+1);
+  const cd=countdown(target);
   if(sessionMarkers.asia){
-    sessionMarkers.asia.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("ASIA","07:00-15:00",asiaOpen,cd),
-      iconSize:[120,88]
-    }));
-
-    sessionMarkers.london.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("LONDON","15:00-21:00",londonOpen,cd),
-      iconSize:[125,88]
-    }));
-
-    sessionMarkers.us.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("US","21:00-06:00",usOpen,cd),
-      iconSize:[120,88]
-    }));
+    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd),iconSize:[120,88]}));
+    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd),iconSize:[125,88]}));
+    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",state.open==="US",cd),iconSize:[120,88]}));
   }
 }
-
 function initMap(){
-  const map=L.map("map",{
-    zoomControl:false,
-    attributionControl:false,
-    dragging:false,
-    scrollWheelZoom:false,
-    doubleClickZoom:false,
-    boxZoom:false,
-    keyboard:false,
-    tap:false
-  }).setView([20,10],2);
-
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
-    maxZoom:5,
-    minZoom:2
-  }).addTo(map);
-
-  sessionMarkers.us=L.marker([39,-98],{
-    icon:L.divIcon({className:"",html:"",iconSize:[120,88]})
-  }).addTo(map);
-
-  sessionMarkers.london=L.marker([51,-1],{
-    icon:L.divIcon({className:"",html:"",iconSize:[125,88]})
-  }).addTo(map);
-
-  sessionMarkers.asia=L.marker([35,120],{
-    icon:L.divIcon({className:"",html:"",iconSize:[120,88]})
-  }).addTo(map);
-
+  map=L.map("map",{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,tap:false}).setView([20,10],2);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:5,minZoom:2}).addTo(map);
+  sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
+  sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:"",iconSize:[125,88]})}).addTo(map);
+  sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
   setTimeout(()=>map.invalidateSize(),300);
 }
-
+function triggerMapAlert(item){
+  const r=regionMap[item.region];
+  if(!r || !map)return;
+  const point=L.marker([r.lat,r.lng],{icon:L.divIcon({className:"",html:`<div class="flashPoint"></div>`,iconSize:[24,24]})}).addTo(map);
+  const popup=L.popup({closeButton:false,autoClose:false,className:""})
+    .setLatLng([r.lat,r.lng])
+    .setContent(`<div class="alertPopup"><b>BREAKING</b><br>${item.region}<br>${item.text}</div>`)
+    .openOn(map);
+  activeAlerts.push(point);
+  setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},15000);
+}
 function renderHeadlines(){
   const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
-  const topBox=document.getElementById("topHeadlineList");
-
-  let html="";
-
-  headlines.forEach(h=>{
-    html+=`
-      <div class="headlineItem">
-        <div class="headlineTop">
-          <div class="headlineTime">${now}</div>
-          <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
-          <div class="headlineText">${h.text}</div>
-        </div>
+  const html=headlines.map(h=>`
+    <div class="headlineItem">
+      <div class="headlineTop">
+        <div class="headlineTime">${h.time||now}</div>
+        <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
+        <div class="headlineText">${h.text}</div>
       </div>
-    `;
-  });
-
-  topBox.innerHTML=html;
+    </div>`).join("");
+  document.getElementById("topHeadlineList").innerHTML=html;
+  document.getElementById("bottomHeadlineList").innerHTML=html;
+}
+const seenBreakingIds=new Set();
+async function loadHeadlines(){
+  try{
+    const res=await fetch("./headlines.json?t="+Date.now(),{cache:"no-store"});
+    if(res.ok){
+      const data=await res.json();
+      if(Array.isArray(data)){
+        data.forEach(item=>{
+          if(item.breaking && item.id && !seenBreakingIds.has(item.id)){
+            seenBreakingIds.add(item.id);
+            triggerMapAlert(item);
+          }
+        });
+        headlines=data;
+      }
+    }
+  }catch(e){}
+  renderHeadlines();
 }
 
 initMap();
@@ -757,12 +335,10 @@ renderCalendar();
 renderHighImpact();
 updateClock();
 renderHeadlines();
-
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(renderCalendar,30000);
-setInterval(renderHeadlines,10000);
+setInterval(loadHeadlines,5000);
 </script>
-
 </body>
 </html>
