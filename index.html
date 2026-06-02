@@ -13,11 +13,13 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
-.wrap{width:100vw;height:100vh;padding:8px;display:grid;grid-template-rows:150px 1fr 240px;gap:8px}
+.wrap{width:100vw;height:100vh;padding:8px;display:grid;grid-template-rows:150px 1fr 245px;gap:8px}
 .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:10px;padding:10px;overflow:hidden}
 .top{display:grid;grid-template-columns:.9fr 1.45fr 1.65fr;gap:8px}
 .label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:800;margin-bottom:6px}
+
 .tvBox{height:120px;overflow:hidden}
+
 .clockCal{display:grid;grid-template-columns:.7fr 1.3fr;gap:10px}
 .clock{font-size:40px;font-weight:900;color:var(--green);line-height:1}
 .date{margin-top:8px;font-size:13px;color:var(--text)}
@@ -29,13 +31,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .eventDot::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:eventBlink 1.2s infinite}
 @keyframes eventBlink{0%{opacity:1}50%{opacity:.25}100%{opacity:1}}
 
-.headlineScroll{height:118px;overflow-y:auto;padding-right:4px}
-.headlineItem{border-bottom:1px solid #181818;padding:7px 0;font-size:12px}
-.headlineTop{display:grid;grid-template-columns:56px 86px 1fr;gap:8px;align-items:center}
-.headlineTime{color:var(--green);font-weight:900}
-.headlineSource{color:var(--gold);font-weight:900}
-.headlineText{color:var(--text);font-weight:700}
-.breaking{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
+.driverGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:118px}
+.driverBox{border:1px solid #181818;border-radius:8px;padding:9px;background:#080808}
+.driverTitle{font-size:11px;color:var(--muted);font-weight:800;margin-bottom:10px}
+.driverValue{font-size:18px;color:var(--gold);font-weight:900}
+.driverGreen{color:var(--green)}
+.driverRed{color:var(--red);animation:redPulse 1s infinite}
 
 .main{display:grid;grid-template-columns:52% 48%;gap:8px;min-height:0}
 .mapPanel{position:relative}
@@ -47,21 +48,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .sessionLabel.open{border-color:rgba(255,45,45,.75)}
 .sessionTime,.sessionCountdown{color:var(--green);font-weight:900}
 .openText{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
-
 .alertPopup{background:rgba(5,5,5,.92);border:1px solid rgba(255,45,45,.8);border-radius:8px;color:var(--text);padding:9px 12px;min-width:180px;box-shadow:0 0 22px rgba(255,45,45,.35)}
 .alertPopup b{color:var(--red)}
 .flashPoint{width:22px;height:22px;border-radius:50%;background:var(--red);box-shadow:0 0 25px var(--red);animation:mapFlash 1s infinite}
 @keyframes mapFlash{0%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.25}100%{transform:scale(1);opacity:1}}
 
-.blink24{animation:redPulse 1s infinite}
-@keyframes redPulse{0%{opacity:1;text-shadow:0 0 5px var(--red)}50%{opacity:.25;text-shadow:0 0 20px var(--red)}100%{opacity:1;text-shadow:0 0 5px var(--red)}}
-
-.videoPanel{position:relative;overflow:hidden}
+.videoPanel{position:relative}
 .videoTools{position:absolute;top:8px;left:10px;right:10px;z-index:10;display:flex;gap:6px}
 .videoTools button{background:#111;border:1px solid #333;color:var(--text);font-size:11px;padding:5px 8px;border-radius:6px;cursor:pointer}
 .videoTools button.active{border-color:var(--gold);color:var(--gold)}
-.videoFrame{width:100%;height:100%;border:0;border-radius:10px;filter:brightness(.85) contrast(1.05)}
+.videoFrame{width:100%;height:100%;border:0;border-radius:10px;filter:brightness(.9) contrast(1.05)}
 
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
 .newsPanel{overflow:hidden}
 .newsTable{height:100%;overflow-y:auto;padding-right:4px}
 .newsHead,.newsRow{display:grid;grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;gap:8px;align-items:center}
@@ -71,8 +69,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .impactCell{color:var(--red);font-weight:900}
 .countCell{color:var(--gold);font-weight:900}
 .redCount{color:var(--red)!important}
+.blink24{animation:redPulse 1s infinite}
 
-.bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:0}
+.headlineScroll{height:205px;overflow-y:auto;padding-right:4px}
+.headlineItem{border-bottom:1px solid #181818;padding:7px 0;font-size:12px}
+.headlineTop{display:grid;grid-template-columns:56px 86px 1fr;gap:8px;align-items:center}
+.headlineTime{color:var(--green);font-weight:900}
+.headlineSource{color:var(--gold);font-weight:900}
+.headlineText{color:var(--text);font-weight:700}
+.breaking{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
+
+@keyframes redPulse{0%{opacity:1;text-shadow:0 0 5px var(--red)}50%{opacity:.25;text-shadow:0 0 20px var(--red)}100%{opacity:1;text-shadow:0 0 5px var(--red)}}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#090909}
 ::-webkit-scrollbar-thumb{background:#2b2b2b;border-radius:10px}
@@ -108,8 +115,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     </div>
 
     <div class="panel">
-      <div class="label">LIVE HEADLINES</div>
-      <div class="headlineScroll" id="topHeadlineList"></div>
+      <div class="label">GOLD DRIVER</div>
+      <div class="driverGrid">
+        <div class="driverBox"><div class="driverTitle">SAFE HAVEN</div><div class="driverValue driverGreen">ACTIVE</div></div>
+        <div class="driverBox"><div class="driverTitle">HIGH IMPACT</div><div class="driverValue driverRed">WATCH</div></div>
+        <div class="driverBox"><div class="driverTitle">NEWS ALERT</div><div class="driverValue">STANDBY</div></div>
+        <div class="driverBox"><div class="driverTitle">SESSION</div><div class="driverValue driverGreen" id="topSession">----</div></div>
+        <div class="driverBox"><div class="driverTitle">VOLATILITY</div><div class="driverValue">ELEVATED</div></div>
+        <div class="driverBox"><div class="driverTitle">UPDATE</div><div class="driverValue driverGreen">AUTO</div></div>
+      </div>
     </div>
   </div>
 
@@ -121,12 +135,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 
     <div class="panel videoPanel">
       <div class="videoTools">
-        <button onclick="setVideo('bloomberg')" id="btn-bloomberg" class="active">BLOOMBERG</button>
-        <button onclick="setVideo('cnbc')" id="btn-cnbc">CNBC</button>
-        <button onclick="setVideo('usnews')" id="btn-usnews">US NEWS</button>
-        <button onclick="setVideo('fed')" id="btn-fed">FED</button>
+        <button onclick="setVideo('sky')" id="btn-sky" class="active">SKY NEWS</button>
+        <button onclick="setVideo('abc')" id="btn-abc">ABC LIVE</button>
+        <button onclick="setVideo('nbc')" id="btn-nbc">NBC LIVE</button>
+        <button onclick="setVideo('dw')" id="btn-dw">DW LIVE</button>
+        <button onclick="setVideo('cspan')" id="btn-cspan">C-SPAN</button>
       </div>
-      <iframe id="videoFrame" class="videoFrame" src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&controls=1&loop=1&playlist=jfKfPfyJRdk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <iframe id="videoFrame" class="videoFrame"
+        src="https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen>
+      </iframe>
     </div>
   </div>
 
@@ -143,7 +162,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 
     <div class="panel">
       <div class="label">LIVE HEADLINES / SPEECH ALERT</div>
-      <div class="headlineScroll" id="bottomHeadlineList" style="height:200px"></div>
+      <div class="headlineScroll" id="bottomHeadlineList"></div>
     </div>
   </div>
 
@@ -175,32 +194,23 @@ const highImpactEvents=[
 ];
 
 let headlines=[
-  {id:"h1",time:"",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false},
-  {id:"h2",time:"",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false},
-  {id:"h3",time:"",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false},
-  {id:"h4",time:"",source:"MARKET",region:"US",text:"XAUUSD sensitivity elevated into high impact US data.",breaking:false}
+  {id:"h1",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false},
+  {id:"h2",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false},
+  {id:"h3",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false},
+  {id:"h4",source:"MARKET",region:"US",text:"XAUUSD sensitivity elevated into high impact US data.",breaking:false}
 ];
 
-const regionMap={
-  "MIDDLE EAST":{lat:31,lng:35},
-  "RED SEA":{lat:19,lng:38},
-  "UKRAINE":{lat:49,lng:32},
-  "TAIWAN":{lat:23.7,lng:121},
-  "US":{lat:39,lng:-98},
-  "FED":{lat:38.9,lng:-77},
-  "ENERGY":{lat:26,lng:50}
-};
-
 const videoUrls={
-  bloomberg:"https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&controls=1&loop=1&playlist=jfKfPfyJRdk",
-  cnbc:"https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&loop=1&playlist=9Auq9mYxFEE",
-  usnews:"https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1&controls=1",
-  fed:"https://www.youtube.com/embed/live_stream?channel=UCQqHEDX9iN2uYofX_YJdR5A&autoplay=1&mute=1&controls=1"
+  sky:"https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1",
+  abc:"https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1&mute=1&controls=1",
+  nbc:"https://www.youtube.com/embed/HpL5ZkN2u6o?autoplay=1&mute=1&controls=1",
+  dw:"https://www.youtube.com/embed/GE_SfNVNyqk?autoplay=1&mute=1&controls=1",
+  cspan:"https://www.youtube.com/embed/live_stream?channel=UCb--64Gl51jIEVE-GLDAVTg&autoplay=1&mute=1&controls=1"
 };
 
 function setVideo(type){
   document.getElementById("videoFrame").src=videoUrls[type];
-  ["bloomberg","cnbc","usnews","fed"].forEach(x=>{
+  ["sky","abc","nbc","dw","cspan"].forEach(x=>{
     document.getElementById("btn-"+x).classList.toggle("active",x===type);
   });
 }
@@ -257,7 +267,7 @@ function updateClock(){
   updateSession(now);
 }
 
-let map,sessionMarkers={},activeAlerts=[];
+let map,sessionMarkers={};
 function sessionHtml(name,time,isOpen,cd){
   return `<div class="sessionLabel ${isOpen?"open":""}">${name}<br><span class="sessionTime">${time}</span><br>${isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`}</div>`;
 }
@@ -272,6 +282,7 @@ function updateSession(now){
   target.setHours(state.nextHour,0,0,0);
   if(target<=now)target.setDate(target.getDate()+1);
   const cd=countdown(target);
+  document.getElementById("topSession").textContent=state.open;
   if(sessionMarkers.asia){
     sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd),iconSize:[120,88]}));
     sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd),iconSize:[125,88]}));
@@ -286,48 +297,18 @@ function initMap(){
   sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
   setTimeout(()=>map.invalidateSize(),300);
 }
-function triggerMapAlert(item){
-  const r=regionMap[item.region];
-  if(!r || !map)return;
-  const point=L.marker([r.lat,r.lng],{icon:L.divIcon({className:"",html:`<div class="flashPoint"></div>`,iconSize:[24,24]})}).addTo(map);
-  const popup=L.popup({closeButton:false,autoClose:false,className:""})
-    .setLatLng([r.lat,r.lng])
-    .setContent(`<div class="alertPopup"><b>BREAKING</b><br>${item.region}<br>${item.text}</div>`)
-    .openOn(map);
-  activeAlerts.push(point);
-  setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},15000);
-}
+
 function renderHeadlines(){
   const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
   const html=headlines.map(h=>`
     <div class="headlineItem">
       <div class="headlineTop">
-        <div class="headlineTime">${h.time||now}</div>
+        <div class="headlineTime">${now}</div>
         <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
         <div class="headlineText">${h.text}</div>
       </div>
     </div>`).join("");
-  document.getElementById("topHeadlineList").innerHTML=html;
   document.getElementById("bottomHeadlineList").innerHTML=html;
-}
-const seenBreakingIds=new Set();
-async function loadHeadlines(){
-  try{
-    const res=await fetch("./headlines.json?t="+Date.now(),{cache:"no-store"});
-    if(res.ok){
-      const data=await res.json();
-      if(Array.isArray(data)){
-        data.forEach(item=>{
-          if(item.breaking && item.id && !seenBreakingIds.has(item.id)){
-            seenBreakingIds.add(item.id);
-            triggerMapAlert(item);
-          }
-        });
-        headlines=data;
-      }
-    }
-  }catch(e){}
-  renderHeadlines();
 }
 
 initMap();
@@ -335,10 +316,11 @@ renderCalendar();
 renderHighImpact();
 updateClock();
 renderHeadlines();
+
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(renderCalendar,30000);
-setInterval(loadHeadlines,5000);
+setInterval(renderHeadlines,10000);
 </script>
 </body>
 </html>
