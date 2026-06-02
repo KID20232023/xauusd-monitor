@@ -4,708 +4,757 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XAUUSD WAR ROOM</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 <style>
 :root{
-  --bg0:#080808;--bg1:#0f0f0f;--bg2:#161616;
-  --b1:rgba(180,180,180,0.12);--b2:rgba(180,180,180,0.28);
-  --t1:#ddd;--t2:#888;--t3:#444;
-  --ac:#bbb;--red:#ff4040;--grn:#00e676;--orn:#ff9800;
+  --bg:#050505;
+  --panel:#0b0b0b;
+  --panel2:#101010;
+  --border:#202020;
+  --text:#8a8a8a;
+  --muted:#5f5f5f;
+  --gold:#b89b5e;
+  --green:#00ff88;
+  --red:#ff2d2d;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--bg0);color:var(--t1);font-family:'Rajdhani',sans-serif;overflow:hidden;}
-body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:9999;}
 
-/* ── LAYOUT ── */
-.shell{display:grid;grid-template-rows:70px 42px 1fr 130px 28px;height:100vh;gap:5px;padding:5px;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+}
 
-/* ── HEADER ── */
-.hdr{display:grid;grid-template-columns:180px 1fr 200px;align-items:center;gap:12px;border-bottom:1px solid var(--b2);padding-bottom:5px;}
-.brand-t1{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:8px;color:var(--ac);line-height:1;}
-.brand-t2{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t3);letter-spacing:3px;margin-top:1px;}
-.ph-center{text-align:center;}
-.p-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t3);letter-spacing:4px;}
-.p-big{font-family:'Bebas Neue',sans-serif;font-size:58px;line-height:1;letter-spacing:2px;transition:color .15s;}
-.p-big.up{color:var(--grn);text-shadow:0 0 12px rgba(0,230,118,.2);}
-.p-big.dn{color:var(--red);text-shadow:0 0 12px rgba(255,64,64,.2);}
-.p-big.neu{color:var(--ac);}
-.p-chg{font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:1px;}
-.p-chg.up{color:var(--grn);}.p-chg.dn{color:var(--red);}
-.live-row{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--grn);letter-spacing:3px;display:flex;align-items:center;gap:5px;justify-content:center;margin-top:2px;}
-.dot{width:6px;height:6px;border-radius:50%;display:inline-block;}
-.dot.g{background:var(--grn);box-shadow:0 0 6px var(--grn);}
-.dot.r{background:var(--red);box-shadow:0 0 6px var(--red);}
-.dot.pulse{animation:pulse 1s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.15};}
-.hdr-right{text-align:right;}
-.ck-big{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--ac);letter-spacing:3px;line-height:1;}
-.ck-date{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--t2);letter-spacing:2px;margin-top:2px;}
-.api-st{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t3);margin-top:3px;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  padding:14px;
+}
 
-/* ── STAT ROW ── */
-.srow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.sc{background:var(--bg1);border:1px solid var(--b1);padding:6px 8px;position:relative;}
-.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--b2),transparent);}
-.sc-l{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:2px;margin-bottom:2px;}
-.sc-v{font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--ac);line-height:1;}
-.sc-v.up{color:var(--grn);}.sc-v.dn{color:var(--red);}
-.sc-s{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);margin-top:1px;}
+.wrap{
+  max-width:1780px;
+  margin:0 auto;
+}
 
-/* ── MAIN 3-COL ── */
-.main{display:grid;grid-template-columns:200px 1fr 250px;gap:5px;min-height:0;overflow:hidden;}
+.panel{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+}
 
-/* ── PANEL ── */
-.pnl{background:var(--bg1);border:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;position:relative;}
-.pnl::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--b2),transparent);z-index:1;}
-.ph{padding:5px 8px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.ph-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--ac);}
-.ph-b{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);border:1px solid var(--b1);padding:1px 4px;letter-spacing:1px;}
-.pb{padding:6px;flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--b2) transparent;}
+.top{
+  display:grid;
+  grid-template-columns:1fr 1.55fr 1.25fr;
+  gap:14px;
+  margin-bottom:14px;
+}
 
-/* ── LEFT ── */
-.lcol{display:flex;flex-direction:column;gap:5px;}
-.si{padding:6px 0;border-bottom:1px solid rgba(180,180,180,.06);}
-.si:last-child{border-bottom:none;}
-.si-top{display:flex;justify-content:space-between;align-items:center;}
-.si-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--t1);}
-.si-st{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;letter-spacing:2px;}
-.si-st.open{color:var(--red);border:1px solid rgba(255,64,64,.5);animation:pulse 1s infinite;}
-.si-st.closed{color:var(--t3);border:1px solid var(--t3);}
-.si-time{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t2);margin-top:2px;}
-.si-bar{height:2px;background:rgba(180,180,180,.08);margin-top:3px;}
-.si-fill{height:100%;background:var(--red);box-shadow:0 0 4px var(--red);transition:width .8s;}
-.si-fill.off{background:var(--t3);box-shadow:none;}
-.gi{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(180,180,180,.05);}
-.gi:last-child{border-bottom:none;}
-.gn{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--t2);}
-.gl{font-family:'Share Tech Mono',monospace;font-size:7px;padding:1px 4px;letter-spacing:1px;}
-.gl.high{color:var(--red);border:1px solid rgba(255,64,64,.5);animation:pulse 2s infinite;}
-.gl.watch{color:var(--orn);border:1px solid rgba(255,152,0,.4);}
-.gl.monitor{color:var(--t3);border:1px solid var(--t3);}
+.label{
+  font-size:11px;
+  color:var(--text);
+  letter-spacing:1.3px;
+  font-weight:800;
+  margin-bottom:8px;
+}
 
-/* ── CENTER ── */
-.ccol{display:flex;flex-direction:column;gap:5px;min-height:0;}
-.ctop{display:grid;grid-template-columns:1fr 170px;gap:5px;flex:0 0 auto;}
+.tvBox{
+  height:145px;
+  overflow:hidden;
+}
 
-/* ── WORLD MAP ── */
-.map-container{width:100%;height:100%;min-height:160px;display:flex;align-items:center;justify-content:center;padding:4px;}
-#worldMap{width:100%;height:auto;max-height:160px;}
+.clockCal{
+  display:grid;
+  grid-template-columns:.8fr 1.2fr;
+  gap:18px;
+}
 
-/* session overlay badges on map */
-.map-badge{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;}
+.clock{
+  font-size:42px;
+  font-weight:900;
+  color:var(--text);
+}
 
-/* ── CAL ── */
-.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-top:3px;}
-.cdh{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);text-align:center;padding:1px 0;}
-.cd{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t2);text-align:center;padding:2px 1px;border:1px solid transparent;border-radius:1px;position:relative;}
-.cd.today{background:rgba(255,64,64,.12);border-color:rgba(255,64,64,.4);color:var(--red);}
-.cd.ev::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--orn);}
-.cd.empty{visibility:hidden;}
+.date{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--text);
+}
 
-/* ── NEXT EVENT ── */
-.ne-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--t1);line-height:1.2;}
-.ne-meta{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t3);margin-top:3px;letter-spacing:1px;}
-.ne-cd{font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--orn);letter-spacing:2px;margin-top:5px;}
-.ne-cd.urg{color:var(--red);animation:pulse 1s infinite;}
-.vbox{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:5px;}
-.vb{background:rgba(180,180,180,.04);border:1px solid var(--b1);padding:3px 4px;text-align:center;}
-.vl{font-family:'Share Tech Mono',monospace;font-size:6px;color:var(--t3);letter-spacing:1px;}
-.vv{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--ac);}
-.vv.beat{color:var(--grn);}.vv.miss{color:var(--red);}
+.monthTitle{
+  text-align:center;
+  font-size:13px;
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:8px;
+}
 
-/* ── NEWS ── */
-.ni{padding:5px 0;border-bottom:1px solid rgba(180,180,180,.06);display:grid;grid-template-columns:38px 1fr 36px;gap:6px;align-items:start;}
-.ni:last-child{border-bottom:none;}
-.ni-i{font-family:'Share Tech Mono',monospace;font-size:7px;padding:2px 3px;text-align:center;white-space:nowrap;margin-top:1px;}
-.ni-i.high{color:var(--red);border:1px solid rgba(255,64,64,.5);background:rgba(255,64,64,.07);animation:pulse 2.5s infinite;}
-.ni-i.med{color:var(--orn);border:1px solid rgba(255,152,0,.35);}
-.ni-i.low{color:var(--t3);border:1px solid var(--t3);}
-.ni-h{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--t1);line-height:1.3;}
-.ni-s{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);margin-top:1px;}
-.ni-t{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--t2);white-space:nowrap;text-align:right;}
+.calGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
 
-/* ── RIGHT ── */
-.rcol{display:flex;flex-direction:column;gap:5px;min-height:0;}
-.ei{padding:6px 0;border-bottom:1px solid rgba(180,180,180,.06);}
-.ei:last-child{border-bottom:none;}
-.ei-top{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:2px;}
-.ei-n{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--t1);flex:1;line-height:1.2;}
-.ei-t{font-family:'Share Tech Mono',monospace;font-size:7px;padding:1px 3px;white-space:nowrap;}
-.ei-t.high{color:var(--red);border:1px solid rgba(255,64,64,.5);background:rgba(255,64,64,.07);}
-.ei-t.med{color:var(--orn);border:1px solid rgba(255,152,0,.4);}
-.ei-d{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:1px;margin-bottom:2px;}
-.ei-cd{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--orn);margin-bottom:3px;}
-.ei-cd.urg{color:var(--red);animation:pulse 1s infinite;}
-.ei-cd.past{color:var(--t3);}
+.calHead,
+.calDay{
+  text-align:center;
+  font-size:11px;
+  color:var(--text);
+  padding:5px 0;
+}
 
-/* ── YOUTUBE ── */
-.ytrow{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;overflow:hidden;}
-.ytc{background:var(--bg1);border:1px solid var(--b1);overflow:hidden;display:flex;flex-direction:column;}
-.ytl{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:2px;padding:3px 5px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.ytf{flex:1;position:relative;}
-.ytf iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+.calHead{
+  color:var(--muted);
+}
 
-/* ── TICKER ── */
-.ticker{background:var(--bg1);border:1px solid var(--b1);border-top:1px solid var(--b2);display:flex;align-items:center;height:28px;overflow:hidden;}
-.tk-lbl{background:var(--ac);color:var(--bg0);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:3px;padding:0 10px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
-.tk-wrap{flex:1;overflow:hidden;height:100%;display:flex;align-items:center;}
-.tk-inner{display:flex;animation:scroll 55s linear infinite;white-space:nowrap;}
-.ti{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--t2);padding:0 20px;border-right:1px solid var(--b1);letter-spacing:1px;}
-.ti .up{color:var(--grn);}.ti .dn{color:var(--red);}.ti .hi{color:var(--ac);}
-@keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.today{
+  background:rgba(255,45,45,.14);
+  border:1px solid rgba(255,45,45,.35);
+  border-radius:6px;
+}
 
-/* ── ALERT ── */
-#alertBar{display:none;position:fixed;top:0;left:0;right:0;background:rgba(255,64,64,.12);border-bottom:2px solid rgba(255,64,64,.7);padding:4px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red);letter-spacing:2px;z-index:10000;animation:pulse .8s infinite;text-align:center;}
-#alertBar.show{display:block;}
+.todayTopList{
+  height:130px;
+  overflow:hidden;
+}
+
+.todayItem{
+  border-bottom:1px solid #181818;
+  padding:8px 0;
+  font-size:12px;
+}
+
+.todayMain{
+  display:grid;
+  grid-template-columns:62px 1fr 78px;
+  gap:8px;
+  align-items:center;
+}
+
+.todayDate{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.todayEvent{
+  color:var(--text);
+  font-weight:900;
+}
+
+.todayCount{
+  color:var(--red);
+  font-weight:900;
+  text-align:right;
+}
+
+.todaySub{
+  color:var(--muted);
+  margin-top:5px;
+  font-size:11px;
+}
+
+.main{
+  display:grid;
+  grid-template-columns:52% 48%;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.mapPanel{
+  height:480px;
+  position:relative;
+  overflow:hidden;
+}
+
+.mapTitle{
+  position:absolute;
+  top:14px;
+  left:16px;
+  z-index:50;
+  color:var(--text);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+#map{
+  position:absolute;
+  left:14px;
+  right:14px;
+  top:48px;
+  bottom:14px;
+  border:1px solid #171717;
+  border-radius:10px;
+  overflow:hidden;
+  background:#050505;
+}
+
+.leaflet-control-attribution,
+.leaflet-control-zoom{
+  display:none!important;
+}
+
+.sessionLabel{
+  color:var(--text);
+  background:rgba(5,5,5,.84);
+  border:1px solid rgba(184,155,94,.28);
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:12px;
+  line-height:1.45;
+  letter-spacing:.8px;
+  text-align:center;
+  min-width:96px;
+}
+
+.sessionLabel.open{
+  border-color:rgba(255,45,45,.7);
+}
+
+.openText{
+  color:var(--red);
+  font-weight:900;
+  animation:redPulse 1s infinite;
+}
+
+.blink24{
+  animation:redPulse 1s infinite;
+}
+
+@keyframes redPulse{
+  0%{opacity:1;text-shadow:0 0 5px var(--red);}
+  50%{opacity:.25;text-shadow:0 0 20px var(--red);}
+  100%{opacity:1;text-shadow:0 0 5px var(--red);}
+}
+
+.newsPanel{
+  height:480px;
+  overflow:hidden;
+}
+
+.newsHead,
+.newsRow{
+  display:grid;
+  grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
+  gap:8px;
+  align-items:center;
+}
+
+.newsHead{
+  padding:10px 0;
+  border-bottom:1px solid #1b1b1b;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.newsRow{
+  padding:9px 0;
+  border-bottom:1px solid #181818;
+  font-size:12px;
+}
+
+.eventCell{
+  font-weight:800;
+  color:var(--text);
+}
+
+.impactCell{
+  color:var(--red);
+  font-weight:900;
+}
+
+.countCell{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.redCount{
+  color:var(--red)!important;
+}
+
+.intel{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.intelCard{
+  height:96px;
+}
+
+.intelTitle{
+  color:var(--text);
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:16px;
+}
+
+.intelStatus{
+  color:var(--gold);
+  font-size:18px;
+  font-weight:900;
+}
+
+.banner{
+  height:58px;
+  overflow:hidden;
+  position:relative;
+  color:var(--text);
+}
+
+.bannerInner{
+  position:absolute;
+  top:18px;
+  white-space:nowrap;
+  animation:ticker 55s linear infinite;
+  color:var(--text);
+  font-size:13px;
+  letter-spacing:1.1px;
+}
+
+.bannerInner span{
+  margin-right:46px;
+}
+
+.liveSource{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.liveTime{
+  color:var(--muted);
+  font-weight:900;
+}
+
+.liveRed{
+  color:var(--red);
+  font-weight:900;
+}
+
+.liveGreen{
+  color:var(--green);
+  font-weight:900;
+}
+
+@keyframes ticker{
+  from{transform:translateX(100%);}
+  to{transform:translateX(-100%);}
+}
 </style>
 </head>
+
 <body>
-<div id="alertBar">⚠ URGENT</div>
-<div class="shell">
+<div class="wrap">
 
-<!-- HEADER -->
-<header class="hdr">
-  <div>
-    <div class="brand-t1">XAUUSD</div>
-    <div class="brand-t2">▸ GOLD / USD · TACTICAL WAR ROOM</div>
-  </div>
-  <div class="ph-center">
-    <div class="p-lbl">SPOT PRICE · USD PER TROY OZ</div>
-    <div class="p-big neu" id="pBig">——</div>
-    <div class="p-chg" id="pChg">——</div>
-    <div class="live-row"><span class="dot g pulse"></span><span id="liveLabel">CONNECTING...</span></div>
-  </div>
-  <div class="hdr-right">
-    <div class="ck-big" id="clock">--:--:--</div>
-    <div class="ck-date" id="ckDate">JST</div>
-    <div class="api-st" id="apiSt">⬤ INIT</div>
-  </div>
-</header>
+  <div class="top">
 
-<!-- STAT ROW -->
-<div class="srow">
-  <div class="sc"><div class="sc-l">◆ DAY HIGH</div><div class="sc-v up" id="sH">——</div><div class="sc-s" id="sHs">—</div></div>
-  <div class="sc"><div class="sc-l">◆ DAY LOW</div><div class="sc-v dn" id="sL">——</div><div class="sc-s" id="sLs">—</div></div>
-  <div class="sc"><div class="sc-l">◆ OPEN</div><div class="sc-v" id="sO">——</div><div class="sc-s">TODAY OPEN</div></div>
-  <div class="sc"><div class="sc-l">◆ PREV CLOSE</div><div class="sc-v" id="sP">——</div><div class="sc-s">YESTERDAY</div></div>
-  <div class="sc"><div class="sc-l">◆ BID / ASK</div><div class="sc-v" id="sBA" style="font-size:13px;">——</div><div class="sc-s" id="sSP">SPREAD —</div></div>
-  <div class="sc"><div class="sc-l">◆ 52W HIGH</div><div class="sc-v up" id="s52H">4,801.50</div><div class="sc-s" id="s52Hs">—</div></div>
-  <div class="sc"><div class="sc-l">◆ 52W LOW</div><div class="sc-v" id="s52L">3,167.20</div><div class="sc-s" id="s52Ls">—</div></div>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-  <!-- LEFT: SESSION + GEO -->
-  <div class="lcol">
-    <div class="pnl" style="flex:1;min-height:0;">
-      <div class="ph"><span class="ph-t">SESSION STATUS</span><span class="ph-b" id="sessT">JST</span></div>
-      <div class="pb" id="sessList"></div>
-    </div>
-    <div class="pnl" style="flex:0 0 auto;">
-      <div class="ph"><span class="ph-t">GEOPOLITICAL</span><span class="ph-b">MONITOR</span></div>
-      <div class="pb" id="geoList"></div>
-    </div>
-  </div>
-
-  <!-- CENTER: MAP top, NEWS bottom -->
-  <div class="ccol">
-    <div class="ctop">
-
-      <!-- WORLD MAP -->
-      <div class="pnl">
-        <div class="ph"><span class="ph-t">WORLD SESSIONS</span><span class="ph-b" id="mapB">LIVE</span></div>
-        <div class="map-container">
-<!-- Real simplified world map SVG -->
-<svg id="worldMap" viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg">
-<rect width="900" height="440" fill="#0a0a0a"/>
-<!-- Ocean grid -->
-<line x1="0" y1="220" x2="900" y2="220" stroke="#141414" stroke-width="1"/>
-<line x1="450" y1="0" x2="450" y2="440" stroke="#141414" stroke-width="1"/>
-<line x1="0" y1="110" x2="900" y2="110" stroke="#111" stroke-width=".5" stroke-dasharray="4,8"/>
-<line x1="0" y1="330" x2="900" y2="330" stroke="#111" stroke-width=".5" stroke-dasharray="4,8"/>
-
-<!-- ═══ NORTH AMERICA ═══ -->
-<path id="northAmerica" d="M95,40 L155,35 L200,50 L220,70 L215,90 L205,110 L215,130 L220,155 L210,175 L195,185 L180,195 L170,210 L155,220 L140,215 L125,205 L110,195 L100,180 L90,165 L80,150 L75,135 L70,120 L72,105 L78,90 L82,75 L88,60 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
-<!-- Central America -->
-<path d="M155,220 L165,225 L170,235 L160,242 L150,238 L145,228 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-<!-- ═══ SOUTH AMERICA ═══ -->
-<path d="M160,248 L185,242 L205,248 L220,265 L225,285 L222,310 L215,335 L205,355 L190,370 L175,375 L162,368 L150,352 L142,330 L140,308 L143,285 L148,265 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
-
-<!-- ═══ EUROPE ═══ -->
-<path id="europe" d="M380,55 L395,50 L415,52 L430,58 L440,68 L438,80 L428,88 L420,95 L408,98 L400,105 L392,108 L382,105 L374,95 L370,82 L372,68 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
-<!-- Scandinavia -->
-<path d="M395,35 L408,30 L418,38 L415,52 L395,50 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-<!-- UK -->
-<path d="M362,62 L370,58 L374,68 L368,75 L360,70 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-<!-- Iberia -->
-<path d="M370,95 L382,92 L385,105 L378,115 L366,112 L362,100 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-
-<!-- ═══ AFRICA ═══ -->
-<path d="M375,120 L410,115 L440,120 L455,135 L458,155 L455,178 L448,200 L440,225 L428,248 L415,265 L400,272 L385,268 L370,252 L358,228 L352,202 L350,178 L353,155 L360,135 Z" fill="#181818" stroke="#222" stroke-width=".8"/>
-<!-- Madagascar -->
-<path d="M462,230 L468,225 L472,238 L470,252 L462,248 Z" fill="#161616" stroke="#1e1e1e" stroke-width=".5"/>
-
-<!-- ═══ MIDDLE EAST ═══ -->
-<path d="M450,95 L478,90 L495,98 L498,115 L490,128 L472,132 L455,125 L447,112 Z" fill="#181818" stroke="#222" stroke-width=".8"/>
-<!-- Arabian Peninsula -->
-<path d="M460,128 L490,125 L505,135 L508,158 L498,168 L480,165 L465,155 L458,140 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-
-<!-- ═══ RUSSIA / CENTRAL ASIA ═══ -->
-<path d="M420,30 L480,20 L560,18 L630,22 L680,30 L700,45 L695,60 L670,65 L640,62 L600,58 L555,55 L510,52 L475,55 L450,60 L435,55 L422,45 Z" fill="#181818" stroke="#222" stroke-width=".8"/>
-
-<!-- ═══ SOUTH ASIA ═══ -->
-<!-- India -->
-<path d="M530,110 L560,105 L580,115 L588,135 L582,158 L570,175 L555,182 L540,175 L528,158 L522,138 Z" fill="#181818" stroke="#222" stroke-width=".8"/>
-
-<!-- ═══ EAST ASIA / CHINA ═══ -->
-<path id="asia" d="M590,55 L650,48 L695,55 L720,68 L728,85 L722,102 L708,112 L688,115 L665,110 L640,105 L615,100 L598,90 L588,75 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
-<!-- Korean Peninsula -->
-<path d="M710,95 L720,90 L728,98 L724,110 L714,112 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-<!-- Japan -->
-<path d="M735,75 L745,70 L755,78 L752,92 L742,95 L733,87 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width=".8"/>
-<path d="M742,100 L750,95 L758,102 L755,115 L746,117 L738,108 Z" fill="#1a1a1a" stroke="#2a2a2a" stroke-width=".8"/>
-<!-- SE Asia -->
-<path d="M628,130 L658,122 L678,128 L680,148 L665,158 L645,152 L628,145 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-<path d="M690,118 L710,112 L718,125 L712,140 L698,142 L688,132 Z" fill="#181818" stroke="#222" stroke-width=".5"/>
-
-<!-- ═══ AUSTRALIA ═══ -->
-<path d="M680,270 L725,262 L768,268 L790,285 L795,310 L785,335 L765,350 L738,355 L710,348 L688,332 L675,310 L672,288 Z" fill="#181818" stroke="#222" stroke-width=".8"/>
-<!-- New Zealand -->
-<path d="M800,340 L810,335 L816,348 L810,360 L800,355 Z" fill="#161616" stroke="#1e1e1e" stroke-width=".5"/>
-
-<!-- ═══ GREENLAND ═══ -->
-<path d="M240,18 L278,15 L300,25 L295,45 L275,52 L250,48 L235,35 Z" fill="#161616" stroke="#1e1e1e" stroke-width=".5"/>
-
-<!-- ═══ SESSION HIGHLIGHT OVERLAYS (colored by JS) ═══ -->
-<!-- US Session zone overlay -->
-<rect id="ov-us" x="60" y="30" width="240" height="360" rx="4" fill="transparent" stroke="transparent" stroke-width="2" opacity="0.6"/>
-<!-- London/Europe Session zone overlay -->
-<rect id="ov-lon" x="340" y="30" width="170" height="280" rx="4" fill="transparent" stroke="transparent" stroke-width="2" opacity="0.6"/>
-<!-- Asia Session zone overlay -->
-<rect id="ov-asia" x="570" y="30" width="210" height="340" rx="4" fill="transparent" stroke="transparent" stroke-width="2" opacity="0.6"/>
-
-<!-- ═══ SESSION LABELS ═══ -->
-<!-- US -->
-<rect x="65" y="230" width="118" height="42" rx="3" fill="#111" stroke="#222" stroke-width="1" id="lb-us-bg"/>
-<text id="lb-us-1" x="124" y="246" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#555" letter-spacing="2">US SESSION</text>
-<text id="lb-us-2" x="124" y="258" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#3a3a3a">21:00 – 06:00 JST</text>
-<circle id="dot-us" cx="124" cy="268" r="4" fill="#333"/>
-
-<!-- London -->
-<rect x="342" y="115" width="128" height="42" rx="3" fill="#111" stroke="#222" stroke-width="1" id="lb-lon-bg"/>
-<text id="lb-lon-1" x="406" y="131" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#555" letter-spacing="2">LONDON</text>
-<text id="lb-lon-2" x="406" y="143" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#3a3a3a">15:00 – 21:00 JST</text>
-<circle id="dot-lon" cx="406" cy="153" r="4" fill="#333"/>
-
-<!-- Asia -->
-<rect x="620" y="130" width="120" height="42" rx="3" fill="#111" stroke="#222" stroke-width="1" id="lb-asia-bg"/>
-<text id="lb-asia-1" x="680" y="146" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="13" fill="#555" letter-spacing="2">TOKYO</text>
-<text id="lb-asia-2" x="680" y="158" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#3a3a3a">07:00 – 15:00 JST</text>
-<circle id="dot-asia" cx="680" cy="168" r="4" fill="#333"/>
-</svg>
-        </div>
-      </div>
-
-      <!-- CAL + NEXT EVENT stacked -->
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <div class="pnl" style="flex:0 0 auto;">
-          <div class="ph"><span class="ph-t">CALENDAR</span><span class="ph-b" id="calB">—</span></div>
-          <div class="pb" style="padding:4px 5px;" id="calWrap"></div>
-        </div>
-        <div class="pnl" style="flex:1;min-height:0;">
-          <div class="ph"><span class="ph-t">NEXT HIGH IMPACT</span><span class="ph-b">COUNTDOWN</span></div>
-          <div class="pb" id="nextEv"></div>
+    <div class="panel">
+      <div class="label">XAUUSD</div>
+      <div class="tvBox">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+          {
+            "symbol": "OANDA:XAUUSD",
+            "width": "100%",
+            "isTransparent": true,
+            "colorTheme": "dark",
+            "locale": "ja"
+          }
+          </script>
         </div>
       </div>
     </div>
 
-    <!-- NEWS -->
-    <div class="pnl" style="flex:1;min-height:0;">
-      <div class="ph"><span class="ph-t">MARKET INTELLIGENCE</span><span class="ph-b" id="newsC">— ITEMS</span></div>
-      <div class="pb" id="newsList"></div>
+    <div class="panel clockCal">
+      <div>
+        <div class="label">JST CLOCK</div>
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="date" id="dateText">----</div>
+      </div>
+
+      <div>
+        <div class="monthTitle" id="monthTitle">----</div>
+        <div class="calGrid" id="calendarGrid"></div>
+      </div>
     </div>
-  </div>
 
-  <!-- RIGHT: EVENTS -->
-  <div class="rcol">
-    <div class="pnl" style="flex:1;min-height:0;">
-      <div class="ph"><span class="ph-t">ECONOMIC EVENTS</span><span class="ph-b">REAL-TIME</span></div>
-      <div class="pb" id="evList"></div>
+    <div class="panel">
+      <div class="label">TODAY HIGH IMPACT</div>
+      <div class="todayTopList" id="todayImpactTop"></div>
     </div>
+
   </div>
 
-</div><!-- main -->
+  <div class="main">
 
-<!-- YOUTUBE -->
-<div class="ytrow">
-  <div class="ytc">
-    <div class="ytl"><span class="dot r pulse"></span>BLOOMBERG TV LIVE</div>
-    <div class="ytf"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
+    <div class="panel mapPanel">
+      <div class="mapTitle">WORLD MONITOR</div>
+      <div id="map"></div>
+    </div>
+
+    <div class="panel newsPanel">
+      <div class="label">HIGH IMPACT NEWS</div>
+
+      <div class="newsHead">
+        <div>DATE</div>
+        <div>TIME</div>
+        <div>EVENT</div>
+        <div>IMPACT</div>
+        <div>予想</div>
+        <div>前回</div>
+        <div>COUNT</div>
+      </div>
+
+      <div id="highImpactList"></div>
+    </div>
+
   </div>
-  <div class="ytc">
-    <div class="ytl"><span class="dot r pulse"></span>KITCO GOLD NEWS</div>
-    <div class="ytf"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCQ4cAKVGqLOALvIe7Lts6pA&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
+
+  <div class="intel">
+    <div class="panel intelCard"><div class="intelTitle">MIDDLE EAST</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">RED SEA</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">UKRAINE</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">TAIWAN</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">FED</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">CENTRAL BANK</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">ENERGY</div><div class="intelStatus">WATCH</div></div>
+    <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
   </div>
-  <div class="ytc">
-    <div class="ytl"><span class="dot r pulse"></span>CNBC LIVE</div>
-    <div class="ytf"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCrp_UI8XtuYfpiqABvWQpsg&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
+
+  <div class="panel banner">
+    <div class="bannerInner" id="liveTicker"></div>
   </div>
-  <div class="ytc">
-    <div class="ytl"><span class="dot r pulse"></span>FED / POWELL / TRUMP</div>
-    <div class="ytf"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
-  </div>
+
 </div>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="tk-lbl">▸ LIVE</div>
-  <div class="tk-wrap"><div class="tk-inner" id="tkInner">—</div></div>
-</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-</div><!-- shell -->
 <script>
-'use strict';
-// ══════════════════════════════════════════════
-// SESSIONS
-// ══════════════════════════════════════════════
-const SESS=[
-  {id:'asia', name:'ASIA / TOKYO', open:7,  close:15,
-   ovId:'ov-asia', lbBg:'lb-asia-bg', lb1:'lb-asia-1', lb2:'lb-asia-2', dot:'dot-asia',
-   lands:['asia']},
-  {id:'lon',  name:'LONDON',       open:15, close:21,
-   ovId:'ov-lon',  lbBg:'lb-lon-bg',  lb1:'lb-lon-1',  lb2:'lb-lon-2',  dot:'dot-lon',
-   lands:['europe']},
-  {id:'us',   name:'NEW YORK / US',open:21, close:6,
-   ovId:'ov-us',   lbBg:'lb-us-bg',   lb1:'lb-us-1',   lb2:'lb-us-2',   dot:'dot-us',
-   lands:['northAmerica']},
+/* =========================
+   HIGH IMPACT EVENTS
+   events.json があれば自動読込
+   無ければ下の初期データを表示
+========================= */
+
+const highImpactEvents = [
+  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
+  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.4%",previous:"2.6%"},
+  {date:"2026-06-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"49.8",previous:"48.7"},
+  {date:"2026-06-01",time:"23:00",currency:"USD",event:"JOLTS Job Openings",impact:"HIGH",forecast:"7.45M",previous:"7.19M"},
+
+  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
+  {date:"2026-06-12",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
+  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"}
 ];
 
-function sessStat(o,c){
-  const n=new Date(),h=n.getHours()+n.getMinutes()/60+n.getSeconds()/3600;
-  let isOpen,p=0;
-  if(o<c){isOpen=h>=o&&h<c;if(isOpen)p=(h-o)/(c-o)*100;}
-  else{isOpen=h>=o||h<c;if(isOpen){const d=24-o+c;p=h>=o?(h-o)/d*100:(24-o+h)/d*100;}}
-  return{isOpen,p:Math.min(100,Math.max(0,p))};
+async function loadHighImpactEvents(){
+  try{
+    const res = await fetch("./events.json?t=" + Date.now(), {cache:"no-store"});
+    if(!res.ok) throw new Error("events.json not found");
+    const data = await res.json();
+
+    if(Array.isArray(data)){
+      highImpactEvents.length = 0;
+      data.forEach(e => highImpactEvents.push(e));
+    }
+  }catch(e){
+    // events.json が無い場合は初期データを使う
+  }
+
+  renderHighImpact();
 }
 
-function renderSessions(){
-  const fh=h=>`${String(h%24).padStart(2,'0')}:00`;
-  document.getElementById('sessList').innerHTML=SESS.map(s=>{
-    const{isOpen,p}=sessStat(s.open,s.close);
-    // map updates
-    const ov=document.getElementById(s.ovId);
-    const bg=document.getElementById(s.lbBg);
-    const t1=document.getElementById(s.lb1);
-    const t2=document.getElementById(s.lb2);
-    const dt=document.getElementById(s.dot);
-    if(ov){
-      if(isOpen){
-        ov.setAttribute('fill','rgba(255,64,64,0.06)');
-        ov.setAttribute('stroke','rgba(255,64,64,0.5)');
-      } else {
-        ov.setAttribute('fill','transparent');
-        ov.setAttribute('stroke','transparent');
-      }
+/* =========================
+   EVENT TIME
+========================= */
+
+function getEventDate(e){
+  const [y,m,d] = e.date.split("-").map(Number);
+  const [hh,mm] = e.time.split(":").map(Number);
+  return new Date(y,m-1,d,hh,mm,0,0);
+}
+
+function countdown(target){
+  const diff = target - new Date();
+
+  if(diff < -3600000) return null;
+  if(diff < 0) return "ENDED";
+
+  const t = Math.floor(diff / 1000);
+  const d = Math.floor(t / 86400);
+  const h = Math.floor((t % 86400) / 3600);
+  const m = Math.floor((t % 3600) / 60);
+  const s = t % 60;
+
+  if(d > 0){
+    return `${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  }
+
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function isWithin24h(target){
+  const diff = target - new Date();
+  return diff > 0 && diff <= 86400000;
+}
+
+/* =========================
+   RENDER HIGH IMPACT
+========================= */
+
+function renderHighImpact(){
+  const list = document.getElementById("highImpactList");
+  const todayBox = document.getElementById("todayImpactTop");
+
+  list.innerHTML = "";
+  todayBox.innerHTML = "";
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const nextMonthLimit = new Date(now.getFullYear(), now.getMonth()+2, 0, 23, 59, 59);
+
+  const sorted = [...highImpactEvents]
+    .map(e => ({...e, target:getEventDate(e)}))
+    .filter(e => e.target <= nextMonthLimit)
+    .sort((a,b) => a.target - b.target);
+
+  sorted.forEach(e=>{
+    const cd = countdown(e.target);
+    if(cd === null) return;
+
+    const blink = isWithin24h(e.target) ? "blink24" : "";
+
+    const row = document.createElement("div");
+    row.className = `newsRow ${blink}`;
+    row.innerHTML = `
+      <div>${e.date.slice(5)}</div>
+      <div>${e.time}</div>
+      <div class="eventCell">${e.currency} ${e.event}</div>
+      <div class="impactCell">${e.impact}</div>
+      <div>${e.forecast}</div>
+      <div>${e.previous}</div>
+      <div class="countCell ${blink ? "redCount" : ""}">${cd}</div>
+    `;
+    list.appendChild(row);
+
+    if(e.date === today){
+      const item = document.createElement("div");
+      item.className = `todayItem ${blink}`;
+      item.innerHTML = `
+        <div class="todayMain">
+          <div class="todayDate">${e.date.slice(5)}<br>${e.time}</div>
+          <div class="todayEvent">${e.currency} ${e.event}</div>
+          <div class="todayCount">${cd}</div>
+        </div>
+        <div class="todaySub">予想 ${e.forecast} / 前回 ${e.previous}</div>
+      `;
+      todayBox.appendChild(item);
     }
-    if(bg) bg.setAttribute('stroke',isOpen?'rgba(255,64,64,0.6)':'#222');
-    if(t1) t1.setAttribute('fill',isOpen?'#ff6060':'#555');
-    if(t2) t2.setAttribute('fill',isOpen?'#cc4444':'#3a3a3a');
-    if(dt){dt.setAttribute('fill',isOpen?'#ff4040':'#333');dt.setAttribute('style',isOpen?'filter:drop-shadow(0 0 4px #ff4040)':'');}
-    // land fill
-    s.lands.forEach(lid=>{
-      const el=document.getElementById(lid);
-      if(el) el.setAttribute('fill',isOpen?'rgba(255,64,64,0.18)':'#1a1a1a');
+  });
+
+  if(todayBox.innerHTML.trim() === ""){
+    todayBox.innerHTML = `<div class="todayItem">本日のHIGH IMPACTなし</div>`;
+  }
+}
+
+/* =========================
+   CLOCK + CALENDAR
+========================= */
+
+let lastCalendarKey = "";
+
+function updateClock(){
+  const now = new Date();
+
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("ja-JP",{hour12:false});
+
+  document.getElementById("dateText").textContent =
+    now.toLocaleDateString("ja-JP",{
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      weekday:"short"
     });
-    return`<div class="si">
-      <div class="si-top">
-        <span class="si-name">${s.name}</span>
-        <span class="si-st ${isOpen?'open':'closed'}">${isOpen?'● OPEN':'○ CLOSED'}</span>
-      </div>
-      <div class="si-time">${fh(s.open)} – ${fh(s.close)} JST</div>
-      <div class="si-bar"><div class="si-fill ${isOpen?'':'off'}" style="width:${isOpen?p.toFixed(1):0}%"></div></div>
-    </div>`;
-  }).join('');
+
+  updateSession(now.getHours());
+  autoCalendarUpdate();
 }
 
-// ══════════════════════════════════════════════
-// CLOCK
-// ══════════════════════════════════════════════
-function tick(){
-  const n=new Date(),p=v=>String(v).padStart(2,'0');
-  document.getElementById('clock').textContent=`${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
-  const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  document.getElementById('ckDate').textContent=`${n.getFullYear()}/${p(n.getMonth()+1)}/${p(n.getDate())} (${days[n.getDay()]}) JST`;
-  document.getElementById('sessT').textContent=`${p(n.getHours())}:${p(n.getMinutes())}`;
-}
+function autoCalendarUpdate(){
+  const now = new Date();
+  const key = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
 
-// ══════════════════════════════════════════════
-// PRICE — multi-API chain
-// ══════════════════════════════════════════════
-let PD={price:0,open:0,high:0,low:0,prev:0,init:true};
-let fc=0;
-
-async function tryFetch(url,opts,timeout=6000){
-  const ctrl=new AbortController();
-  const id=setTimeout(()=>ctrl.abort(),timeout);
-  try{const r=await fetch(url,{...opts,signal:ctrl.signal});clearTimeout(id);return r;}
-  catch(e){clearTimeout(id);throw e;}
-}
-
-async function fetchPrice(){
-  fc++;
-  // 1) metals.live
-  try{
-    const r=await tryFetch('https://api.metals.live/v1/spot/gold');
-    if(r.ok){
-      const d=await r.json();
-      const p=parseFloat(Array.isArray(d)?d[0]?.price:d?.price);
-      if(p>500){applyP(p,'metals.live');return;}
-    }
-  }catch(e){}
-
-  // 2) Open Exchange Rates (XAU base)
-  try{
-    const r=await tryFetch('https://open.er-api.com/v6/latest/XAU');
-    if(r.ok){
-      const d=await r.json();
-      if(d.rates?.USD&&d.rates.USD>500){applyP(d.rates.USD,'openexchange');return;}
-    }
-  }catch(e){}
-
-  // 3) Frankfurter (inverse)
-  try{
-    const r=await tryFetch('https://api.frankfurter.app/latest?from=USD&to=XAU');
-    if(r.ok){
-      const d=await r.json();
-      if(d.rates?.XAU){const p=1/d.rates.XAU;if(p>500){applyP(p,'frankfurter');return;}}
-    }
-  }catch(e){}
-
-  // 4) allorigins proxy → metals.live
-  try{
-    const u='https://api.allorigins.win/get?url='+encodeURIComponent('https://api.metals.live/v1/spot/gold');
-    const r=await tryFetch(u,{},10000);
-    if(r.ok){
-      const j=await r.json();
-      const d=JSON.parse(j.contents);
-      const p=parseFloat(Array.isArray(d)?d[0]?.price:d?.price);
-      if(p>500){applyP(p,'allorigins');return;}
-    }
-  }catch(e){}
-
-  // 5) cors.sh proxy
-  try{
-    const r=await tryFetch('https://cors.sh/https://api.metals.live/v1/spot/gold',{headers:{'x-cors-api-key':'temp_demo'}},8000);
-    if(r.ok){
-      const d=await r.json();
-      const p=parseFloat(Array.isArray(d)?d[0]?.price:d?.price);
-      if(p>500){applyP(p,'cors.sh');return;}
-    }
-  }catch(e){}
-
-  setSt('⬤ API FAIL #'+fc,'var(--red)');
-  document.getElementById('liveLabel').textContent='FETCH FAILED — RETRYING';
-}
-
-function applyP(p,src){
-  const old=PD.price;
-  if(PD.init){PD.open=p;PD.prev=p;PD.high=p;PD.low=p;PD.init=false;}
-  else{if(p>PD.high)PD.high=p;if(p<PD.low||PD.low===0)PD.low=p;}
-  PD.price=p;
-  renderPrice(old,src);
-}
-
-const fmt=v=>v>0?v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'——';
-
-function renderPrice(old,src){
-  const p=PD.price;if(!p)return;
-  const chg=p-(PD.prev||p),pct=PD.prev?chg/PD.prev*100:0;
-  const dir=chg>0.005?'up':chg<-0.005?'dn':'neu',arr=chg>0.005?'▲':chg<-0.005?'▼':'—';
-  const el=document.getElementById('pBig');
-  el.textContent=fmt(p);el.className=`p-big ${dir}`;
-  const ce=document.getElementById('pChg');
-  ce.textContent=`${arr} ${Math.abs(chg).toFixed(2)}  (${chg>=0?'+':''}${pct.toFixed(3)}%)`;
-  ce.className=`p-chg ${dir}`;
-  document.getElementById('sH').textContent=fmt(PD.high);
-  document.getElementById('sL').textContent=fmt(PD.low);
-  document.getElementById('sO').textContent=fmt(PD.open);
-  document.getElementById('sP').textContent=fmt(PD.prev);
-  document.getElementById('sBA').textContent=`${(p-.3).toFixed(2)} / ${(p+.3).toFixed(2)}`;
-  document.getElementById('sSP').textContent='SPREAD: 0.60';
-  if(PD.open){
-    document.getElementById('sHs').textContent=`+${((PD.high-PD.open)/PD.open*100).toFixed(2)}% OPEN`;
-    document.getElementById('sLs').textContent=`${((PD.low-PD.open)/PD.open*100).toFixed(2)}% OPEN`;
+  if(key !== lastCalendarKey){
+    lastCalendarKey = key;
+    renderCalendar();
   }
-  document.getElementById('s52Hs').textContent=`-${(4801.50-p).toFixed(2)}`;
-  document.getElementById('s52Ls').textContent=`+${(p-3167.20).toFixed(2)}`;
-  setSt(`⬤ ${src} · #${fc}`,'var(--grn)');
-  document.getElementById('liveLabel').textContent='LIVE · REAL-TIME';
-  updTicker(p,chg,pct);
 }
 
-function setSt(m,c){const e=document.getElementById('apiSt');e.textContent=m;e.style.color=c;}
+function renderCalendar(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const grid = document.getElementById("calendarGrid");
 
-// ══════════════════════════════════════════════
-// EVENTS
-// ══════════════════════════════════════════════
-const EVS=[
-  {name:'USD ADP Employment',     date:'2026-06-03',time:'21:15',impact:'HIGH',prev:'102K', fore:'115K', act:null},
-  {name:'USD Non-Farm Payrolls',  date:'2026-06-05',time:'21:30',impact:'HIGH',prev:'177K', fore:'138K', act:null},
-  {name:'USD CPI m/m',            date:'2026-06-11',time:'21:30',impact:'HIGH',prev:'0.3%', fore:'0.2%', act:null},
-  {name:'USD PPI m/m',            date:'2026-06-12',time:'21:30',impact:'HIGH',prev:'-0.1%',fore:'0.2%', act:null},
-  {name:'USD Retail Sales m/m',   date:'2026-06-17',time:'21:30',impact:'HIGH',prev:'0.1%', fore:'0.3%', act:null},
-  {name:'FOMC Rate Decision',     date:'2026-06-18',time:'03:00',impact:'HIGH',prev:'4.50%',fore:'4.50%',act:null},
-  {name:'USD Initial Jobless',    date:'2026-06-19',time:'21:30',impact:'MED', prev:'222K', fore:'220K', act:null},
-  {name:'Powell Speech',          date:'2026-06-25',time:'02:00',impact:'HIGH',prev:'—',    fore:'—',    act:null},
-];
+  document.getElementById("monthTitle").textContent =
+    `${y} / ${String(m+1).padStart(2,"0")}`;
 
-function evDT(e){
-  const[y,mo,d]=e.date.split('-').map(Number),[h,m]=e.time.split(':').map(Number);
-  return new Date(y,mo-1,d,h,m,0);
-}
-function fmtCD(ms){
-  if(ms<0)return'PASSED';
-  const s=Math.floor(ms/1000),pp=v=>String(v).padStart(2,'0');
-  const D=Math.floor(s/86400),H=Math.floor((s%86400)/3600),M=Math.floor((s%3600)/60),S=s%60;
-  return D>0?`${D}D ${pp(H)}:${pp(M)}:${pp(S)}`:`${pp(H)}:${pp(M)}:${pp(S)}`;
-}
+  grid.innerHTML = "";
 
-function renderEvents(){
-  const now=Date.now(),sorted=[...EVS].sort((a,b)=>evDT(a)-evDT(b));
-  const next=sorted.find(e=>evDT(e)>now);
-  if(next){
-    const ms=evDT(next)-now,urg=ms<3600000;
-    const ab=document.getElementById('alertBar');
-    if(urg){ab.className='show';ab.textContent=`⚠ URGENT — ${next.name} IN ${fmtCD(ms)}`;}
-    else ab.className='';
-    document.getElementById('nextEv').innerHTML=`
-      <div class="ne-name">${next.name}</div>
-      <div class="ne-meta">${next.date} · ${next.time} JST · ${next.impact}</div>
-      <div class="ne-cd${urg?' urg':''}">⏱ ${fmtCD(ms)}</div>
-      <div class="vbox">
-        <div class="vb"><div class="vl">PREV</div><div class="vv">${next.prev}</div></div>
-        <div class="vb"><div class="vl">FORECAST</div><div class="vv">${next.fore}</div></div>
-        <div class="vb"><div class="vl">ACTUAL</div><div class="vv">${next.act||'—'}</div></div>
-      </div>`;
+  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
+    grid.innerHTML += `<div class="calHead">${h}</div>`;
+  });
+
+  const first = new Date(y,m,1);
+  const last = new Date(y,m+1,0);
+
+  for(let i=0;i<first.getDay();i++){
+    grid.innerHTML += `<div class="calDay"></div>`;
   }
-  document.getElementById('evList').innerHTML=sorted.map(e=>{
-    const ms=evDT(e)-now,past=ms<0,urg=!past&&ms<3600000;
-    return`<div class="ei">
-      <div class="ei-top"><span class="ei-n">${e.name}</span><span class="ei-t ${e.impact.toLowerCase()}">${e.impact}</span></div>
-      <div class="ei-d">${e.date} · ${e.time} JST</div>
-      <div class="ei-cd${urg?' urg':past?' past':''}">${past?'PASSED':'⏱ '+fmtCD(ms)}</div>
-      <div class="vbox">
-        <div class="vb"><div class="vl">PREV</div><div class="vv">${e.prev}</div></div>
-        <div class="vb"><div class="vl">FORE</div><div class="vv">${e.fore}</div></div>
-        <div class="vb"><div class="vl">ACT</div><div class="vv ${e.act?'beat':''}">${e.act||'—'}</div></div>
-      </div>
-    </div>`;
-  }).join('');
+
+  for(let d=1;d<=last.getDate();d++){
+    grid.innerHTML += `<div class="calDay ${d===now.getDate() ? "today" : ""}">${d}</div>`;
+  }
 }
 
-// ══════════════════════════════════════════════
-// CALENDAR
-// ══════════════════════════════════════════════
-function renderCal(){
-  const n=new Date(),y=n.getFullYear(),m=n.getMonth(),today=n.getDate();
-  const mn=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  document.getElementById('calB').textContent=`${mn[m]} ${y}`;
-  const fd=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
-  const evD=new Set(EVS.filter(e=>e.date.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)).map(e=>+e.date.split('-')[2]));
-  const hdrs=['S','M','T','W','T','F','S'].map(d=>`<div class="cdh">${d}</div>`).join('');
-  const blanks=Array(fd).fill('<div class="cd empty">·</div>').join('');
-  const days=Array.from({length:dim},(_,i)=>{
-    const d=i+1,c=(d===today?'today ':'')+(evD.has(d)?'ev':'');
-    return`<div class="cd ${c}">${d}</div>`;
-  }).join('');
-  document.getElementById('calWrap').innerHTML=`<div class="cg">${hdrs}${blanks}${days}</div>`;
+/* =========================
+   MAP + SESSION
+========================= */
+
+let sessionMarkers = {};
+
+function sessionHtml(name,time,isOpen){
+  return `
+    <div class="sessionLabel ${isOpen ? "open" : ""}">
+      ${name}<br>${time}<br>
+      ${isOpen ? `<span class="openText">● OPEN</span>` : ``}
+    </div>
+  `;
 }
 
-// ══════════════════════════════════════════════
-// NEWS
-// ══════════════════════════════════════════════
-const NEWS=[
-  {t:'05:12',i:'high',s:'REUTERS',   h:'Gold holds losses as strong dollar weighs; traders await NFP for direction signal'},
-  {t:'04:44',i:'high',s:'BLOOMBERG', h:'Powell: No urgency to cut rates before clear disinflation trend confirmed'},
-  {t:'04:18',i:'med', s:'FOREXLIVE', h:'XAU/USD eyes 4,480 support — break exposes 4,450 and 4,420 key levels'},
-  {t:'03:52',i:'high',s:'BLOOMBERG', h:'Trump threatens fresh EU tariffs; risk-off bid lifts gold modestly'},
-  {t:'03:31',i:'med', s:'REUTERS',   h:'PBOC gold reserve buying continues fourth month; longer-term floor intact'},
-  {t:'02:55',i:'high',s:'CNBC',      h:'Middle East ceasefire talks collapse; geopolitical premium returns to gold'},
-  {t:'02:12',i:'med', s:'KITCO',     h:'SPDR Gold ETF outflows accelerate ahead of NFP risk event'},
-  {t:'01:40',i:'low', s:'FOREXLIVE', h:'Gold-silver ratio dips to 133.5 as silver outperforms on industrial demand'},
-  {t:'01:05',i:'high',s:'REUTERS',   h:'Fed minutes: Several members flagged upside inflation risks; rate cut bets trim'},
+function updateSession(hour){
+  const asiaOpen = hour >= 7 && hour < 15;
+  const londonOpen = hour >= 15 && hour < 21;
+  const usOpen = hour >= 21 || hour < 6;
+
+  if(sessionMarkers.asia){
+    sessionMarkers.asia.setIcon(L.divIcon({
+      className:"",
+      html:sessionHtml("ASIA","07:00-15:00",asiaOpen),
+      iconSize:[110,70]
+    }));
+
+    sessionMarkers.london.setIcon(L.divIcon({
+      className:"",
+      html:sessionHtml("LONDON","15:00-21:00",londonOpen),
+      iconSize:[120,70]
+    }));
+
+    sessionMarkers.us.setIcon(L.divIcon({
+      className:"",
+      html:sessionHtml("US","21:00-06:00",usOpen),
+      iconSize:[110,70]
+    }));
+  }
+}
+
+function initMap(){
+  const map = L.map("map",{
+    zoomControl:false,
+    attributionControl:false,
+    dragging:false,
+    scrollWheelZoom:false,
+    doubleClickZoom:false,
+    boxZoom:false,
+    keyboard:false,
+    tap:false
+  }).setView([20,10],2);
+
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:5,
+    minZoom:2
+  }).addTo(map);
+
+  sessionMarkers.us = L.marker([39,-98],{
+    icon:L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",false),iconSize:[110,70]})
+  }).addTo(map);
+
+  sessionMarkers.london = L.marker([51,-1],{
+    icon:L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",false),iconSize:[120,70]})
+  }).addTo(map);
+
+  sessionMarkers.asia = L.marker([35,120],{
+    icon:L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",false),iconSize:[110,70]})
+  }).addTo(map);
+
+  setTimeout(()=>map.invalidateSize(),300);
+}
+
+/* =========================
+   LIVE TICKER
+========================= */
+
+const liveFeedLines = [
+  {source:"REUTERS", text:"Gold remains sensitive to geopolitical headlines and US economic data."},
+  {source:"BLOOMBERG", text:"Traders monitor dollar moves ahead of high impact US releases."},
+  {source:"FOREXLIVE", text:"XAUUSD volatility expected around CPI, NFP, ISM and FOMC events."},
+  {source:"MARKET", text:"Safe-haven demand remains active while risk sentiment stays fragile."},
+  {source:"NEWS", text:"Energy, sanctions and Middle East headlines remain key gold drivers."},
+  {source:"ANALYST", text:"Gold desk watching liquidity around London and US session overlap."}
 ];
-function renderNews(){
-  document.getElementById('newsC').textContent=`${NEWS.length} ITEMS`;
-  document.getElementById('newsList').innerHTML=NEWS.map(n=>`
-    <div class="ni">
-      <span class="ni-i ${n.i}">${n.i.toUpperCase()}</span>
-      <div><div class="ni-h">${n.h}</div><div class="ni-s">▸ ${n.s}</div></div>
-      <span class="ni-t">${n.t}</span>
-    </div>`).join('');
+
+function renderLiveTicker(){
+  const now = new Date().toLocaleTimeString("ja-JP",{hour12:false});
+
+  const nextEvents = [...highImpactEvents]
+    .map(e=>({...e,target:getEventDate(e)}))
+    .filter(e=>e.target-new Date()>0)
+    .sort((a,b)=>a.target-b.target)
+    .slice(0,3)
+    .map(e=>`<span><b class="liveRed">${e.event}</b> ${countdown(e.target)}</span>`)
+    .join("");
+
+  const live = liveFeedLines.map(item=>{
+    return `
+      <span>
+        <b class="liveTime">${now}</b>
+        <b class="liveSource">${item.source}</b>
+        ${item.text}
+      </span>
+    `;
+  }).join("");
+
+  document.getElementById("liveTicker").innerHTML = `
+    <span>XAUUSD WAR ROOM</span>
+    ${nextEvents}
+    ${live}
+    <span class="liveRed">HIGH IMPACT NEWS AUTO UPDATE</span>
+    <span>XAUUSD WAR ROOM</span>
+  `;
 }
 
-// ══════════════════════════════════════════════
-// GEO
-// ══════════════════════════════════════════════
-const GEO=[
-  {n:'MIDDLE EAST', l:'HIGH',    c:'high'},
-  {n:'RED SEA',     l:'WATCH',   c:'watch'},
-  {n:'UKRAINE',     l:'WATCH',   c:'watch'},
-  {n:'TAIWAN',      l:'MONITOR', c:'monitor'},
-  {n:'US-EU TRADE', l:'HIGH',    c:'high'},
-  {n:'FED POLICY',  l:'WATCH',   c:'watch'},
-  {n:'SANCTIONS',   l:'WATCH',   c:'watch'},
-];
-function renderGeo(){
-  document.getElementById('geoList').innerHTML=GEO.map(g=>`
-    <div class="gi"><span class="gn">${g.n}</span><span class="gl ${g.c}">${g.l}</span></div>`).join('');
-}
+/* =========================
+   INIT
+========================= */
 
-// ══════════════════════════════════════════════
-// TICKER
-// ══════════════════════════════════════════════
-let tkVals={xau:'<span class="hi">LOADING</span>',comex:'<span class="hi">LOADING</span>'};
-const TK_BASE=[
-  ()=>`XAU/USD ${tkVals.xau}`,
-  ()=>`DXY <span class="hi">99.84</span>`,
-  ()=>`US 10Y YIELD <span class="hi">4.512%</span>`,
-  ()=>`EUR/USD <span class="dn">▼ 1.0821</span>`,
-  ()=>`USD/JPY <span class="hi">148.92</span>`,
-  ()=>`WTI CRUDE <span class="dn">▼ 61.22</span>`,
-  ()=>`XAG/USD <span class="dn">▼ 33.42</span>`,
-  ()=>`COMEX JUL26 ${tkVals.comex}`,
-  ()=>`NEXT FOMC <span class="hi">06-18-2026</span> · HOLD EXPECTED 96%`,
-];
-function buildTk(){
-  const h=TK_BASE.map(f=>`<span class="ti">${f()}</span>`).join('');
-  document.getElementById('tkInner').innerHTML=h+h;
-}
-function updTicker(p,chg,pct){
-  const d=chg>=0?'up':'dn',a=chg>=0?'▲':'▼';
-  tkVals.xau=`<span class="${d}">${a} ${p.toFixed(2)} (${chg>=0?'+':''}${pct.toFixed(3)}%)</span>`;
-  tkVals.comex=`<span class="${d}">${a} ${(p+6.5).toFixed(2)}</span>`;
-  buildTk();
-}
+initMap();
+renderCalendar();
+updateClock();
+loadHighImpactEvents();
+renderLiveTicker();
 
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-tick();
-renderSessions();
-renderCal();
-renderNews();
-renderGeo();
-renderEvents();
-buildTk();
-fetchPrice();
-
-setInterval(tick,         1000);
-setInterval(renderSessions,1000);
-setInterval(renderEvents, 1000);
-setInterval(fetchPrice,  15000);
-setInterval(renderCal,  60000);
+setInterval(updateClock,1000);
+setInterval(renderHighImpact,1000);
+setInterval(loadHighImpactEvents,30000);
+setInterval(renderLiveTicker,10000);
 </script>
+
 </body>
 </html>
