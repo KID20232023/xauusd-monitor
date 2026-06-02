@@ -48,13 +48,13 @@ html,body{
   background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--border);
   border-radius:10px;
-  padding:12px;
+  padding:10px;
   overflow:hidden;
 }
 
 .top{
   display:grid;
-  grid-template-columns:1fr 1.45fr 1.35fr;
+  grid-template-columns:0.9fr 1.6fr 1.5fr;
   gap:8px;
 }
 
@@ -73,42 +73,44 @@ html,body{
 
 .clockCal{
   display:grid;
-  grid-template-columns:.8fr 1.2fr;
-  gap:14px;
+  grid-template-columns:.7fr 1.3fr;
+  gap:10px;
 }
 
 .clock{
-  font-size:42px;
+  font-size:40px;
   font-weight:900;
   color:var(--green);
+  line-height:1;
 }
 
 .date{
   margin-top:8px;
-  font-size:14px;
+  font-size:13px;
   color:var(--text);
 }
 
 .monthTitle{
   text-align:center;
-  font-size:13px;
+  font-size:12px;
   font-weight:800;
   color:var(--text);
-  margin-bottom:6px;
+  margin-bottom:4px;
 }
 
 .calGrid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
-  gap:3px;
+  gap:2px;
 }
 
-.calHead,.calDay{
+.calHead,
+.calDay{
   position:relative;
   text-align:center;
-  font-size:11px;
+  font-size:10px;
   color:var(--text);
-  padding:4px 0;
+  padding:3px 0;
 }
 
 .calHead{
@@ -117,17 +119,17 @@ html,body{
 
 .today{
   background:rgba(255,45,45,.14);
-  border-radius:6px;
+  border-radius:5px;
 }
 
 .eventDot::after{
   content:"";
   position:absolute;
-  bottom:1px;
+  bottom:0;
   left:50%;
   transform:translateX(-50%);
-  width:6px;
-  height:6px;
+  width:5px;
+  height:5px;
   border-radius:50%;
   background:var(--gold);
   box-shadow:0 0 8px var(--gold);
@@ -140,44 +142,48 @@ html,body{
   100%{opacity:1}
 }
 
-.todayTopList{
-  height:120px;
+.headlinesPanel{
   overflow:hidden;
 }
 
-.todayItem{
+.headlineScroll{
+  height:118px;
+  overflow-y:auto;
+  padding-right:4px;
+}
+
+.headlineItem{
   border-bottom:1px solid #181818;
   padding:7px 0;
   font-size:12px;
 }
 
-.todayMain{
+.headlineTop{
   display:grid;
-  grid-template-columns:62px 1fr 82px;
+  grid-template-columns:56px 86px 1fr;
   gap:8px;
   align-items:center;
 }
 
-.todayDate{
+.headlineTime{
+  color:var(--green);
+  font-weight:900;
+}
+
+.headlineSource{
   color:var(--gold);
   font-weight:900;
 }
 
-.todayEvent{
+.headlineText{
   color:var(--text);
-  font-weight:900;
+  font-weight:700;
 }
 
-.todayCount{
+.breaking{
   color:var(--red);
   font-weight:900;
-  text-align:right;
-}
-
-.todaySub{
-  color:var(--muted);
-  margin-top:4px;
-  font-size:11px;
+  animation:redPulse 1s infinite;
 }
 
 .main{
@@ -262,7 +268,14 @@ html,body{
   overflow:hidden;
 }
 
-.newsHead,.newsRow{
+.newsTable{
+  height:calc(100% - 34px);
+  overflow-y:auto;
+  padding-right:4px;
+}
+
+.newsHead,
+.newsRow{
   display:grid;
   grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
   gap:8px;
@@ -274,6 +287,10 @@ html,body{
   border-bottom:1px solid #1b1b1b;
   font-size:11px;
   color:var(--muted);
+  position:sticky;
+  top:0;
+  background:#0b0b0b;
+  z-index:5;
 }
 
 .newsRow{
@@ -316,42 +333,32 @@ html,body{
   filter:brightness(.82) contrast(1.05);
 }
 
-.headlines{
-  overflow:hidden;
-}
-
-.headlineItem{
-  border-bottom:1px solid #181818;
-  padding:8px 0;
-  font-size:12px;
-}
-
-.headlineTop{
-  display:grid;
-  grid-template-columns:58px 82px 1fr;
-  gap:8px;
-  align-items:center;
-}
-
-.headlineTime{
-  color:var(--green);
+.youtubeLabel{
+  position:absolute;
+  z-index:10;
+  top:10px;
+  left:12px;
+  font-size:11px;
   font-weight:900;
-}
-
-.headlineSource{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.headlineText{
   color:var(--text);
-  font-weight:700;
+  letter-spacing:1.2px;
 }
 
-.breaking{
-  color:var(--red);
-  font-weight:900;
-  animation:redPulse 1s infinite;
+.youtubeBox{
+  position:relative;
+}
+
+::-webkit-scrollbar{
+  width:6px;
+}
+
+::-webkit-scrollbar-track{
+  background:#090909;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#2b2b2b;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -385,15 +392,16 @@ html,body{
         <div class="clock" id="clock">00:00:00</div>
         <div class="date" id="dateText">----</div>
       </div>
+
       <div>
         <div class="monthTitle" id="monthTitle">----</div>
         <div class="calGrid" id="calendarGrid"></div>
       </div>
     </div>
 
-    <div class="panel headlines">
+    <div class="panel headlinesPanel">
       <div class="label">LIVE HEADLINES</div>
-      <div id="topHeadlineList"></div>
+      <div class="headlineScroll" id="topHeadlineList"></div>
     </div>
 
   </div>
@@ -407,33 +415,53 @@ html,body{
 
     <div class="panel newsPanel">
       <div class="label">HIGH IMPACT NEWS</div>
-      <div class="newsHead">
-        <div>DATE</div>
-        <div>TIME</div>
-        <div>EVENT</div>
-        <div>IMPACT</div>
-        <div>予想</div>
-        <div>前回</div>
-        <div>COUNT</div>
+
+      <div class="newsTable">
+        <div class="newsHead">
+          <div>DATE</div>
+          <div>TIME</div>
+          <div>EVENT</div>
+          <div>IMPACT</div>
+          <div>予想</div>
+          <div>前回</div>
+          <div>COUNT</div>
+        </div>
+
+        <div id="highImpactList"></div>
       </div>
-      <div id="highImpactList"></div>
     </div>
 
   </div>
 
   <div class="bottom">
+
     <div class="panel youtubeBox">
-      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div class="youtubeLabel">BLOOMBERG LIVE</div>
+      <iframe
+        src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&controls=1&loop=1&playlist=jfKfPfyJRdk"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
     </div>
 
     <div class="panel youtubeBox">
-      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCvJJ_dzjViJCoLf5uKUTwoA&autoplay=1&mute=1&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div class="youtubeLabel">CNBC LIVE</div>
+      <iframe
+        src="https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&loop=1&playlist=9Auq9mYxFEE"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
     </div>
 
-    <div class="panel headlines">
-      <div class="label">LIVE HEADLINES</div>
-      <div id="headlineList"></div>
+    <div class="panel youtubeBox">
+      <div class="youtubeLabel">US NEWS / SPEECH</div>
+      <iframe
+        src="https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1&controls=1"
+        allow="autoplay; encrypted-media"
+        allowfullscreen>
+      </iframe>
     </div>
+
   </div>
 
 </div>
@@ -454,6 +482,7 @@ const highImpactEvents=[
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
 
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
 
@@ -461,13 +490,26 @@ const highImpactEvents=[
   {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Inflation Expectations",impact:"HIGH",forecast:"---",previous:"---"},
 
   {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
+  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Core Retail Sales m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
 
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
   {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-06-18",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---"},
+
+  {date:"2026-06-24",time:"23:00",currency:"USD",event:"New Home Sales",impact:"HIGH",forecast:"---",previous:"---"},
+
+  {date:"2026-06-25",time:"21:30",currency:"USD",event:"Final GDP q/q",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-06-25",time:"21:30",currency:"USD",event:"Unemployment Claims",impact:"HIGH",forecast:"---",previous:"---"},
 
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
-  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"}
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"},
+  {date:"2026-06-26",time:"23:00",currency:"USD",event:"Revised UoM Consumer Sentiment",impact:"HIGH",forecast:"---",previous:"---"},
+
+  {date:"2026-07-01",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-07-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-07-02",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-07-02",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"---",previous:"---"}
 ];
 
 const headlines=[
@@ -475,7 +517,10 @@ const headlines=[
   {source:"WHITE HOUSE",text:"US administration comments watched for geopolitical risk."},
   {source:"TREASURY",text:"Treasury yield move remains key driver for gold."},
   {source:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true},
-  {source:"MARKET",text:"XAUUSD sensitivity elevated into high impact US data."}
+  {source:"MARKET",text:"XAUUSD sensitivity elevated into high impact US data."},
+  {source:"BLOOMBERG",text:"Dollar and yields remain key short-term drivers for gold."},
+  {source:"CNBC",text:"US equity sentiment watched during New York session."},
+  {source:"REUTERS",text:"Energy and geopolitical headlines remain in focus."}
 ];
 
 function getEventDate(e){
@@ -486,14 +531,19 @@ function getEventDate(e){
 
 function countdown(target){
   const diff=target-new Date();
+
   if(diff<-3600000)return null;
   if(diff<0)return"ENDED";
+
   const t=Math.floor(diff/1000);
   const d=Math.floor(t/86400);
   const h=Math.floor((t%86400)/3600);
   const m=Math.floor((t%3600)/60);
   const s=t%60;
-  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+
+  return d>0
+    ?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+    :`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 function isWithin24h(target){
@@ -568,8 +618,18 @@ function renderCalendar(){
 
 function updateClock(){
   const now=new Date();
-  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
-  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
+
+  document.getElementById("clock").textContent=
+    now.toLocaleTimeString("ja-JP",{hour12:false});
+
+  document.getElementById("dateText").textContent=
+    now.toLocaleDateString("ja-JP",{
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      weekday:"short"
+    });
+
   updateSession(now);
 }
 
@@ -577,15 +637,26 @@ let sessionMarkers={};
 
 function getSessionState(now){
   const h=now.getHours();
-  if(h>=7&&h<15)return{open:"ASIA",next:"LONDON",nextHour:15};
-  if(h>=15&&h<21)return{open:"LONDON",next:"US",nextHour:21};
+
+  if(h>=7&&h<15){
+    return{open:"ASIA",next:"LONDON",nextHour:15};
+  }
+
+  if(h>=15&&h<21){
+    return{open:"LONDON",next:"US",nextHour:21};
+  }
+
   return{open:"US",next:"ASIA",nextHour:7};
 }
 
 function nextSessionCountdown(now,nextHour){
   const target=new Date(now);
   target.setHours(nextHour,0,0,0);
-  if(target<=now)target.setDate(target.getDate()+1);
+
+  if(target<=now){
+    target.setDate(target.getDate()+1);
+  }
+
   return countdown(target);
 }
 
@@ -608,9 +679,23 @@ function updateSession(now){
   const usOpen=state.open==="US";
 
   if(sessionMarkers.asia){
-    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",asiaOpen,cd),iconSize:[120,88]}));
-    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",londonOpen,cd),iconSize:[125,88]}));
-    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",usOpen,cd),iconSize:[120,88]}));
+    sessionMarkers.asia.setIcon(L.divIcon({
+      className:"",
+      html:sessionHtml("ASIA","07:00-15:00",asiaOpen,cd),
+      iconSize:[120,88]
+    }));
+
+    sessionMarkers.london.setIcon(L.divIcon({
+      className:"",
+      html:sessionHtml("LONDON","15:00-21:00",londonOpen,cd),
+      iconSize:[125,88]
+    }));
+
+    sessionMarkers.us.setIcon(L.divIcon({
+      className:"",
+      html:sessionHtml("US","21:00-06:00",usOpen,cd),
+      iconSize:[120,88]
+    }));
   }
 }
 
@@ -631,9 +716,17 @@ function initMap(){
     minZoom:2
   }).addTo(map);
 
-  sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
-  sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:"",iconSize:[125,88]})}).addTo(map);
-  sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
+  sessionMarkers.us=L.marker([39,-98],{
+    icon:L.divIcon({className:"",html:"",iconSize:[120,88]})
+  }).addTo(map);
+
+  sessionMarkers.london=L.marker([51,-1],{
+    icon:L.divIcon({className:"",html:"",iconSize:[125,88]})
+  }).addTo(map);
+
+  sessionMarkers.asia=L.marker([35,120],{
+    icon:L.divIcon({className:"",html:"",iconSize:[120,88]})
+  }).addTo(map);
 
   setTimeout(()=>map.invalidateSize(),300);
 }
@@ -641,7 +734,6 @@ function initMap(){
 function renderHeadlines(){
   const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
   const topBox=document.getElementById("topHeadlineList");
-  const bottomBox=document.getElementById("headlineList");
 
   let html="";
 
@@ -658,7 +750,6 @@ function renderHeadlines(){
   });
 
   topBox.innerHTML=html;
-  bottomBox.innerHTML=html;
 }
 
 initMap();
