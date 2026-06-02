@@ -20,36 +20,37 @@
   --red:#ff2d2d;
 }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
-body{
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
   background:var(--bg);
   color:var(--text);
-  padding:14px;
 }
 
 .wrap{
-  max-width:1780px;
-  margin:0 auto;
+  width:100vw;
+  height:100vh;
+  padding:8px;
+  display:grid;
+  grid-template-rows:150px 1fr 78px 190px;
+  gap:8px;
 }
 
 .panel{
   background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
+  border-radius:10px;
+  padding:12px;
+  overflow:hidden;
 }
 
 .top{
   display:grid;
-  grid-template-columns:1fr 1.55fr 1.25fr;
-  gap:14px;
-  margin-bottom:14px;
+  grid-template-columns:1fr 1.45fr 1.35fr;
+  gap:8px;
 }
 
 .label{
@@ -57,24 +58,24 @@ body{
   color:var(--text);
   letter-spacing:1.3px;
   font-weight:800;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
 .tvBox{
-  height:145px;
+  height:120px;
   overflow:hidden;
 }
 
 .clockCal{
   display:grid;
   grid-template-columns:.8fr 1.2fr;
-  gap:18px;
+  gap:14px;
 }
 
 .clock{
   font-size:42px;
   font-weight:900;
-  color:var(--text);
+  color:var(--green);
 }
 
 .date{
@@ -88,102 +89,88 @@ body{
   font-size:13px;
   font-weight:800;
   color:var(--text);
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
 .calGrid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
-  gap:4px;
+  gap:3px;
 }
 
-.calHead,
-.calDay{
+.calHead,.calDay{
+  position:relative;
   text-align:center;
   font-size:11px;
   color:var(--text);
-  padding:5px 0;
+  padding:4px 0;
 }
 
-.calHead{
-  color:var(--muted);
-}
+.calHead{color:var(--muted)}
 
 .today{
   background:rgba(255,45,45,.14);
-  border:1px solid rgba(255,45,45,.45);
   border-radius:6px;
 }
 
-.eventDay{
-  background:rgba(184,155,94,.18);
-  border:1px solid rgba(184,155,94,.55);
-  border-radius:6px;
-  color:var(--gold)!important;
+.eventDot::after{
+  content:"";
+  position:absolute;
+  bottom:1px;
+  left:50%;
+  transform:translateX(-50%);
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 8px var(--gold);
+  animation:eventBlink 1.2s infinite;
 }
 
-.today.eventDay{
-  background:rgba(255,45,45,.16);
-  border:1px solid rgba(255,45,45,.55);
+@keyframes eventBlink{
+  0%{opacity:1}
+  50%{opacity:.25}
+  100%{opacity:1}
 }
 
 .todayTopList{
-  height:130px;
+  height:120px;
   overflow:hidden;
 }
 
 .todayItem{
   border-bottom:1px solid #181818;
-  padding:8px 0;
+  padding:7px 0;
   font-size:12px;
 }
 
 .todayMain{
   display:grid;
-  grid-template-columns:62px 1fr 78px;
+  grid-template-columns:62px 1fr 82px;
   gap:8px;
   align-items:center;
 }
 
-.todayDate{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.todayEvent{
-  color:var(--text);
-  font-weight:900;
-}
-
-.todayCount{
-  color:var(--red);
-  font-weight:900;
-  text-align:right;
-}
-
-.todaySub{
-  color:var(--muted);
-  margin-top:5px;
-  font-size:11px;
-}
+.todayDate{color:var(--gold);font-weight:900}
+.todayEvent{color:var(--text);font-weight:900}
+.todayCount{color:var(--red);font-weight:900;text-align:right}
+.todaySub{color:var(--muted);margin-top:4px;font-size:11px}
 
 .main{
   display:grid;
   grid-template-columns:52% 48%;
-  gap:14px;
-  margin-bottom:14px;
+  gap:8px;
+  min-height:0;
 }
 
 .mapPanel{
-  height:480px;
   position:relative;
-  overflow:hidden;
 }
 
 .mapTitle{
   position:absolute;
-  top:14px;
-  left:16px;
+  top:12px;
+  left:14px;
   z-index:50;
   color:var(--text);
   font-size:13px;
@@ -193,10 +180,10 @@ body{
 
 #map{
   position:absolute;
-  left:14px;
-  right:14px;
-  top:48px;
-  bottom:14px;
+  left:12px;
+  right:12px;
+  top:42px;
+  bottom:12px;
   border:1px solid #171717;
   border-radius:10px;
   overflow:hidden;
@@ -204,25 +191,29 @@ body{
 }
 
 .leaflet-control-attribution,
-.leaflet-control-zoom{
-  display:none!important;
-}
+.leaflet-control-zoom{display:none!important}
 
 .sessionLabel{
   color:var(--text);
-  background:rgba(5,5,5,.84);
+  background:rgba(5,5,5,.86);
   border:1px solid rgba(184,155,94,.28);
   border-radius:8px;
-  padding:8px 10px;
+  padding:7px 9px;
   font-size:12px;
   line-height:1.45;
   letter-spacing:.8px;
   text-align:center;
-  min-width:96px;
+  min-width:112px;
 }
 
 .sessionLabel.open{
-  border-color:rgba(255,45,45,.7);
+  border-color:rgba(255,45,45,.75);
+}
+
+.sessionTime,
+.sessionCountdown{
+  color:var(--green);
+  font-weight:900;
 }
 
 .openText{
@@ -236,18 +227,16 @@ body{
 }
 
 @keyframes redPulse{
-  0%{opacity:1;text-shadow:0 0 5px var(--red);}
-  50%{opacity:.25;text-shadow:0 0 20px var(--red);}
-  100%{opacity:1;text-shadow:0 0 5px var(--red);}
+  0%{opacity:1;text-shadow:0 0 5px var(--red)}
+  50%{opacity:.25;text-shadow:0 0 20px var(--red)}
+  100%{opacity:1;text-shadow:0 0 5px var(--red)}
 }
 
 .newsPanel{
-  height:480px;
   overflow:hidden;
 }
 
-.newsHead,
-.newsRow{
+.newsHead,.newsRow{
   display:grid;
   grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
   gap:8px;
@@ -255,70 +244,51 @@ body{
 }
 
 .newsHead{
-  padding:10px 0;
+  padding:8px 0;
   border-bottom:1px solid #1b1b1b;
   font-size:11px;
   color:var(--muted);
 }
 
 .newsRow{
-  padding:9px 0;
+  padding:8px 0;
   border-bottom:1px solid #181818;
   font-size:12px;
 }
 
-.eventCell{
-  font-weight:800;
-  color:var(--text);
-}
-
-.impactCell{
-  color:var(--red);
-  font-weight:900;
-}
-
-.countCell{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.redCount{
-  color:var(--red)!important;
-}
+.eventCell{font-weight:800;color:var(--text)}
+.impactCell{color:var(--red);font-weight:900}
+.countCell{color:var(--gold);font-weight:900}
+.redCount{color:var(--red)!important}
 
 .intel{
   display:grid;
   grid-template-columns:repeat(8,1fr);
-  gap:10px;
-  margin-bottom:14px;
+  gap:8px;
 }
 
 .intelCard{
-  height:96px;
+  padding:10px;
 }
 
 .intelTitle{
   color:var(--text);
   font-size:12px;
   font-weight:900;
-  margin-bottom:16px;
+  margin-bottom:11px;
 }
 
 .intelStatus{
   color:var(--gold);
-  font-size:18px;
+  font-size:17px;
   font-weight:900;
 }
 
-.youtubeBar{
-  height:150px;
+.bottom{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-}
-
-.youtubeBox{
-  overflow:hidden;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  min-height:0;
 }
 
 .youtubeBox iframe{
@@ -329,18 +299,27 @@ body{
   filter:brightness(.82) contrast(1.05);
 }
 
-@media(max-width:1200px){
-  .top,
-  .main,
-  .intel,
-  .youtubeBar{
-    grid-template-columns:1fr;
-  }
-
-  .clockCal{
-    grid-template-columns:1fr;
-  }
+.headlines{
+  overflow:hidden;
 }
+
+.headlineItem{
+  border-bottom:1px solid #181818;
+  padding:8px 0;
+  font-size:12px;
+}
+
+.headlineTop{
+  display:grid;
+  grid-template-columns:58px 82px 1fr;
+  gap:8px;
+  align-items:center;
+}
+
+.headlineTime{color:var(--green);font-weight:900}
+.headlineSource{color:var(--gold);font-weight:900}
+.headlineText{color:var(--text);font-weight:700}
+.breaking{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
 </style>
 </head>
 
@@ -356,11 +335,11 @@ body{
           <div class="tradingview-widget-container__widget"></div>
           <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
           {
-            "symbol": "OANDA:XAUUSD",
-            "width": "100%",
-            "isTransparent": true,
-            "colorTheme": "dark",
-            "locale": "ja"
+            "symbol":"OANDA:XAUUSD",
+            "width":"100%",
+            "isTransparent":true,
+            "colorTheme":"dark",
+            "locale":"ja"
           }
           </script>
         </div>
@@ -373,7 +352,6 @@ body{
         <div class="clock" id="clock">00:00:00</div>
         <div class="date" id="dateText">----</div>
       </div>
-
       <div>
         <div class="monthTitle" id="monthTitle">----</div>
         <div class="calGrid" id="calendarGrid"></div>
@@ -396,7 +374,6 @@ body{
 
     <div class="panel newsPanel">
       <div class="label">HIGH IMPACT NEWS</div>
-
       <div class="newsHead">
         <div>DATE</div>
         <div>TIME</div>
@@ -406,7 +383,6 @@ body{
         <div>前回</div>
         <div>COUNT</div>
       </div>
-
       <div id="highImpactList"></div>
     </div>
 
@@ -423,17 +399,18 @@ body{
     <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
   </div>
 
-  <div class="youtubeBar">
-    <div class="youtubeBox">
-      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1"></iframe>
+  <div class="bottom">
+    <div class="panel youtubeBox">
+      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <div class="youtubeBox">
-      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCUMZ7gohGI9HcU9VNsr2FJQ&autoplay=1&mute=1"></iframe>
+    <div class="panel youtubeBox">
+      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCvJJ_dzjViJCoLf5uKUTwoA&autoplay=1&mute=1&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <div class="youtubeBox">
-      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCJFOER35ggIWwsXh2ZDnqyg&autoplay=1&mute=1"></iframe>
+    <div class="panel headlines">
+      <div class="label">LIVE HEADLINES</div>
+      <div id="headlineList"></div>
     </div>
   </div>
 
@@ -442,250 +419,194 @@ body{
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-const highImpactEvents = [
+const highImpactEvents=[
   {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
   {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6"},
   {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6"},
-
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
-
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
-
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
-
   {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2"},
   {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Inflation Expectations",impact:"HIGH",forecast:"---",previous:"---"},
-
   {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
-
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
   {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---"},
-
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"}
 ];
 
-async function loadHighImpactEvents(){
-  try{
-    const res = await fetch("./events.json?t=" + Date.now(), {cache:"no-store"});
-    if(!res.ok) throw new Error("events.json not found");
-
-    const data = await res.json();
-
-    if(Array.isArray(data)){
-      highImpactEvents.length = 0;
-      data.forEach(e => highImpactEvents.push(e));
-    }
-  }catch(e){}
-
-  renderHighImpact();
-  renderCalendar();
-}
+const headlines=[
+  {source:"FED",text:"Fed speaker comments monitored for rate-cut timing."},
+  {source:"WHITE HOUSE",text:"US administration comments watched for geopolitical risk."},
+  {source:"TREASURY",text:"Treasury yield move remains key driver for gold."},
+  {source:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true},
+  {source:"MARKET",text:"XAUUSD sensitivity elevated into high impact US data."}
+];
 
 function getEventDate(e){
-  const [y,m,d] = e.date.split("-").map(Number);
-  const [hh,mm] = e.time.split(":").map(Number);
+  const [y,m,d]=e.date.split("-").map(Number);
+  const [hh,mm]=e.time.split(":").map(Number);
   return new Date(y,m-1,d,hh,mm,0,0);
 }
 
 function countdown(target){
-  const diff = target - new Date();
-
-  if(diff < -3600000) return null;
-  if(diff < 0) return "ENDED";
-
-  const t = Math.floor(diff / 1000);
-  const d = Math.floor(t / 86400);
-  const h = Math.floor((t % 86400) / 3600);
-  const m = Math.floor((t % 3600) / 60);
-  const s = t % 60;
-
-  if(d > 0){
-    return `${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
-  }
-
-  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  const diff=target-new Date();
+  if(diff<-3600000)return null;
+  if(diff<0)return"ENDED";
+  const t=Math.floor(diff/1000);
+  const d=Math.floor(t/86400);
+  const h=Math.floor((t%86400)/3600);
+  const m=Math.floor((t%3600)/60);
+  const s=t%60;
+  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 function isWithin24h(target){
-  const diff = target - new Date();
-  return diff > 0 && diff <= 86400000;
+  const diff=target-new Date();
+  return diff>0&&diff<=86400000;
 }
 
 function renderHighImpact(){
-  const list = document.getElementById("highImpactList");
-  const todayBox = document.getElementById("todayImpactTop");
+  const list=document.getElementById("highImpactList");
+  const todayBox=document.getElementById("todayImpactTop");
+  list.innerHTML="";
+  todayBox.innerHTML="";
 
-  list.innerHTML = "";
-  todayBox.innerHTML = "";
+  const now=new Date();
+  const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const nextMonthLimit=new Date(now.getFullYear(),now.getMonth()+2,0,23,59,59);
 
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
-  const nextMonthLimit = new Date(now.getFullYear(), now.getMonth()+2, 0, 23, 59, 59);
+  [...highImpactEvents]
+    .map(e=>({...e,target:getEventDate(e)}))
+    .filter(e=>e.target<=nextMonthLimit)
+    .sort((a,b)=>a.target-b.target)
+    .forEach(e=>{
+      const cd=countdown(e.target);
+      if(cd===null)return;
 
-  const sorted = [...highImpactEvents]
-    .map(e => ({...e, target:getEventDate(e)}))
-    .filter(e => e.target <= nextMonthLimit)
-    .sort((a,b) => a.target - b.target);
+      const blink=isWithin24h(e.target)?"blink24":"";
 
-  sorted.forEach(e=>{
-    const cd = countdown(e.target);
-    if(cd === null) return;
-
-    const blink = isWithin24h(e.target) ? "blink24" : "";
-
-    const row = document.createElement("div");
-    row.className = `newsRow ${blink}`;
-    row.innerHTML = `
-      <div>${e.date.slice(5)}</div>
-      <div>${e.time}</div>
-      <div class="eventCell">${e.currency} ${e.event}</div>
-      <div class="impactCell">${e.impact}</div>
-      <div>${e.forecast}</div>
-      <div>${e.previous}</div>
-      <div class="countCell ${blink ? "redCount" : ""}">${cd}</div>
-    `;
-    list.appendChild(row);
-
-    if(e.date === today){
-      const item = document.createElement("div");
-      item.className = `todayItem ${blink}`;
-      item.innerHTML = `
-        <div class="todayMain">
-          <div class="todayDate">${e.date.slice(5)}<br>${e.time}</div>
-          <div class="todayEvent">${e.currency} ${e.event}</div>
-          <div class="todayCount">${cd}</div>
+      list.innerHTML+=`
+        <div class="newsRow ${blink}">
+          <div>${e.date.slice(5)}</div>
+          <div>${e.time}</div>
+          <div class="eventCell">${e.currency} ${e.event}</div>
+          <div class="impactCell">${e.impact}</div>
+          <div>${e.forecast}</div>
+          <div>${e.previous}</div>
+          <div class="countCell ${blink?"redCount":""}">${cd}</div>
         </div>
-        <div class="todaySub">予想 ${e.forecast} / 前回 ${e.previous}</div>
       `;
-      todayBox.appendChild(item);
-    }
-  });
 
-  if(todayBox.innerHTML.trim() === ""){
-    todayBox.innerHTML = `<div class="todayItem">本日のHIGH IMPACTなし</div>`;
-  }
-}
-
-let lastCalendarKey = "";
-
-function updateClock(){
-  const now = new Date();
-
-  document.getElementById("clock").textContent =
-    now.toLocaleTimeString("ja-JP",{hour12:false});
-
-  document.getElementById("dateText").textContent =
-    now.toLocaleDateString("ja-JP",{
-      year:"numeric",
-      month:"2-digit",
-      day:"2-digit",
-      weekday:"short"
+      if(e.date===today){
+        todayBox.innerHTML+=`
+          <div class="todayItem ${blink}">
+            <div class="todayMain">
+              <div class="todayDate">${e.date.slice(5)}<br>${e.time}</div>
+              <div class="todayEvent">${e.currency} ${e.event}</div>
+              <div class="todayCount">${cd}</div>
+            </div>
+            <div class="todaySub">予想 ${e.forecast} / 前回 ${e.previous}</div>
+          </div>
+        `;
+      }
     });
 
-  updateSession(now.getHours());
-  autoCalendarUpdate();
-}
-
-function autoCalendarUpdate(){
-  const now = new Date();
-  const key = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
-
-  if(key !== lastCalendarKey){
-    lastCalendarKey = key;
-    renderCalendar();
+  if(todayBox.innerHTML.trim()===""){
+    todayBox.innerHTML=`<div class="todayItem">本日のHIGH IMPACTなし</div>`;
   }
 }
 
 function renderCalendar(){
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth();
-  const grid = document.getElementById("calendarGrid");
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=now.getMonth();
+  const grid=document.getElementById("calendarGrid");
 
-  document.getElementById("monthTitle").textContent =
-    `${y} / ${String(m+1).padStart(2,"0")}`;
+  document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
+  grid.innerHTML="";
 
-  grid.innerHTML = "";
-
-  const eventDays = new Set(
+  const eventDays=new Set(
     highImpactEvents.map(e=>{
-      const d = new Date(e.date + "T00:00:00");
-      if(d.getFullYear() === y && d.getMonth() === m){
-        return d.getDate();
-      }
-      return null;
+      const d=new Date(e.date+"T00:00:00");
+      return d.getFullYear()===y&&d.getMonth()===m?d.getDate():null;
     }).filter(Boolean)
   );
 
   ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
-    grid.innerHTML += `<div class="calHead">${h}</div>`;
+    grid.innerHTML+=`<div class="calHead">${h}</div>`;
   });
 
-  const first = new Date(y,m,1);
-  const last = new Date(y,m+1,0);
+  const first=new Date(y,m,1);
+  const last=new Date(y,m+1,0);
 
-  for(let i=0;i<first.getDay();i++){
-    grid.innerHTML += `<div class="calDay"></div>`;
-  }
+  for(let i=0;i<first.getDay();i++)grid.innerHTML+=`<div class="calDay"></div>`;
 
   for(let d=1;d<=last.getDate();d++){
-    const isToday = d === now.getDate();
-    const isEvent = eventDays.has(d);
-
-    grid.innerHTML += `
-      <div class="calDay ${isToday ? "today" : ""} ${isEvent ? "eventDay" : ""}">
+    grid.innerHTML+=`
+      <div class="calDay ${d===now.getDate()?"today":""} ${eventDays.has(d)?"eventDot":""}">
         ${d}
       </div>
     `;
   }
 }
 
-let sessionMarkers = {};
+function updateClock(){
+  const now=new Date();
+  document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour12:false});
+  document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
+  updateSession(now);
+}
 
-function sessionHtml(name,time,isOpen){
+let sessionMarkers={};
+
+function getSessionState(now){
+  const h=now.getHours();
+  if(h>=7&&h<15)return{open:"ASIA",next:"LONDON",nextHour:15};
+  if(h>=15&&h<21)return{open:"LONDON",next:"US",nextHour:21};
+  return{open:"US",next:"ASIA",nextHour:7};
+}
+
+function nextSessionCountdown(now,nextHour){
+  const target=new Date(now);
+  target.setHours(nextHour,0,0,0);
+  if(target<=now)target.setDate(target.getDate()+1);
+  return countdown(target);
+}
+
+function sessionHtml(name,time,isOpen,cd){
   return `
-    <div class="sessionLabel ${isOpen ? "open" : ""}">
-      ${name}<br>${time}<br>
-      ${isOpen ? `<span class="openText">● OPEN</span>` : ``}
+    <div class="sessionLabel ${isOpen?"open":""}">
+      ${name}<br>
+      <span class="sessionTime">${time}</span><br>
+      ${isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`}
     </div>
   `;
 }
 
-function updateSession(hour){
-  const asiaOpen = hour >= 7 && hour < 15;
-  const londonOpen = hour >= 15 && hour < 21;
-  const usOpen = hour >= 21 || hour < 6;
+function updateSession(now){
+  const state=getSessionState(now);
+  const cd=nextSessionCountdown(now,state.nextHour);
+
+  const asiaOpen=state.open==="ASIA";
+  const londonOpen=state.open==="LONDON";
+  const usOpen=state.open==="US";
 
   if(sessionMarkers.asia){
-    sessionMarkers.asia.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("ASIA","07:00-15:00",asiaOpen),
-      iconSize:[110,70]
-    }));
-
-    sessionMarkers.london.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("LONDON","15:00-21:00",londonOpen),
-      iconSize:[120,70]
-    }));
-
-    sessionMarkers.us.setIcon(L.divIcon({
-      className:"",
-      html:sessionHtml("US","21:00-06:00",usOpen),
-      iconSize:[110,70]
-    }));
+    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",asiaOpen,cd),iconSize:[120,88]}));
+    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",londonOpen,cd),iconSize:[125,88]}));
+    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",usOpen,cd),iconSize:[120,88]}));
   }
 }
 
 function initMap(){
-  const map = L.map("map",{
+  const map=L.map("map",{
     zoomControl:false,
     attributionControl:false,
     dragging:false,
@@ -701,41 +622,41 @@ function initMap(){
     minZoom:2
   }).addTo(map);
 
-  sessionMarkers.us = L.marker([39,-98],{
-    icon:L.divIcon({
-      className:"",
-      html:sessionHtml("US","21:00-06:00",false),
-      iconSize:[110,70]
-    })
-  }).addTo(map);
-
-  sessionMarkers.london = L.marker([51,-1],{
-    icon:L.divIcon({
-      className:"",
-      html:sessionHtml("LONDON","15:00-21:00",false),
-      iconSize:[120,70]
-    })
-  }).addTo(map);
-
-  sessionMarkers.asia = L.marker([35,120],{
-    icon:L.divIcon({
-      className:"",
-      html:sessionHtml("ASIA","07:00-15:00",false),
-      iconSize:[110,70]
-    })
-  }).addTo(map);
+  sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
+  sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:"",iconSize:[125,88]})}).addTo(map);
+  sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
 
   setTimeout(()=>map.invalidateSize(),300);
 }
 
+function renderHeadlines(){
+  const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
+  const box=document.getElementById("headlineList");
+  box.innerHTML="";
+
+  headlines.forEach(h=>{
+    box.innerHTML+=`
+      <div class="headlineItem">
+        <div class="headlineTop">
+          <div class="headlineTime">${now}</div>
+          <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
+          <div class="headlineText">${h.text}</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
 initMap();
 renderCalendar();
+renderHighImpact();
 updateClock();
-loadHighImpactEvents();
+renderHeadlines();
 
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
-setInterval(loadHighImpactEvents,30000);
+setInterval(renderCalendar,30000);
+setInterval(renderHeadlines,10000);
 </script>
 
 </body>
