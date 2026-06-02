@@ -20,7 +20,12 @@
   --red:#ff2d2d;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+}
 
 html,body{
   width:100%;
@@ -35,7 +40,7 @@ html,body{
   height:100vh;
   padding:8px;
   display:grid;
-  grid-template-rows:150px 1fr 78px 190px;
+  grid-template-rows:150px 1fr 240px;
   gap:8px;
 }
 
@@ -106,7 +111,9 @@ html,body{
   padding:4px 0;
 }
 
-.calHead{color:var(--muted)}
+.calHead{
+  color:var(--muted);
+}
 
 .today{
   background:rgba(255,45,45,.14);
@@ -151,10 +158,27 @@ html,body{
   align-items:center;
 }
 
-.todayDate{color:var(--gold);font-weight:900}
-.todayEvent{color:var(--text);font-weight:900}
-.todayCount{color:var(--red);font-weight:900;text-align:right}
-.todaySub{color:var(--muted);margin-top:4px;font-size:11px}
+.todayDate{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.todayEvent{
+  color:var(--text);
+  font-weight:900;
+}
+
+.todayCount{
+  color:var(--red);
+  font-weight:900;
+  text-align:right;
+}
+
+.todaySub{
+  color:var(--muted);
+  margin-top:4px;
+  font-size:11px;
+}
 
 .main{
   display:grid;
@@ -191,7 +215,9 @@ html,body{
 }
 
 .leaflet-control-attribution,
-.leaflet-control-zoom{display:none!important}
+.leaflet-control-zoom{
+  display:none!important;
+}
 
 .sessionLabel{
   color:var(--text);
@@ -256,32 +282,23 @@ html,body{
   font-size:12px;
 }
 
-.eventCell{font-weight:800;color:var(--text)}
-.impactCell{color:var(--red);font-weight:900}
-.countCell{color:var(--gold);font-weight:900}
-.redCount{color:var(--red)!important}
-
-.intel{
-  display:grid;
-  grid-template-columns:repeat(8,1fr);
-  gap:8px;
-}
-
-.intelCard{
-  padding:10px;
-}
-
-.intelTitle{
+.eventCell{
+  font-weight:800;
   color:var(--text);
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:11px;
 }
 
-.intelStatus{
-  color:var(--gold);
-  font-size:17px;
+.impactCell{
+  color:var(--red);
   font-weight:900;
+}
+
+.countCell{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.redCount{
+  color:var(--red)!important;
 }
 
 .bottom{
@@ -316,10 +333,26 @@ html,body{
   align-items:center;
 }
 
-.headlineTime{color:var(--green);font-weight:900}
-.headlineSource{color:var(--gold);font-weight:900}
-.headlineText{color:var(--text);font-weight:700}
-.breaking{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
+.headlineTime{
+  color:var(--green);
+  font-weight:900;
+}
+
+.headlineSource{
+  color:var(--gold);
+  font-weight:900;
+}
+
+.headlineText{
+  color:var(--text);
+  font-weight:700;
+}
+
+.breaking{
+  color:var(--red);
+  font-weight:900;
+  animation:redPulse 1s infinite;
+}
 </style>
 </head>
 
@@ -358,9 +391,9 @@ html,body{
       </div>
     </div>
 
-    <div class="panel">
-      <div class="label">TODAY HIGH IMPACT</div>
-      <div class="todayTopList" id="todayImpactTop"></div>
+    <div class="panel headlines">
+      <div class="label">LIVE HEADLINES</div>
+      <div id="topHeadlineList"></div>
     </div>
 
   </div>
@@ -388,17 +421,6 @@ html,body{
 
   </div>
 
-  <div class="intel">
-    <div class="panel intelCard"><div class="intelTitle">MIDDLE EAST</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">RED SEA</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">UKRAINE</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">TAIWAN</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">FED</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">CENTRAL BANK</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">ENERGY</div><div class="intelStatus">WATCH</div></div>
-    <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
-  </div>
-
   <div class="bottom">
     <div class="panel youtubeBox">
       <iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -423,20 +445,27 @@ const highImpactEvents=[
   {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
   {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6"},
   {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6"},
+
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%"},
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
+
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
+
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
+
   {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2"},
   {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Inflation Expectations",impact:"HIGH",forecast:"---",previous:"---"},
+
   {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
+
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
   {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---"},
+
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"}
 ];
@@ -474,12 +503,9 @@ function isWithin24h(target){
 
 function renderHighImpact(){
   const list=document.getElementById("highImpactList");
-  const todayBox=document.getElementById("todayImpactTop");
   list.innerHTML="";
-  todayBox.innerHTML="";
 
   const now=new Date();
-  const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
   const nextMonthLimit=new Date(now.getFullYear(),now.getMonth()+2,0,23,59,59);
 
   [...highImpactEvents]
@@ -503,24 +529,7 @@ function renderHighImpact(){
           <div class="countCell ${blink?"redCount":""}">${cd}</div>
         </div>
       `;
-
-      if(e.date===today){
-        todayBox.innerHTML+=`
-          <div class="todayItem ${blink}">
-            <div class="todayMain">
-              <div class="todayDate">${e.date.slice(5)}<br>${e.time}</div>
-              <div class="todayEvent">${e.currency} ${e.event}</div>
-              <div class="todayCount">${cd}</div>
-            </div>
-            <div class="todaySub">予想 ${e.forecast} / 前回 ${e.previous}</div>
-          </div>
-        `;
-      }
     });
-
-  if(todayBox.innerHTML.trim()===""){
-    todayBox.innerHTML=`<div class="todayItem">本日のHIGH IMPACTなし</div>`;
-  }
 }
 
 function renderCalendar(){
@@ -631,11 +640,13 @@ function initMap(){
 
 function renderHeadlines(){
   const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
-  const box=document.getElementById("headlineList");
-  box.innerHTML="";
+  const topBox=document.getElementById("topHeadlineList");
+  const bottomBox=document.getElementById("headlineList");
+
+  let html="";
 
   headlines.forEach(h=>{
-    box.innerHTML+=`
+    html+=`
       <div class="headlineItem">
         <div class="headlineTop">
           <div class="headlineTime">${now}</div>
@@ -645,6 +656,9 @@ function renderHeadlines(){
       </div>
     `;
   });
+
+  topBox.innerHTML=html;
+  bottomBox.innerHTML=html;
 }
 
 initMap();
