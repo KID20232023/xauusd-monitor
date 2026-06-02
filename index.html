@@ -6,253 +6,280 @@
 <title>XAUUSD WAR ROOM</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg0: #0a0a0a;
-  --bg1: #111111;
-  --bg2: #181818;
-  --bg3: #202020;
-  --border: rgba(160,160,160,0.18);
-  --border2: rgba(160,160,160,0.35);
-  --text1: #e0e0e0;
-  --text2: #999;
-  --text3: #555;
-  --accent: #c0c0c0;
-  --red: #ff3b3b;
-  --green: #00e676;
-  --gold: #bfa760;
-  --gold2: #d4bc78;
-  --warn: #ff9800;
+:root{
+  --bg0:#0a0a0a;--bg1:#111;--bg2:#181818;
+  --border:rgba(160,160,160,0.15);--border2:rgba(160,160,160,0.3);
+  --text1:#e0e0e0;--text2:#888;--text3:#444;
+  --accent:#b0b0b0;--red:#ff3b3b;--green:#00e676;--warn:#ff9800;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--bg0);color:var(--text1);font-family:'Rajdhani',sans-serif;overflow-x:hidden;}
-body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);pointer-events:none;z-index:9999;}
+html,body{height:100%;background:var(--bg0);color:var(--text1);font-family:'Rajdhani',sans-serif;overflow:hidden;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:9999;}
 
-.shell{display:grid;grid-template-rows:auto auto 1fr auto auto;height:100vh;gap:6px;padding:6px;}
+.shell{display:grid;grid-template-rows:64px 44px 1fr 120px 26px;height:100vh;gap:4px;padding:4px;}
 
-.hdr{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:16px;border-bottom:1px solid var(--border2);padding-bottom:6px;}
-.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:8px;color:var(--accent);line-height:1;}
-.hdr-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:4px;margin-top:2px;}
+/* HEADER */
+.hdr{display:grid;grid-template-columns:200px 1fr 220px;align-items:center;gap:8px;border-bottom:1px solid var(--border2);padding-bottom:4px;}
+.hdr-brand .t1{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:8px;color:var(--accent);line-height:1;}
+.hdr-brand .t2{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:3px;}
 .price-hero{text-align:center;}
-.price-big{font-family:'Bebas Neue',sans-serif;font-size:64px;line-height:1;letter-spacing:2px;transition:color .3s;}
+.price-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:4px;}
+.price-big{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;letter-spacing:2px;transition:color .2s;}
 .price-big.up{color:var(--green);}
 .price-big.dn{color:var(--red);}
-.price-chg{font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:2px;}
+.price-big.neu{color:var(--accent);}
+.price-chg{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px;}
 .price-chg.up{color:var(--green);}
 .price-chg.dn{color:var(--red);}
-.price-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:4px;}
-.hdr-clock{text-align:right;}
-.clock-big{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--accent);letter-spacing:3px;line-height:1;}
+.live-row{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green);letter-spacing:3px;display:flex;align-items:center;gap:4px;justify-content:center;margin-top:2px;}
+.dot{width:5px;height:5px;border-radius:50%;display:inline-block;}
+.dot.green{background:var(--green);box-shadow:0 0 6px var(--green);}
+.dot.red{background:var(--red);box-shadow:0 0 6px var(--red);}
+.dot.pulse{animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.1};}
+.hdr-right{text-align:right;}
+.clock-big{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);letter-spacing:3px;line-height:1;}
 .clock-date{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:2px;margin-top:2px;}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);display:inline-block;animation:blink 1.5s infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2};}
-.live-row{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:3px;display:flex;align-items:center;gap:5px;margin-top:4px;justify-content:center;}
+.api-status{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;margin-top:3px;}
 
-.stat-row{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
-.sc{background:var(--bg1);border:1px solid var(--border);padding:7px 10px;position:relative;}
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.sc{background:var(--bg1);border:1px solid var(--border);padding:5px 8px;position:relative;overflow:hidden;}
 .sc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
-.sc-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;margin-bottom:3px;}
-.sc-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);line-height:1;}
+.sc-lbl{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);letter-spacing:2px;margin-bottom:2px;}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent);line-height:1;}
 .sc-val.up{color:var(--green);}
 .sc-val.dn{color:var(--red);}
-.sc-sub{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);margin-top:2px;}
+.sc-sub{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);margin-top:1px;}
 
-.main{display:grid;grid-template-columns:240px 1fr 260px;gap:6px;min-height:0;}
+/* MAIN 3-COL */
+.main{display:grid;grid-template-columns:220px 1fr 240px;gap:4px;min-height:0;overflow:hidden;}
 
 .panel{background:var(--bg1);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;position:relative;}
-.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
-.ph{padding:6px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.ph-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:var(--accent);}
-.ph-badge{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);border:1px solid var(--border);padding:1px 5px;letter-spacing:2px;}
-.pb{padding:8px;flex:1;overflow-y:auto;}
-.pb::-webkit-scrollbar{width:2px;}
-.pb::-webkit-scrollbar-thumb{background:var(--border2);}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);z-index:1;}
+.ph{padding:5px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:1;}
+.ph-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--accent);}
+.ph-b{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);border:1px solid var(--border);padding:1px 4px;letter-spacing:1px;}
+.pb{padding:6px;flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
 
-.left-col{display:flex;flex-direction:column;gap:6px;}
+/* LEFT COL */
+.left-col{display:flex;flex-direction:column;gap:4px;}
 
-.map-wrap{padding:6px;flex:1;display:flex;align-items:center;justify-content:center;}
-.map-wrap svg{width:100%;height:auto;}
-
-.sess-item{padding:7px 0;border-bottom:1px solid rgba(160,160,160,0.08);}
+/* SESSION */
+.sess-item{padding:6px 0;border-bottom:1px solid rgba(160,160,160,0.07);}
 .sess-item:last-child{border-bottom:none;}
 .sess-top{display:flex;justify-content:space-between;align-items:center;}
-.sess-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--text1);}
-.sess-st{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 6px;letter-spacing:2px;}
+.sess-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:var(--text1);}
+.sess-st{font-family:'Share Tech Mono',monospace;font-size:7px;padding:2px 5px;letter-spacing:2px;}
 .sess-st.open{color:var(--red);border:1px solid rgba(255,59,59,.5);animation:blink 1s infinite;}
 .sess-st.closed{color:var(--text3);border:1px solid var(--text3);}
-.sess-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);margin-top:2px;letter-spacing:1px;}
-.sess-bar-bg{height:2px;background:rgba(160,160,160,.1);margin-top:4px;}
-.sess-bar-fill{height:100%;background:var(--red);box-shadow:0 0 4px var(--red);transition:width 1s;}
-.sess-bar-fill.closed{background:var(--text3);box-shadow:none;}
+.sess-time{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text2);margin-top:2px;}
+.sess-bar{height:2px;background:rgba(160,160,160,.08);margin-top:3px;}
+.sess-fill{height:100%;background:var(--red);box-shadow:0 0 4px var(--red);transition:width .5s;}
+.sess-fill.off{background:var(--text3);box-shadow:none;}
 
-.center-col{display:flex;flex-direction:column;gap:6px;}
-
-.cal-wrap{padding:8px;}
-.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.cal-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:var(--accent);}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-day-hdr{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);text-align:center;padding:2px 0;}
-.cal-day{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);text-align:center;padding:3px 2px;border:1px solid transparent;border-radius:2px;position:relative;}
-.cal-day.today{background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.4);color:var(--red);}
-.cal-day.has-event::after{content:'';position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--warn);}
-.cal-day.empty{color:transparent;}
-
-.news-item{padding:7px 0;border-bottom:1px solid rgba(160,160,160,.08);display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;}
-.ni-impact{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 4px;white-space:nowrap;margin-top:1px;}
-.ni-impact.high{color:var(--red);border:1px solid rgba(255,59,59,.5);background:rgba(255,59,59,.08);animation:blink 2s infinite;}
-.ni-impact.med{color:var(--warn);border:1px solid rgba(255,152,0,.4);}
-.ni-impact.low{color:var(--text3);border:1px solid var(--text3);}
-.ni-head{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--text1);line-height:1.3;}
-.ni-src{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);margin-top:2px;}
-.ni-time{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);white-space:nowrap;}
-
-.right-col{display:flex;flex-direction:column;gap:6px;}
-
-.ev-item{padding:8px 0;border-bottom:1px solid rgba(160,160,160,.08);}
-.ev-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:3px;}
-.ev-name{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--text1);flex:1;}
-.ev-tag{font-family:'Share Tech Mono',monospace;font-size:8px;padding:1px 4px;}
-.ev-tag.high{color:var(--red);border:1px solid rgba(255,59,59,.5);background:rgba(255,59,59,.08);}
-.ev-tag.med{color:var(--warn);border:1px solid rgba(255,152,0,.4);}
-.ev-date{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1px;margin-bottom:4px;}
-.ev-cd{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--warn);letter-spacing:1px;margin-bottom:4px;}
-.ev-cd.urgent{color:var(--red);animation:blink 1s infinite;}
-.ev-vals{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;}
-.ev-vb{background:rgba(160,160,160,.05);border:1px solid var(--border);padding:3px 5px;text-align:center;}
-.ev-vl{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);letter-spacing:1px;}
-.ev-vn{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--accent);}
-.ev-vn.beat{color:var(--green);}
-.ev-vn.miss{color:var(--red);}
-
-.geo-item{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(160,160,160,.06);}
-.geo-name{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--text2);}
-.geo-lv{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 5px;letter-spacing:2px;}
+/* GEO */
+.geo-item{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(160,160,160,.05);}
+.geo-name{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--text2);}
+.geo-lv{font-family:'Share Tech Mono',monospace;font-size:7px;padding:1px 4px;letter-spacing:1px;}
 .geo-lv.high{color:var(--red);border:1px solid rgba(255,59,59,.5);animation:blink 2s infinite;}
 .geo-lv.watch{color:var(--warn);border:1px solid rgba(255,152,0,.4);}
 .geo-lv.monitor{color:var(--text3);border:1px solid var(--text3);}
 
-.yt-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-.yt-card{background:var(--bg1);border:1px solid var(--border);overflow:hidden;}
-.yt-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;padding:4px 6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:5px;}
-.yt-label .live-dot{width:4px;height:4px;}
-.yt-frame{position:relative;padding-bottom:56.25%;height:0;}
+/* CENTER COL */
+.center-col{display:flex;flex-direction:column;gap:4px;min-height:0;}
+.center-top{display:grid;grid-template-columns:1fr 1fr;gap:4px;flex:0 0 auto;}
+
+/* WORLD MAP */
+.map-svg{width:100%;height:auto;display:block;}
+
+/* NEWS */
+.ni{padding:6px 0;border-bottom:1px solid rgba(160,160,160,.07);display:grid;grid-template-columns:36px 1fr 36px;gap:6px;align-items:start;}
+.ni:last-child{border-bottom:none;}
+.ni-imp{font-family:'Share Tech Mono',monospace;font-size:7px;padding:2px 3px;text-align:center;white-space:nowrap;margin-top:1px;}
+.ni-imp.high{color:var(--red);border:1px solid rgba(255,59,59,.5);background:rgba(255,59,59,.07);animation:blink 2.5s infinite;}
+.ni-imp.med{color:var(--warn);border:1px solid rgba(255,152,0,.35);}
+.ni-imp.low{color:var(--text3);border:1px solid var(--text3);}
+.ni-head{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:var(--text1);line-height:1.3;}
+.ni-src{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);margin-top:2px;}
+.ni-time{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text2);white-space:nowrap;text-align:right;}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-top:4px;}
+.cal-dh{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);text-align:center;padding:2px 0;}
+.cal-d{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text2);text-align:center;padding:2px 1px;border:1px solid transparent;border-radius:1px;position:relative;}
+.cal-d.today{background:rgba(255,59,59,.12);border-color:rgba(255,59,59,.4);color:var(--red);}
+.cal-d.ev::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--warn);}
+.cal-d.empty{color:transparent;pointer-events:none;}
+
+/* NEXT EVENT */
+.ne-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--text1);line-height:1.2;}
+.ne-meta{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);margin-top:3px;letter-spacing:1px;}
+.ne-cd{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--warn);letter-spacing:2px;margin-top:6px;}
+.ne-cd.urgent{color:var(--red);animation:blink 1s infinite;}
+.ev-vals{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:6px;}
+.ev-vb{background:rgba(160,160,160,.04);border:1px solid var(--border);padding:3px 4px;text-align:center;}
+.ev-vl{font-family:'Share Tech Mono',monospace;font-size:6px;color:var(--text3);letter-spacing:1px;}
+.ev-vn{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--accent);}
+.ev-vn.beat{color:var(--green);}
+.ev-vn.miss{color:var(--red);}
+
+/* RIGHT COL */
+.right-col{display:flex;flex-direction:column;gap:4px;min-height:0;}
+.ev-item{padding:6px 0;border-bottom:1px solid rgba(160,160,160,.07);}
+.ev-item:last-child{border-bottom:none;}
+.ev-top{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:2px;}
+.ev-name{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:var(--text1);flex:1;line-height:1.2;}
+.ev-tag{font-family:'Share Tech Mono',monospace;font-size:7px;padding:1px 3px;white-space:nowrap;}
+.ev-tag.high{color:var(--red);border:1px solid rgba(255,59,59,.5);background:rgba(255,59,59,.07);}
+.ev-tag.med{color:var(--warn);border:1px solid rgba(255,152,0,.4);}
+.ev-date{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);letter-spacing:1px;margin-bottom:3px;}
+.ev-cd{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--warn);margin-bottom:3px;}
+.ev-cd.urgent{color:var(--red);animation:blink 1s infinite;}
+.ev-cd.passed{color:var(--text3);}
+
+/* YOUTUBE ROW */
+.yt-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;overflow:hidden;}
+.yt-card{background:var(--bg1);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;}
+.yt-lbl{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text3);letter-spacing:2px;padding:3px 5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.yt-frame{flex:1;position:relative;}
 .yt-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
 
-.ticker-bar{background:var(--bg1);border:1px solid var(--border);border-top:1px solid var(--border2);display:flex;align-items:center;height:28px;overflow:hidden;flex-shrink:0;}
-.ticker-lbl{background:var(--accent);color:var(--bg0);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:3px;padding:0 12px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
+/* TICKER */
+.ticker{background:var(--bg1);border:1px solid var(--border);border-top:1px solid var(--border2);display:flex;align-items:center;height:26px;overflow:hidden;}
+.ticker-lbl{background:var(--accent);color:var(--bg0);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;padding:0 10px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
 .ticker-wrap{flex:1;overflow:hidden;height:100%;display:flex;align-items:center;}
-.ticker-inner{display:flex;animation:scroll 50s linear infinite;white-space:nowrap;}
-.ti{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);padding:0 24px;border-right:1px solid var(--border);letter-spacing:1px;}
+.ticker-inner{display:flex;animation:scroll 60s linear infinite;white-space:nowrap;}
+.ti{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text2);padding:0 20px;border-right:1px solid var(--border);letter-spacing:1px;}
 .ti .up{color:var(--green);}
 .ti .dn{color:var(--red);}
 .ti .hi{color:var(--accent);}
 @keyframes scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-.alert-banner{display:none;background:rgba(255,59,59,.1);border:1px solid rgba(255,59,59,.6);padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);letter-spacing:2px;animation:blink .8s infinite;flex-shrink:0;}
-.alert-banner.show{display:block;}
+/* ALERT */
+.alert-bar{display:none;position:fixed;top:0;left:0;right:0;background:rgba(255,59,59,.15);border-bottom:1px solid rgba(255,59,59,.6);padding:4px 12px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--red);letter-spacing:2px;z-index:9998;animation:blink .8s infinite;text-align:center;}
+.alert-bar.show{display:block;}
 </style>
 </head>
 <body>
+
+<div id="alertBar" class="alert-bar">⚠ URGENT</div>
+
 <div class="shell">
 
 <!-- HEADER -->
 <header class="hdr">
-  <div>
-    <div class="hdr-title">XAUUSD</div>
-    <div class="hdr-sub">▸ GOLD / USD · TACTICAL WAR ROOM</div>
+  <div class="hdr-brand">
+    <div class="t1">XAUUSD</div>
+    <div class="t2">▸ GOLD / USD · TACTICAL WAR ROOM</div>
   </div>
   <div class="price-hero">
-    <div class="price-lbl">SPOT PRICE · USD PER OZ</div>
-    <div class="price-big dn" id="mainPrice">——</div>
-    <div class="price-chg dn" id="mainChg">CONNECTING...</div>
-    <div class="live-row"><span class="live-dot"></span>LIVE</div>
+    <div class="price-lbl">SPOT PRICE · USD PER TROY OZ</div>
+    <div class="price-big neu" id="pBig">——</div>
+    <div class="price-chg" id="pChg">——</div>
+    <div class="live-row"><span class="dot green pulse"></span><span id="liveLabel">CONNECTING</span></div>
   </div>
-  <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-    <div class="hdr-clock">
-      <div class="clock-big" id="clock">--:--:--</div>
-      <div class="clock-date" id="clockDate">TOKYO JST</div>
-    </div>
-    <div id="alertBanner" class="alert-banner">⚠ URGENT — HIGH IMPACT EVENT APPROACHING</div>
+  <div class="hdr-right">
+    <div class="clock-big" id="clock">--:--:--</div>
+    <div class="clock-date" id="clockDate">JST</div>
+    <div class="api-status" id="apiStatus" style="color:var(--text3);">⬤ API INIT</div>
   </div>
 </header>
 
 <!-- STAT ROW -->
 <div class="stat-row">
-  <div class="sc"><div class="sc-lbl">◆ DAY HIGH</div><div class="sc-val" id="dayHigh">——</div><div class="sc-sub" id="dhSub">—</div></div>
-  <div class="sc"><div class="sc-lbl">◆ DAY LOW</div><div class="sc-val" id="dayLow">——</div><div class="sc-sub" id="dlSub">—</div></div>
-  <div class="sc"><div class="sc-lbl">◆ OPEN</div><div class="sc-val" id="dayOpen">——</div><div class="sc-sub">TODAY OPEN</div></div>
-  <div class="sc"><div class="sc-lbl">◆ PREV CLOSE</div><div class="sc-val" id="prevClose">——</div><div class="sc-sub">YESTERDAY</div></div>
-  <div class="sc"><div class="sc-lbl">◆ BID / ASK</div><div class="sc-val" id="bidAsk" style="font-size:14px;">——</div><div class="sc-sub" id="spread">SPREAD —</div></div>
-  <div class="sc"><div class="sc-lbl">◆ 52W HIGH</div><div class="sc-val up" id="w52h">4,801.50</div><div class="sc-sub" id="w52hSub">—</div></div>
-  <div class="sc"><div class="sc-lbl">◆ 52W LOW</div><div class="sc-val" id="w52l">3,167.20</div><div class="sc-sub" id="w52lSub">—</div></div>
+  <div class="sc"><div class="sc-lbl">◆ DAY HIGH</div><div class="sc-val up" id="sHigh">——</div><div class="sc-sub" id="sHighSub">—</div></div>
+  <div class="sc"><div class="sc-lbl">◆ DAY LOW</div><div class="sc-val dn" id="sLow">——</div><div class="sc-sub" id="sLowSub">—</div></div>
+  <div class="sc"><div class="sc-lbl">◆ OPEN</div><div class="sc-val" id="sOpen">——</div><div class="sc-sub">TODAY OPEN</div></div>
+  <div class="sc"><div class="sc-lbl">◆ PREV CLOSE</div><div class="sc-val" id="sPrev">——</div><div class="sc-sub">YESTERDAY</div></div>
+  <div class="sc"><div class="sc-lbl">◆ BID / ASK</div><div class="sc-val" id="sBidAsk" style="font-size:13px;">——</div><div class="sc-sub" id="sSpread">SPREAD —</div></div>
+  <div class="sc"><div class="sc-lbl">◆ 52W HIGH</div><div class="sc-val up" id="s52h">4,801.50</div><div class="sc-sub" id="s52hSub">—</div></div>
+  <div class="sc"><div class="sc-lbl">◆ 52W LOW</div><div class="sc-val" id="s52l">3,167.20</div><div class="sc-sub" id="s52lSub">—</div></div>
 </div>
 
-<!-- MAIN GRID -->
+<!-- MAIN -->
 <div class="main">
 
   <!-- LEFT -->
   <div class="left-col">
-    <div class="panel" style="flex:0 0 auto;">
-      <div class="ph"><span class="ph-title">WORLD SESSIONS</span><span class="ph-badge" id="mapBadge">JST</span></div>
-      <div class="map-wrap" id="mapWrap">
-        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" id="worldMapSvg">
-          <rect width="400" height="200" fill="#0d0d0d"/>
-          <g id="region-us">
-            <ellipse cx="80" cy="95" rx="52" ry="42" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
-            <text x="80" y="88" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#666" letter-spacing="1">AMERICAS</text>
-            <text x="80" y="99" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="6" fill="#444">21:00-06:00 JST</text>
-            <text x="80" y="110" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="7" fill="#555">US SESSION</text>
-          </g>
-          <g id="region-london">
-            <ellipse cx="195" cy="78" rx="38" ry="30" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
-            <text x="195" y="72" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#666" letter-spacing="1">EUROPE</text>
-            <text x="195" y="82" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="6" fill="#444">15:00-21:00 JST</text>
-            <text x="195" y="93" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="7" fill="#555">LONDON</text>
-          </g>
-          <g id="region-asia">
-            <ellipse cx="315" cy="88" rx="56" ry="40" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
-            <text x="315" y="82" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="9" fill="#666" letter-spacing="1">ASIA</text>
-            <text x="315" y="92" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="6" fill="#444">07:00-15:00 JST</text>
-            <text x="315" y="103" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="7" fill="#555">TOKYO</text>
-          </g>
-          <ellipse cx="210" cy="138" rx="28" ry="20" fill="#141414" stroke="#222" stroke-width="0.5"/>
-          <text x="210" y="140" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="6" fill="#333">AFRICA/ME</text>
-          <ellipse cx="348" cy="158" rx="24" ry="14" fill="#141414" stroke="#222" stroke-width="0.5"/>
-          <text x="348" y="160" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="6" fill="#333">AUS</text>
-          <line x1="132" y1="90" x2="157" y2="82" stroke="#222" stroke-width="0.5"/>
-          <line x1="233" y1="78" x2="259" y2="82" stroke="#222" stroke-width="0.5"/>
-          <circle id="dot-us"     cx="80"  cy="122" r="3.5" fill="#333"/>
-          <circle id="dot-london" cx="195" cy="110" r="3.5" fill="#333"/>
-          <circle id="dot-asia"   cx="315" cy="130" r="3.5" fill="#333"/>
-        </svg>
-      </div>
-    </div>
-
-    <div class="panel" style="flex:1;">
-      <div class="ph"><span class="ph-title">SESSION STATUS</span><span class="ph-badge" id="sessTime">JST</span></div>
+    <div class="panel" style="flex:1;min-height:0;">
+      <div class="ph"><span class="ph-t">SESSION STATUS</span><span class="ph-b" id="sessClk">JST</span></div>
       <div class="pb" id="sessList"></div>
     </div>
-
     <div class="panel" style="flex:0 0 auto;">
-      <div class="ph"><span class="ph-title">GEOPOLITICAL</span><span class="ph-badge">MONITOR</span></div>
+      <div class="ph"><span class="ph-t">GEOPOLITICAL</span><span class="ph-b">MONITOR</span></div>
       <div class="pb" id="geoList"></div>
     </div>
   </div>
 
   <!-- CENTER -->
   <div class="center-col">
-    <div style="display:grid;grid-template-columns:200px 1fr;gap:6px;flex:0 0 auto;">
+    <!-- TOP ROW: MAP + CALENDAR + NEXT EVENT -->
+    <div class="center-top">
+
+      <!-- WORLD MAP (replaces market intel top) -->
       <div class="panel">
-        <div class="ph"><span class="ph-title">CALENDAR</span><span class="ph-badge" id="calBadge">JUNE</span></div>
-        <div class="cal-wrap" id="calWrap"></div>
+        <div class="ph"><span class="ph-t">WORLD SESSIONS</span><span class="ph-b" id="mapBadge">LIVE</span></div>
+        <div class="pb" style="padding:4px;">
+          <svg viewBox="0 0 360 180" class="map-svg" id="mapSvg" xmlns="http://www.w3.org/2000/svg">
+            <rect width="360" height="180" fill="#0c0c0c" rx="2"/>
+            <!-- Grid lines -->
+            <line x1="0" y1="90" x2="360" y2="90" stroke="#1a1a1a" stroke-width="0.5"/>
+            <line x1="180" y1="0" x2="180" y2="180" stroke="#1a1a1a" stroke-width="0.5"/>
+            <!-- AMERICAS blob -->
+            <g id="rUS">
+              <ellipse cx="72" cy="82" rx="54" ry="44" fill="#1c1c1c" stroke="#2a2a2a" stroke-width="0.8"/>
+              <text x="72" y="74" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="10" fill="#555" letter-spacing="1">AMERICAS</text>
+              <text x="72" y="85" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="6" fill="#3a3a3a">21:00–06:00 JST</text>
+              <text x="72" y="95" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#444">US SESSION</text>
+              <circle id="dUS" cx="72" cy="112" r="4" fill="#333"/>
+            </g>
+            <!-- EUROPE blob -->
+            <g id="rLON">
+              <ellipse cx="182" cy="70" rx="40" ry="30" fill="#1c1c1c" stroke="#2a2a2a" stroke-width="0.8"/>
+              <text x="182" y="63" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="10" fill="#555" letter-spacing="1">EUROPE</text>
+              <text x="182" y="73" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="6" fill="#3a3a3a">15:00–21:00 JST</text>
+              <text x="182" y="83" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#444">LONDON</text>
+              <circle id="dLON" cx="182" cy="98" r="4" fill="#333"/>
+            </g>
+            <!-- ASIA blob -->
+            <g id="rASIA">
+              <ellipse cx="294" cy="78" rx="54" ry="38" fill="#1c1c1c" stroke="#2a2a2a" stroke-width="0.8"/>
+              <text x="294" y="70" text-anchor="middle" font-family="Bebas Neue,sans-serif" font-size="10" fill="#555" letter-spacing="1">ASIA</text>
+              <text x="294" y="81" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="6" fill="#3a3a3a">07:00–15:00 JST</text>
+              <text x="294" y="91" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#444">TOKYO</text>
+              <circle id="dASIA" cx="294" cy="118" r="4" fill="#333"/>
+            </g>
+            <!-- Africa/ME -->
+            <ellipse cx="196" cy="130" rx="26" ry="18" fill="#151515" stroke="#222" stroke-width="0.5"/>
+            <text x="196" y="132" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="5.5" fill="#2e2e2e">AFRICA/ME</text>
+            <!-- AUS -->
+            <ellipse cx="316" cy="148" rx="22" ry="13" fill="#151515" stroke="#222" stroke-width="0.5"/>
+            <text x="316" y="150" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="5.5" fill="#2e2e2e">AUSTRALIA</text>
+            <!-- Connectors -->
+            <line x1="126" y1="78" x2="142" y2="73" stroke="#222" stroke-width="0.4"/>
+            <line x1="222" y1="70" x2="240" y2="72" stroke="#222" stroke-width="0.4"/>
+          </svg>
+        </div>
       </div>
-      <div class="panel">
-        <div class="ph"><span class="ph-title">NEXT HIGH IMPACT</span><span class="ph-badge">COUNTDOWN</span></div>
-        <div class="pb" id="nextEventPanel"></div>
+
+      <!-- CALENDAR + NEXT EVENT stacked -->
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="panel" style="flex:0 0 auto;">
+          <div class="ph"><span class="ph-t">CALENDAR</span><span class="ph-b" id="calBadge">—</span></div>
+          <div class="pb" style="padding:4px 6px;" id="calWrap"></div>
+        </div>
+        <div class="panel" style="flex:1;min-height:0;">
+          <div class="ph"><span class="ph-t">NEXT HIGH IMPACT</span><span class="ph-b">COUNTDOWN</span></div>
+          <div class="pb" id="nextEvPanel"></div>
+        </div>
       </div>
+
     </div>
 
+    <!-- MARKET INTELLIGENCE (news) — now bottom of center -->
     <div class="panel" style="flex:1;min-height:0;">
-      <div class="ph"><span class="ph-title">MARKET INTELLIGENCE</span><span class="ph-badge" id="newsCount">—</span></div>
+      <div class="ph"><span class="ph-t">MARKET INTELLIGENCE</span><span class="ph-b" id="newsCount">—</span></div>
       <div class="pb" id="newsList"></div>
     </div>
   </div>
@@ -260,8 +287,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   <!-- RIGHT -->
   <div class="right-col">
     <div class="panel" style="flex:1;min-height:0;">
-      <div class="ph"><span class="ph-title">ECONOMIC EVENTS</span><span class="ph-badge">REAL-TIME</span></div>
-      <div class="pb" id="eventsList"></div>
+      <div class="ph"><span class="ph-t">ECONOMIC EVENTS</span><span class="ph-b">REAL-TIME</span></div>
+      <div class="pb" id="evList"></div>
     </div>
   </div>
 
@@ -270,309 +297,332 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <!-- YOUTUBE ROW -->
 <div class="yt-row">
   <div class="yt-card">
-    <div class="yt-label"><span class="live-dot"></span>BLOOMBERG TV LIVE</div>
-    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/dp8PhLsUcFE?autoplay=0&mute=1" allowfullscreen allow="autoplay"></iframe></div>
+    <div class="yt-lbl"><span class="dot red pulse"></span>BLOOMBERG TV</div>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
   </div>
   <div class="yt-card">
-    <div class="yt-label"><span class="live-dot"></span>KITCO GOLD LIVE</div>
-    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/KMhXCFqE8-U?autoplay=0&mute=1" allowfullscreen allow="autoplay"></iframe></div>
+    <div class="yt-lbl"><span class="dot red pulse"></span>KITCO GOLD NEWS</div>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCQ4cAKVGqLOALvIe7Lts6pA&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
   </div>
   <div class="yt-card">
-    <div class="yt-label"><span class="live-dot"></span>CNBC LIVE</div>
-    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=0&mute=1" allowfullscreen allow="autoplay"></iframe></div>
+    <div class="yt-lbl"><span class="dot red pulse"></span>CNBC LIVE</div>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCrp_UI8XtuYfpiqABvWQpsg&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
   </div>
   <div class="yt-card">
-    <div class="yt-label"><span class="live-dot"></span>FED / TRUMP SPEECHES</div>
-    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=0&mute=1" allowfullscreen allow="autoplay"></iframe></div>
+    <div class="yt-lbl"><span class="dot red pulse"></span>FEDERAL RESERVE / SPEECHES</div>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
   </div>
 </div>
 
 <!-- TICKER -->
-<div class="ticker-bar">
+<div class="ticker">
   <div class="ticker-lbl">▸ LIVE</div>
-  <div class="ticker-wrap"><div class="ticker-inner" id="tickerInner"></div></div>
+  <div class="ticker-wrap"><div class="ticker-inner" id="tickerInner">—</div></div>
 </div>
 
-</div>
+</div><!-- shell -->
 
 <script>
-const SESSIONS = [
-  { id:'asia',   name:'ASIA / TOKYO',  open:7,  close:15, region:'region-asia',   dot:'dot-asia'   },
-  { id:'london', name:'LONDON',        open:15, close:21, region:'region-london', dot:'dot-london' },
-  { id:'us',     name:'NEW YORK / US', open:21, close:6,  region:'region-us',     dot:'dot-us'     },
+'use strict';
+
+// ── SESSIONS ──────────────────────────────────────────────
+const SESS=[
+  {id:'asia',  name:'ASIA / TOKYO', open:7,  close:15, rId:'rASIA', dId:'dASIA'},
+  {id:'london',name:'LONDON',       open:15, close:21, rId:'rLON',  dId:'dLON' },
+  {id:'us',    name:'NEW YORK / US',open:21, close:6,  rId:'rUS',   dId:'dUS'  },
 ];
 
-function sessionStatus(open, close) {
-  const now = new Date();
-  const h = now.getHours() + now.getMinutes()/60 + now.getSeconds()/3600;
-  let isOpen, progress=0;
-  if(open < close){
-    isOpen = h >= open && h < close;
-    if(isOpen) progress=(h-open)/(close-open)*100;
-  } else {
-    isOpen = h >= open || h < close;
-    if(isOpen){
-      const dur = 24-open+close;
-      progress = h>=open ? (h-open)/dur*100 : (24-open+h)/dur*100;
-    }
-  }
-  return { isOpen, progress: Math.min(100,Math.max(0,progress)) };
+function sessStat(open,close){
+  const n=new Date(), h=n.getHours()+n.getMinutes()/60+n.getSeconds()/3600;
+  let isOpen,prog=0;
+  if(open<close){isOpen=h>=open&&h<close;if(isOpen)prog=(h-open)/(close-open)*100;}
+  else{isOpen=h>=open||h<close;if(isOpen){const dur=24-open+close;prog=h>=open?(h-open)/dur*100:(24-open+h)/dur*100;}}
+  return{isOpen,prog:Math.min(100,Math.max(0,prog))};
 }
 
 function renderSessions(){
-  const list = document.getElementById('sessList');
-  list.innerHTML = SESSIONS.map(s => {
-    const {isOpen, progress} = sessionStatus(s.open, s.close);
-    const fh = h => `${String(h%24).padStart(2,'0')}:00`;
-    const reg = document.getElementById(s.region);
-    const dot = document.getElementById(s.dot);
-    if(reg){
-      reg.querySelectorAll('ellipse').forEach(e => {
-        e.setAttribute('fill', isOpen ? 'rgba(255,59,59,0.15)' : '#1a1a1a');
-        e.setAttribute('stroke', isOpen ? '#ff3b3b' : '#333');
+  const fh=h=>`${String(h%24).padStart(2,'0')}:00`;
+  document.getElementById('sessList').innerHTML=SESS.map(s=>{
+    const{isOpen,prog}=sessStat(s.open,s.close);
+    // map update
+    const rEl=document.getElementById(s.rId);
+    const dEl=document.getElementById(s.dId);
+    if(rEl){
+      rEl.querySelectorAll('ellipse').forEach(e=>{
+        e.setAttribute('fill',isOpen?'rgba(255,59,59,0.18)':'#1c1c1c');
+        e.setAttribute('stroke',isOpen?'#ff3b3b':'#2a2a2a');
       });
-      reg.querySelectorAll('text').forEach(t => {
-        t.setAttribute('fill', isOpen ? '#ff8080' : '#555');
+      rEl.querySelectorAll('text').forEach(t=>{
+        const fs=parseFloat(t.getAttribute('font-size')||10);
+        t.setAttribute('fill',isOpen?(fs>=10?'#ff7070':'#ff4444'):(fs>=10?'#555':'#3a3a3a'));
       });
     }
-    if(dot){
-      dot.setAttribute('fill', isOpen ? '#ff3b3b' : '#333');
-      dot.style.animation = isOpen ? 'blink 1s infinite' : '';
+    if(dEl){
+      dEl.setAttribute('fill',isOpen?'#ff3b3b':'#333');
+      dEl.setAttribute('style',isOpen?'animation:blink 1s infinite':'');
     }
-    return `<div class="sess-item">
+    return`<div class="sess-item">
       <div class="sess-top">
         <span class="sess-name">${s.name}</span>
         <span class="sess-st ${isOpen?'open':'closed'}">${isOpen?'● OPEN':'○ CLOSED'}</span>
       </div>
       <div class="sess-time">${fh(s.open)} – ${fh(s.close)} JST</div>
-      <div class="sess-bar-bg"><div class="sess-bar-fill ${isOpen?'':'closed'}" style="width:${isOpen?progress:0}%"></div></div>
+      <div class="sess-bar"><div class="sess-fill ${isOpen?'':'off'}" style="width:${isOpen?prog.toFixed(1):0}%"></div></div>
     </div>`;
   }).join('');
 }
 
+// ── CLOCK ──────────────────────────────────────────────────
 function updateClock(){
-  const n=new Date(), p=v=>String(v).padStart(2,'0');
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
   document.getElementById('clock').textContent=`${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`;
   const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
   document.getElementById('clockDate').textContent=
     `${n.getFullYear()}/${p(n.getMonth()+1)}/${p(n.getDate())} (${days[n.getDay()]}) JST`;
+  const hh=p(n.getHours()),mm=p(n.getMinutes());
+  document.getElementById('sessClk').textContent=`${hh}:${mm} JST`;
 }
 
-let priceData = { price:0, open:0, high:0, low:0, prev:0 };
+// ── PRICE (multi-API chain) ────────────────────────────────
+let PD={price:0,open:0,high:0,low:0,prev:0,firstFetch:true};
+let fetchCount=0;
 
 async function fetchPrice(){
-  try {
-    const r = await fetch('https://api.metals.live/v1/spot/gold');
-    if(!r.ok) throw new Error();
-    const d = await r.json();
-    const p = parseFloat(d[0]?.price || d?.price || 0);
-    if(p>0) applyPrice(p);
-  } catch(e){
-    try {
-      const r2 = await fetch('https://api.allorigins.win/get?url='+encodeURIComponent('https://api.metals.live/v1/spot/gold'));
-      const j2 = await r2.json();
-      const d2 = JSON.parse(j2.contents);
-      const p2 = parseFloat(d2[0]?.price || 0);
-      if(p2>0) applyPrice(p2);
-    } catch(e2){
-      try {
-        const r3 = await fetch('https://www.goldapi.io/api/XAU/USD',{headers:{'x-access-token':'goldapi-demo'}});
-        const d3 = await r3.json();
-        if(d3.price) applyPrice(d3.price,d3.open_price,d3.high_price,d3.low_price,d3.prev_close_price);
-      } catch(e3){}
-    }
+  fetchCount++;
+  // API 1: metals.live (no CORS issues via direct JSON)
+  try{
+    const r=await fetch('https://api.metals.live/v1/spot/gold',{signal:AbortSignal.timeout(5000)});
+    if(r.ok){const d=await r.json();const p=parseFloat(Array.isArray(d)?d[0].price:d.price);if(p>100){applyP(p,'metals.live');return;}}
+  }catch(e){}
+  // API 2: frankfurter (EUR base, approx)
+  try{
+    const r=await fetch('https://api.frankfurter.app/latest?from=USD&to=XAU',{signal:AbortSignal.timeout(5000)});
+    if(r.ok){const d=await r.json();if(d.rates?.XAU){const p=1/d.rates.XAU;applyP(p,'frankfurter~');return;}}
+  }catch(e){}
+  // API 3: exchangerate-api free
+  try{
+    const r=await fetch('https://open.er-api.com/v6/latest/XAU',{signal:AbortSignal.timeout(5000)});
+    if(r.ok){const d=await r.json();if(d.rates?.USD){applyP(d.rates.USD,'er-api');return;}}
+  }catch(e){}
+  // API 4: allorigins proxy for metals.live
+  try{
+    const url='https://api.allorigins.win/get?url='+encodeURIComponent('https://api.metals.live/v1/spot/gold');
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    if(r.ok){const j=await r.json();const d=JSON.parse(j.contents);const p=parseFloat(Array.isArray(d)?d[0].price:d.price);if(p>100){applyP(p,'allorigins');return;}}
+  }catch(e){}
+  // All failed
+  setStatus('⬤ API ERROR','var(--red)');
+  document.getElementById('liveLabel').textContent='FETCH ERROR — RETRY';
+}
+
+function applyP(p,src,open,high,low,prev){
+  const old=PD.price;
+  PD.price=p;
+  if(PD.firstFetch){PD.open=open||p;PD.prev=prev||p;PD.high=high||p;PD.low=low||p;PD.firstFetch=false;}
+  else{
+    if(open)PD.open=open; if(!PD.open)PD.open=p;
+    if(high)PD.high=high; else if(p>PD.high)PD.high=p;
+    if(low) PD.low=low;  else if(PD.low===0||p<PD.low)PD.low=p;
+    if(prev)PD.prev=prev; else if(!PD.prev)PD.prev=p;
   }
+  renderPrice(old);
+  setStatus(`⬤ ${src} · #${fetchCount}`,'var(--green)');
+  document.getElementById('liveLabel').textContent='LIVE · REAL-TIME';
 }
 
-function applyPrice(p, open, high, low, prev){
-  const old = priceData.price;
-  priceData.price = p;
-  if(open) priceData.open=open; else if(!priceData.open) priceData.open=p;
-  if(high) priceData.high=high; else if(p>priceData.high) priceData.high=p;
-  if(low)  priceData.low=low;  else if(!priceData.low||p<priceData.low) priceData.low=p;
-  if(prev) priceData.prev=prev; else if(!priceData.prev) priceData.prev=p;
-  renderPrice();
-}
+const fmt=v=>v>0?v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'——';
 
-function renderPrice(){
-  const p = priceData.price;
-  if(!p) return;
-  const chg = p - priceData.prev;
-  const pct = priceData.prev ? chg/priceData.prev*100 : 0;
-  const dir = chg>=0?'up':'dn', arr=chg>=0?'▲':'▼';
-  const fmt = v => v>0 ? v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : '——';
-
-  document.getElementById('mainPrice').textContent=fmt(p);
-  document.getElementById('mainPrice').className=`price-big ${dir}`;
-  document.getElementById('mainChg').textContent=`${arr} ${Math.abs(chg).toFixed(2)} (${chg>=0?'+':''}${pct.toFixed(2)}%)`;
-  document.getElementById('mainChg').className=`price-chg ${dir}`;
-  document.getElementById('dayHigh').textContent=fmt(priceData.high);
-  document.getElementById('dayLow').textContent=fmt(priceData.low);
-  document.getElementById('dayOpen').textContent=fmt(priceData.open);
-  document.getElementById('prevClose').textContent=fmt(priceData.prev);
-  document.getElementById('bidAsk').textContent=`${(p-.3).toFixed(2)} / ${(p+.3).toFixed(2)}`;
-  document.getElementById('spread').textContent='SPREAD: 0.60';
-  if(priceData.open) document.getElementById('dhSub').textContent=
-    ((priceData.high-priceData.open)/priceData.open*100).toFixed(2)+'% FROM OPEN';
+function renderPrice(old){
+  const p=PD.price; if(!p) return;
+  const chg=p-(PD.prev||p), pct=PD.prev?chg/PD.prev*100:0;
+  const dir=chg>0?'up':chg<0?'dn':'neu', arr=chg>0?'▲':chg<0?'▼':'—';
+  document.getElementById('pBig').textContent=fmt(p);
+  document.getElementById('pBig').className=`price-big ${dir}`;
+  document.getElementById('pChg').textContent=`${arr} ${Math.abs(chg).toFixed(2)}  (${chg>=0?'+':''}${pct.toFixed(2)}%)`;
+  document.getElementById('pChg').className=`price-chg ${dir}`;
+  document.getElementById('sHigh').textContent=fmt(PD.high);
+  document.getElementById('sLow').textContent=fmt(PD.low);
+  document.getElementById('sOpen').textContent=fmt(PD.open);
+  document.getElementById('sPrev').textContent=fmt(PD.prev);
+  document.getElementById('sBidAsk').textContent=`${(p-.3).toFixed(2)} / ${(p+.3).toFixed(2)}`;
+  document.getElementById('sSpread').textContent='SPREAD: 0.60';
+  if(PD.open&&PD.high){const pf=((PD.high-PD.open)/PD.open*100).toFixed(2);document.getElementById('sHighSub').textContent=`+${pf}% FROM OPEN`;}
+  if(PD.open&&PD.low){const pf=((PD.low-PD.open)/PD.open*100).toFixed(2);document.getElementById('sLowSub').textContent=`${pf}% FROM OPEN`;}
+  if(p){document.getElementById('s52hSub').textContent=`-${(4801.50-p).toFixed(2)} FROM`;}
   updateTicker(p,chg,pct);
 }
 
-const EVENTS = [
-  { name:'USD ADP Employment',    date:'2026-06-03', time:'21:15', impact:'HIGH', prev:'102K',  fore:'115K',  act:null },
-  { name:'USD Non-Farm Payrolls', date:'2026-06-05', time:'21:30', impact:'HIGH', prev:'177K',  fore:'138K',  act:null },
-  { name:'USD CPI m/m',           date:'2026-06-11', time:'21:30', impact:'HIGH', prev:'0.3%',  fore:'0.2%',  act:null },
-  { name:'USD PPI m/m',           date:'2026-06-12', time:'21:30', impact:'HIGH', prev:'-0.1%', fore:'0.2%',  act:null },
-  { name:'USD Retail Sales m/m',  date:'2026-06-17', time:'21:30', impact:'HIGH', prev:'0.1%',  fore:'0.3%',  act:null },
-  { name:'FOMC Rate Decision',    date:'2026-06-18', time:'03:00', impact:'HIGH', prev:'4.50%', fore:'4.50%', act:null },
-  { name:'USD Initial Jobless',   date:'2026-06-19', time:'21:30', impact:'MED',  prev:'222K',  fore:'220K',  act:null },
+function setStatus(msg,color){
+  const el=document.getElementById('apiStatus');
+  el.textContent=msg; el.style.color=color;
+}
+
+// ── EVENTS ────────────────────────────────────────────────
+const EVENTS=[
+  {name:'USD ADP Employment Change',date:'2026-06-03',time:'21:15',impact:'HIGH',prev:'102K', fore:'115K', act:null},
+  {name:'USD Non-Farm Payrolls',    date:'2026-06-05',time:'21:30',impact:'HIGH',prev:'177K', fore:'138K', act:null},
+  {name:'USD CPI m/m',              date:'2026-06-11',time:'21:30',impact:'HIGH',prev:'0.3%', fore:'0.2%', act:null},
+  {name:'USD PPI m/m',              date:'2026-06-12',time:'21:30',impact:'HIGH',prev:'-0.1%',fore:'0.2%', act:null},
+  {name:'USD Retail Sales m/m',     date:'2026-06-17',time:'21:30',impact:'HIGH',prev:'0.1%', fore:'0.3%', act:null},
+  {name:'FOMC Rate Decision',       date:'2026-06-18',time:'03:00',impact:'HIGH',prev:'4.50%',fore:'4.50%',act:null},
+  {name:'USD Initial Jobless Claims',date:'2026-06-19',time:'21:30',impact:'MED', prev:'222K', fore:'220K', act:null},
+  {name:'Fed Chair Powell Speech',  date:'2026-06-25',time:'02:00',impact:'HIGH',prev:'—',    fore:'—',    act:null},
 ];
 
-function eventDateTime(ev){
-  const [y,mo,d]=ev.date.split('-').map(Number);
-  const [h,m]=ev.time.split(':').map(Number);
+function evDT(ev){
+  const[y,mo,d]=ev.date.split('-').map(Number);
+  const[h,m]=ev.time.split(':').map(Number);
   return new Date(y,mo-1,d,h,m,0);
 }
 
-function formatCountdown(ms){
-  if(ms<0) return 'PASSED';
-  const s=Math.floor(ms/1000);
-  const days=Math.floor(s/86400);
-  const hrs=Math.floor((s%86400)/3600);
-  const mins=Math.floor((s%3600)/60);
-  const secs=s%60;
-  const pp=v=>String(v).padStart(2,'0');
-  if(days>0) return `${days}D ${pp(hrs)}:${pp(mins)}:${pp(secs)}`;
-  return `${pp(hrs)}:${pp(mins)}:${pp(secs)}`;
+function fmtCD(ms){
+  if(ms<0)return'PASSED';
+  const s=Math.floor(ms/1000),pp=v=>String(v).padStart(2,'0');
+  const days=Math.floor(s/86400),hrs=Math.floor((s%86400)/3600),mins=Math.floor((s%3600)/60),secs=s%60;
+  return days>0?`${days}D ${pp(hrs)}:${pp(mins)}:${pp(secs)}`:`${pp(hrs)}:${pp(mins)}:${pp(secs)}`;
 }
 
 function renderEvents(){
-  const now = Date.now();
-  const sorted = EVENTS.slice().sort((a,b)=>eventDateTime(a)-eventDateTime(b));
-  const next = sorted.find(e=>eventDateTime(e)>now);
+  const now=Date.now();
+  const sorted=[...EVENTS].sort((a,b)=>evDT(a)-evDT(b));
+  const next=sorted.find(e=>evDT(e)>now);
+
+  // alert
   if(next){
-    const ms = eventDateTime(next)-now;
-    const urgent = ms<3600000;
-    const ab = document.getElementById('alertBanner');
-    if(urgent){ ab.classList.add('show'); ab.textContent=`⚠ URGENT — ${next.name} IN ${formatCountdown(ms)}`; }
+    const ms=evDT(next)-now, urgent=ms<3600000;
+    const ab=document.getElementById('alertBar');
+    if(urgent){ab.classList.add('show');ab.textContent=`⚠ URGENT — ${next.name} IN ${fmtCD(ms)}`;}
     else ab.classList.remove('show');
-    const cdCls = urgent?'ev-cd urgent':'ev-cd';
-    document.getElementById('nextEventPanel').innerHTML=`
-      <div style="padding:4px 0;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text1);letter-spacing:2px;">${next.name}</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px;">${next.date} · ${next.time} JST · ${next.impact}</div>
-        <div class="${cdCls}" style="margin-top:8px;font-size:18px;">⏱ ${formatCountdown(ms)}</div>
-        <div class="ev-vals" style="margin-top:8px;">
-          <div class="ev-vb"><div class="ev-vl">PREV</div><div class="ev-vn">${next.prev}</div></div>
-          <div class="ev-vb"><div class="ev-vl">FORECAST</div><div class="ev-vn">${next.fore}</div></div>
-          <div class="ev-vb"><div class="ev-vl">ACTUAL</div><div class="ev-vn">${next.act||'—'}</div></div>
-        </div>
+
+    // next event panel
+    const cdCls=urgent?'ne-cd urgent':'ne-cd';
+    document.getElementById('nextEvPanel').innerHTML=`
+      <div class="ne-name">${next.name}</div>
+      <div class="ne-meta">${next.date} · ${next.time} JST · ${next.impact}</div>
+      <div class="${cdCls}">⏱ ${fmtCD(ms)}</div>
+      <div class="ev-vals">
+        <div class="ev-vb"><div class="ev-vl">PREV</div><div class="ev-vn">${next.prev}</div></div>
+        <div class="ev-vb"><div class="ev-vl">FORECAST</div><div class="ev-vn">${next.fore}</div></div>
+        <div class="ev-vb"><div class="ev-vl">ACTUAL</div><div class="ev-vn">${next.act||'—'}</div></div>
       </div>`;
   }
-  document.getElementById('eventsList').innerHTML = sorted.map(e=>{
-    const dt=eventDateTime(e), ms=dt-now, isPast=ms<0;
-    const cdCls=!isPast&&ms<3600000?'ev-cd urgent':'ev-cd';
-    return `<div class="ev-item">
+
+  // full list
+  document.getElementById('evList').innerHTML=sorted.map(e=>{
+    const ms=evDT(e)-now, isPast=ms<0;
+    const cdCls=isPast?'ev-cd passed':ms<3600000?'ev-cd urgent':'ev-cd';
+    const cdTxt=isPast?'PASSED':`⏱ ${fmtCD(ms)}`;
+    return`<div class="ev-item">
       <div class="ev-top"><span class="ev-name">${e.name}</span><span class="ev-tag ${e.impact.toLowerCase()}">${e.impact}</span></div>
       <div class="ev-date">${e.date} · ${e.time} JST</div>
-      ${!isPast?`<div class="${cdCls}">⏱ ${formatCountdown(ms)}</div>`:'<div style="font-family:Share Tech Mono,monospace;font-size:8px;color:var(--text3)">PASSED</div>'}
+      <div class="${cdCls}">${cdTxt}</div>
       <div class="ev-vals">
         <div class="ev-vb"><div class="ev-vl">PREV</div><div class="ev-vn">${e.prev}</div></div>
         <div class="ev-vb"><div class="ev-vl">FORE</div><div class="ev-vn">${e.fore}</div></div>
-        <div class="ev-vb"><div class="ev-vl">ACT</div><div class="ev-vn">${e.act||'—'}</div></div>
+        <div class="ev-vb"><div class="ev-vl">ACT</div><div class="ev-vn ${e.act?'beat':''}">${e.act||'—'}</div></div>
       </div>
     </div>`;
   }).join('');
 }
 
+// ── CALENDAR ──────────────────────────────────────────────
 function renderCalendar(){
-  const now=new Date(), y=now.getFullYear(), m=now.getMonth(), today=now.getDate();
-  const firstDay=new Date(y,m,1).getDay(), dim=new Date(y,m+1,0).getDate();
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),today=now.getDate();
   const mn=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
   document.getElementById('calBadge').textContent=`${mn[m]} ${y}`;
-  const evDays=new Set(EVENTS.filter(e=>e.date.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)).map(e=>parseInt(e.date.split('-')[2])));
-  document.getElementById('calWrap').innerHTML=`
-    <div class="cal-header"><span class="cal-title">${mn[m]} ${y}</span></div>
-    <div class="cal-grid">
-      ${['S','M','T','W','T','F','S'].map(d=>`<div class="cal-day-hdr">${d}</div>`).join('')}
-      ${Array(firstDay).fill('<div class="cal-day empty"></div>').join('')}
-      ${Array.from({length:dim},(_,i)=>{
-        const d=i+1, cls=(d===today?'today ':'')+(evDays.has(d)?'has-event':'');
-        return `<div class="cal-day ${cls}">${d}</div>`;
-      }).join('')}
-    </div>`;
+  const fd=new Date(y,m,1).getDay(), dim=new Date(y,m+1,0).getDate();
+  const evDays=new Set(EVENTS.filter(e=>e.date.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)).map(e=>+e.date.split('-')[2]));
+  const hdrs=['S','M','T','W','T','F','S'].map(d=>`<div class="cal-dh">${d}</div>`).join('');
+  const blanks=Array(fd).fill('<div class="cal-d empty">0</div>').join('');
+  const days=Array.from({length:dim},(_,i)=>{
+    const d=i+1,cls=(d===today?'today ':'')+(evDays.has(d)?'ev':'');
+    return`<div class="cal-d ${cls}">${d}</div>`;
+  }).join('');
+  document.getElementById('calWrap').innerHTML=`<div class="cal-grid">${hdrs}${blanks}${days}</div>`;
 }
 
+// ── NEWS ──────────────────────────────────────────────────
 const NEWS=[
-  { time:'04:18', impact:'high', src:'REUTERS',   head:'Gold slides as dollar firms ahead of NFP; traders reduce long exposure on strong jobs outlook' },
-  { time:'03:52', impact:'high', src:'BLOOMBERG', head:'Powell: Fed in no rush to cut rates; watching inflation path closely through summer data' },
-  { time:'03:31', impact:'med',  src:'FOREXLIVE', head:'XAU/USD tests 4,480 key support; break below opens path to 4,450 psychological level' },
-  { time:'02:45', impact:'med',  src:'REUTERS',   head:'PBOC adds gold reserves for fourth straight month — central bank buying supports floor' },
-  { time:'02:12', impact:'high', src:'BLOOMBERG', head:'Trump: Will impose additional tariffs on EU if trade deal not reached by July deadline' },
-  { time:'01:55', impact:'high', src:'CNBC',      head:'Middle East ceasefire talks stall; risk-off flows return, safe-haven gold demand ticks up' },
-  { time:'01:20', impact:'med',  src:'KITCO',     head:'SPDR Gold ETF sees outflows for third session; speculative long positions trimming' },
+  {time:'05:12',impact:'high',src:'REUTERS',   head:'Gold holds losses as strong dollar weighs; traders await NFP for direction signal'},
+  {time:'04:44',impact:'high',src:'BLOOMBERG', head:'Powell reiterates data-dependency; no urgency to cut rates before clear disinflation trend'},
+  {time:'04:18',impact:'med', src:'FOREXLIVE', head:'XAU/USD eyes key 4,480 support — break would expose 4,450 and 4,420 targets'},
+  {time:'03:52',impact:'high',src:'BLOOMBERG', head:'Trump threatens fresh tariffs on EU goods; risk-off sentiment lifts gold modestly'},
+  {time:'03:31',impact:'med', src:'REUTERS',   head:'PBOC gold reserve buying continues for fourth month, underpinning longer-term floor'},
+  {time:'02:55',impact:'high',src:'CNBC',      head:'Middle East ceasefire talks collapse again; geopolitical premium bid returns to gold'},
+  {time:'02:12',impact:'med', src:'KITCO',     head:'SPDR Gold ETF outflows accelerate — speculative longs trimmed ahead of NFP risk'},
+  {time:'01:40',impact:'low', src:'FOREXLIVE', head:'Gold-silver ratio dips to 133.5 as silver outperforms on industrial demand recovery'},
+  {time:'01:05',impact:'high',src:'REUTERS',   head:'Fed minutes: Several members flagged upside inflation risks; market trims cut bets'},
 ];
-
 function renderNews(){
   document.getElementById('newsCount').textContent=`${NEWS.length} ITEMS`;
   document.getElementById('newsList').innerHTML=NEWS.map(n=>`
-    <div class="news-item">
-      <span class="ni-impact ${n.impact}">${n.impact.toUpperCase()}</span>
+    <div class="ni">
+      <span class="ni-imp ${n.impact}">${n.impact.toUpperCase()}</span>
       <div><div class="ni-head">${n.head}</div><div class="ni-src">▸ ${n.src}</div></div>
       <span class="ni-time">${n.time}</span>
     </div>`).join('');
 }
 
+// ── GEO ───────────────────────────────────────────────────
 const GEO=[
-  {name:'MIDDLE EAST',lv:'HIGH',   cls:'high'},
-  {name:'RED SEA',    lv:'WATCH',  cls:'watch'},
-  {name:'UKRAINE',    lv:'WATCH',  cls:'watch'},
-  {name:'TAIWAN',     lv:'MONITOR',cls:'monitor'},
-  {name:'TRADE WAR',  lv:'HIGH',   cls:'high'},
-  {name:'FED POLICY', lv:'WATCH',  cls:'watch'},
+  {name:'MIDDLE EAST', lv:'HIGH',    cls:'high'},
+  {name:'RED SEA',     lv:'WATCH',   cls:'watch'},
+  {name:'UKRAINE',     lv:'WATCH',   cls:'watch'},
+  {name:'TAIWAN',      lv:'MONITOR', cls:'monitor'},
+  {name:'US-EU TRADE', lv:'HIGH',    cls:'high'},
+  {name:'FED POLICY',  lv:'WATCH',   cls:'watch'},
+  {name:'SANCTIONS',   lv:'WATCH',   cls:'watch'},
 ];
 function renderGeo(){
   document.getElementById('geoList').innerHTML=GEO.map(g=>`
     <div class="geo-item"><span class="geo-name">${g.name}</span><span class="geo-lv ${g.cls}">${g.lv}</span></div>`).join('');
 }
 
-let tickerItems=[
-  'XAU/USD <span class="dn">▼ LOADING</span>',
-  'DXY <span class="hi">99.84</span>',
-  'US 10Y YIELD <span class="hi">4.512%</span>',
-  'EUR/USD <span class="dn">▼ 1.0821</span>',
-  'USD/JPY <span class="hi">148.92</span>',
-  'WTI CRUDE <span class="dn">▼ 61.22</span>',
-  'XAG/USD <span class="dn">▼ 33.42</span>',
-  'NEXT FOMC <span class="hi">06-18</span> · HOLD 96%',
+// ── TICKER ────────────────────────────────────────────────
+let tickerBase=[
+  {k:'xau', t:'XAU/USD'},
+  {k:'dxy', t:'DXY <span class="hi">99.84</span>'},
+  {k:'t10', t:'US 10Y YIELD <span class="hi">4.512%</span>'},
+  {k:'eur', t:'EUR/USD <span class="dn">▼ 1.0821</span>'},
+  {k:'jpy', t:'USD/JPY <span class="hi">148.92</span>'},
+  {k:'wti', t:'WTI CRUDE <span class="dn">▼ 61.22</span>'},
+  {k:'xag', t:'XAG/USD <span class="dn">▼ 33.42</span>'},
+  {k:'fomc',t:'NEXT FOMC <span class="hi">06-18-2026</span> · HOLD 96%'},
+  {k:'comex',t:'COMEX JUL26'},
 ];
+let tickerVals={xau:'LOADING', comex:'LOADING'};
+
+function buildTicker(){
+  const items=tickerBase.map(b=>{
+    if(b.k==='xau') return`XAU/USD ${tickerVals.xau}`;
+    if(b.k==='comex') return`COMEX JUL26 ${tickerVals.comex}`;
+    return b.t;
+  }).map(t=>`<span class="ti">${t}</span>`).join('');
+  document.getElementById('tickerInner').innerHTML=items+items;
+}
 
 function updateTicker(p,chg,pct){
-  const dir=chg>=0?'up':'dn', arr=chg>=0?'▲':'▼';
-  tickerItems[0]=`XAU/USD <span class="${dir}">${arr} ${p.toFixed(2)} (${chg>=0?'+':''}${pct.toFixed(2)}%)</span>`;
-  const html=tickerItems.map(t=>`<span class="ti">${t}</span>`).join('');
-  document.getElementById('tickerInner').innerHTML=html+html;
+  const d=chg>=0?'up':'dn',a=chg>=0?'▲':'▼';
+  tickerVals.xau=`<span class="${d}">${a} ${p.toFixed(2)} (${chg>=0?'+':''}${pct.toFixed(2)}%)</span>`;
+  tickerVals.comex=`<span class="${d}">${a} ${(p+6.5).toFixed(2)}</span>`;
+  buildTicker();
 }
 
-function initTicker(){
-  const html=tickerItems.map(t=>`<span class="ti">${t}</span>`).join('');
-  document.getElementById('tickerInner').innerHTML=html+html;
-}
-
-// INIT
+// ── INIT & INTERVALS ──────────────────────────────────────
 renderSessions();
 renderCalendar();
 renderNews();
 renderGeo();
 renderEvents();
-initTicker();
+buildTicker();
 updateClock();
 fetchPrice();
 
-setInterval(updateClock,   1000);
-setInterval(renderSessions,1000);
-setInterval(renderEvents,  1000);
-setInterval(fetchPrice,   15000);
-setInterval(renderCalendar,60000);
+setInterval(updateClock,    1000);
+setInterval(renderSessions, 1000);
+setInterval(renderEvents,   1000);
+setInterval(fetchPrice,    15000);
+setInterval(renderCalendar, 60000);
 </script>
 </body>
 </html>
