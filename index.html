@@ -111,8 +111,20 @@ body{
 
 .today{
   background:rgba(255,45,45,.14);
-  border:1px solid rgba(255,45,45,.35);
+  border:1px solid rgba(255,45,45,.45);
   border-radius:6px;
+}
+
+.eventDay{
+  background:rgba(184,155,94,.18);
+  border:1px solid rgba(184,155,94,.55);
+  border-radius:6px;
+  color:var(--gold)!important;
+}
+
+.today.eventDay{
+  background:rgba(255,45,45,.16);
+  border:1px solid rgba(255,45,45,.55);
 }
 
 .todayTopList{
@@ -298,50 +310,36 @@ body{
   font-weight:900;
 }
 
-.banner{
-  height:58px;
+.youtubeBar{
+  height:150px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.youtubeBox{
   overflow:hidden;
-  position:relative;
-  color:var(--text);
 }
 
-.bannerInner{
-  position:absolute;
-  top:18px;
-  white-space:nowrap;
-  animation:ticker 55s linear infinite;
-  color:var(--text);
-  font-size:13px;
-  letter-spacing:1.1px;
+.youtubeBox iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  border-radius:10px;
+  filter:brightness(.82) contrast(1.05);
 }
 
-.bannerInner span{
-  margin-right:46px;
-}
+@media(max-width:1200px){
+  .top,
+  .main,
+  .intel,
+  .youtubeBar{
+    grid-template-columns:1fr;
+  }
 
-.liveSource{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.liveTime{
-  color:var(--muted);
-  font-weight:900;
-}
-
-.liveRed{
-  color:var(--red);
-  font-weight:900;
-}
-
-.liveGreen{
-  color:var(--green);
-  font-weight:900;
-}
-
-@keyframes ticker{
-  from{transform:translateX(100%);}
-  to{transform:translateX(-100%);}
+  .clockCal{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -425,8 +423,18 @@ body{
     <div class="panel intelCard"><div class="intelTitle">SANCTIONS</div><div class="intelStatus">WATCH</div></div>
   </div>
 
-  <div class="panel banner">
-    <div class="bannerInner" id="liveTicker"></div>
+  <div class="youtubeBar">
+    <div class="youtubeBox">
+      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCIALMKvObZNtJ6AmdCLP7Lg&autoplay=1&mute=1"></iframe>
+    </div>
+
+    <div class="youtubeBox">
+      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCUMZ7gohGI9HcU9VNsr2FJQ&autoplay=1&mute=1"></iframe>
+    </div>
+
+    <div class="youtubeBox">
+      <iframe src="https://www.youtube.com/embed/live_stream?channel=UCJFOER35ggIWwsXh2ZDnqyg&autoplay=1&mute=1"></iframe>
+    </div>
   </div>
 
 </div>
@@ -434,45 +442,51 @@ body{
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* =========================
-   HIGH IMPACT EVENTS
-   events.json があれば自動読込
-   無ければ下の初期データを表示
-========================= */
-
 const highImpactEvents = [
-  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
-  {date:"2026-06-01",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.4%",previous:"2.6%"},
-  {date:"2026-06-01",time:"23:00",currency:"USD",event:"ISM Manufacturing PMI",impact:"HIGH",forecast:"49.8",previous:"48.7"},
-  {date:"2026-06-01",time:"23:00",currency:"USD",event:"JOLTS Job Openings",impact:"HIGH",forecast:"7.45M",previous:"7.19M"},
-
   {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K"},
+  {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6"},
+  {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6"},
+
   {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K"},
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
-  {date:"2026-06-12",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
-  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"}
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
+
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%"},
+
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%"},
+
+  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2"},
+  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Inflation Expectations",impact:"HIGH",forecast:"---",previous:"---"},
+
+  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%"},
+
+  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%"},
+  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Statement",impact:"HIGH",forecast:"---",previous:"---"},
+  {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---"},
+
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%"},
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index y/y",impact:"HIGH",forecast:"2.7%",previous:"2.8%"}
 ];
 
 async function loadHighImpactEvents(){
   try{
     const res = await fetch("./events.json?t=" + Date.now(), {cache:"no-store"});
     if(!res.ok) throw new Error("events.json not found");
+
     const data = await res.json();
 
     if(Array.isArray(data)){
       highImpactEvents.length = 0;
       data.forEach(e => highImpactEvents.push(e));
     }
-  }catch(e){
-    // events.json が無い場合は初期データを使う
-  }
+  }catch(e){}
 
   renderHighImpact();
+  renderCalendar();
 }
-
-/* =========================
-   EVENT TIME
-========================= */
 
 function getEventDate(e){
   const [y,m,d] = e.date.split("-").map(Number);
@@ -503,10 +517,6 @@ function isWithin24h(target){
   const diff = target - new Date();
   return diff > 0 && diff <= 86400000;
 }
-
-/* =========================
-   RENDER HIGH IMPACT
-========================= */
 
 function renderHighImpact(){
   const list = document.getElementById("highImpactList");
@@ -563,10 +573,6 @@ function renderHighImpact(){
   }
 }
 
-/* =========================
-   CLOCK + CALENDAR
-========================= */
-
 let lastCalendarKey = "";
 
 function updateClock(){
@@ -608,6 +614,16 @@ function renderCalendar(){
 
   grid.innerHTML = "";
 
+  const eventDays = new Set(
+    highImpactEvents.map(e=>{
+      const d = new Date(e.date + "T00:00:00");
+      if(d.getFullYear() === y && d.getMonth() === m){
+        return d.getDate();
+      }
+      return null;
+    }).filter(Boolean)
+  );
+
   ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
     grid.innerHTML += `<div class="calHead">${h}</div>`;
   });
@@ -620,13 +636,16 @@ function renderCalendar(){
   }
 
   for(let d=1;d<=last.getDate();d++){
-    grid.innerHTML += `<div class="calDay ${d===now.getDate() ? "today" : ""}">${d}</div>`;
+    const isToday = d === now.getDate();
+    const isEvent = eventDays.has(d);
+
+    grid.innerHTML += `
+      <div class="calDay ${isToday ? "today" : ""} ${isEvent ? "eventDay" : ""}">
+        ${d}
+      </div>
+    `;
   }
 }
-
-/* =========================
-   MAP + SESSION
-========================= */
 
 let sessionMarkers = {};
 
@@ -683,77 +702,40 @@ function initMap(){
   }).addTo(map);
 
   sessionMarkers.us = L.marker([39,-98],{
-    icon:L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",false),iconSize:[110,70]})
+    icon:L.divIcon({
+      className:"",
+      html:sessionHtml("US","21:00-06:00",false),
+      iconSize:[110,70]
+    })
   }).addTo(map);
 
   sessionMarkers.london = L.marker([51,-1],{
-    icon:L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",false),iconSize:[120,70]})
+    icon:L.divIcon({
+      className:"",
+      html:sessionHtml("LONDON","15:00-21:00",false),
+      iconSize:[120,70]
+    })
   }).addTo(map);
 
   sessionMarkers.asia = L.marker([35,120],{
-    icon:L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",false),iconSize:[110,70]})
+    icon:L.divIcon({
+      className:"",
+      html:sessionHtml("ASIA","07:00-15:00",false),
+      iconSize:[110,70]
+    })
   }).addTo(map);
 
   setTimeout(()=>map.invalidateSize(),300);
 }
 
-/* =========================
-   LIVE TICKER
-========================= */
-
-const liveFeedLines = [
-  {source:"REUTERS", text:"Gold remains sensitive to geopolitical headlines and US economic data."},
-  {source:"BLOOMBERG", text:"Traders monitor dollar moves ahead of high impact US releases."},
-  {source:"FOREXLIVE", text:"XAUUSD volatility expected around CPI, NFP, ISM and FOMC events."},
-  {source:"MARKET", text:"Safe-haven demand remains active while risk sentiment stays fragile."},
-  {source:"NEWS", text:"Energy, sanctions and Middle East headlines remain key gold drivers."},
-  {source:"ANALYST", text:"Gold desk watching liquidity around London and US session overlap."}
-];
-
-function renderLiveTicker(){
-  const now = new Date().toLocaleTimeString("ja-JP",{hour12:false});
-
-  const nextEvents = [...highImpactEvents]
-    .map(e=>({...e,target:getEventDate(e)}))
-    .filter(e=>e.target-new Date()>0)
-    .sort((a,b)=>a.target-b.target)
-    .slice(0,3)
-    .map(e=>`<span><b class="liveRed">${e.event}</b> ${countdown(e.target)}</span>`)
-    .join("");
-
-  const live = liveFeedLines.map(item=>{
-    return `
-      <span>
-        <b class="liveTime">${now}</b>
-        <b class="liveSource">${item.source}</b>
-        ${item.text}
-      </span>
-    `;
-  }).join("");
-
-  document.getElementById("liveTicker").innerHTML = `
-    <span>XAUUSD WAR ROOM</span>
-    ${nextEvents}
-    ${live}
-    <span class="liveRed">HIGH IMPACT NEWS AUTO UPDATE</span>
-    <span>XAUUSD WAR ROOM</span>
-  `;
-}
-
-/* =========================
-   INIT
-========================= */
-
 initMap();
 renderCalendar();
 updateClock();
 loadHighImpactEvents();
-renderLiveTicker();
 
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(loadHighImpactEvents,30000);
-setInterval(renderLiveTicker,10000);
 </script>
 
 </body>
