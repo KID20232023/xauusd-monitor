@@ -80,14 +80,12 @@ html,body{
 .date{
   margin-top:8px;
   font-size:13px;
-  color:var(--text);
 }
 
 .monthTitle{
   text-align:center;
   font-size:12px;
   font-weight:800;
-  color:var(--text);
   margin-bottom:4px;
 }
 
@@ -132,37 +130,42 @@ html,body{
   100%{opacity:1}
 }
 
-.statusGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  grid-template-rows:repeat(2,1fr);
-  gap:6px;
+.breakingBox{
   height:118px;
+  overflow-y:auto;
+  padding-right:4px;
 }
 
-.statusBox{
-  border:1px solid #181818;
-  border-radius:8px;
-  padding:7px;
-  background:#080808;
+.breakingItem{
+  border-bottom:1px solid #181818;
+  padding:8px 0;
+  cursor:pointer;
 }
 
-.statusTitle{
-  font-size:10px;
-  color:var(--muted);
-  font-weight:800;
-}
-
-.statusValue{
-  font-size:15px;
-  margin-top:5px;
-  color:var(--gold);
+.breakingTime{
+  color:var(--green);
   font-weight:900;
-  white-space:nowrap;
+  font-size:12px;
 }
 
-.green{color:var(--green)!important}
-.red{color:var(--red)!important}
+.breakingSource{
+  color:var(--red);
+  font-weight:900;
+  font-size:12px;
+  animation:redPulse 1s infinite;
+}
+
+.breakingText{
+  color:var(--text);
+  font-size:12px;
+  margin-top:4px;
+}
+
+.noBreaking{
+  color:var(--muted);
+  font-size:13px;
+  padding-top:18px;
+}
 
 .main{
   display:grid;
@@ -200,10 +203,10 @@ html,body{
 .leaflet-control-zoom{display:none!important}
 
 .sessionLabel{
-  background:rgba(5,5,5,.86);
-  border:1px solid rgba(184,155,94,.24);
-  border-radius:8px;
-  padding:7px 9px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(160,160,160,.16);
+  border-radius:6px;
+  padding:5px 8px;
   font-size:12px;
   line-height:1.45;
   letter-spacing:.8px;
@@ -214,11 +217,10 @@ html,body{
 
 .sessionLabel.open{
   color:var(--white);
-  border-color:rgba(255,255,255,.55);
+  border:1px solid rgba(220,220,220,.28);
 }
 
-.sessionTime,
-.sessionCountdown{
+.sessionTime,.sessionCountdown{
   color:var(--green);
   font-weight:900;
 }
@@ -268,6 +270,18 @@ html,body{
   filter:brightness(.9) contrast(1.05);
 }
 
+.videoNote{
+  position:absolute;
+  right:12px;
+  bottom:10px;
+  color:var(--muted);
+  font-size:10px;
+  z-index:5;
+  background:rgba(0,0,0,.45);
+  padding:4px 6px;
+  border-radius:5px;
+}
+
 .bottom{
   display:grid;
   grid-template-columns:52% 48%;
@@ -309,7 +323,11 @@ html,body{
 }
 
 .newsRow:hover,
-.newsRow.selected{
+.newsRow.selected,
+.headlineItem:hover,
+.headlineItem.selected,
+.breakingItem:hover,
+.breakingItem.selected{
   background:rgba(184,155,94,.08);
 }
 
@@ -337,7 +355,7 @@ html,body{
 
 .blink24{animation:redPulse 1s infinite}
 
-.eventDetail{
+.detailBox{
   height:82px;
   margin-top:8px;
   border-top:1px solid #181818;
@@ -347,13 +365,13 @@ html,body{
   overflow-y:auto;
 }
 
-.eventDetailTitle{
+.detailTitle{
   color:var(--gold);
   font-weight:900;
   margin-bottom:5px;
 }
 
-.eventDetailText{
+.detailText{
   color:var(--text);
   line-height:1.45;
 }
@@ -369,11 +387,6 @@ html,body{
   padding:7px 0;
   font-size:12px;
   cursor:pointer;
-}
-
-.headlineItem:hover,
-.headlineItem.selected{
-  background:rgba(184,155,94,.08);
 }
 
 .headlineTop{
@@ -393,15 +406,14 @@ html,body{
   font-weight:900;
 }
 
+.headlineSource.breaking{
+  color:var(--red);
+  animation:redPulse 1s infinite;
+}
+
 .headlineText{
   color:var(--text);
   font-weight:700;
-}
-
-.breaking{
-  color:var(--red);
-  font-weight:900;
-  animation:redPulse 1s infinite;
 }
 
 .alertPopup{
@@ -480,15 +492,8 @@ html,body{
     </div>
 
     <div class="panel">
-      <div class="label">MARKET STATUS</div>
-      <div class="statusGrid">
-        <div class="statusBox"><div class="statusTitle">SAFE HAVEN</div><div class="statusValue green">ACTIVE</div></div>
-        <div class="statusBox"><div class="statusTitle">HIGH IMPACT</div><div class="statusValue red">WATCH</div></div>
-        <div class="statusBox"><div class="statusTitle">NEWS ALERT</div><div class="statusValue">STANDBY</div></div>
-        <div class="statusBox"><div class="statusTitle">SESSION</div><div class="statusValue green" id="topSession">----</div></div>
-        <div class="statusBox"><div class="statusTitle">VOLATILITY</div><div class="statusValue">ELEVATED</div></div>
-        <div class="statusBox"><div class="statusTitle">UPDATE</div><div class="statusValue green">AUTO</div></div>
-      </div>
+      <div class="label">BREAKING NEWS</div>
+      <div class="breakingBox" id="breakingBox"></div>
     </div>
 
   </div>
@@ -502,20 +507,20 @@ html,body{
 
     <div class="panel videoPanel">
       <div class="videoTools">
-        <button onclick="setVideo('sky')" id="btn-sky" class="active">SKY NEWS</button>
-        <button onclick="setVideo('dw')" id="btn-dw">DW LIVE</button>
-        <button onclick="setVideo('abc')" id="btn-abc">ABC LIVE</button>
-        <button onclick="setVideo('nbc')" id="btn-nbc">NBC LIVE</button>
-        <button onclick="setVideo('cspan')" id="btn-cspan">C-SPAN</button>
+        <button onclick="setVideo(0)" id="videoBtn0" class="active">LIVE 1</button>
+        <button onclick="setVideo(1)" id="videoBtn1">LIVE 2</button>
+        <button onclick="setVideo(2)" id="videoBtn2">LIVE 3</button>
+        <button onclick="setVideo(3)" id="videoBtn3">LIVE 4</button>
       </div>
 
       <iframe
         id="videoFrame"
         class="videoFrame"
-        src="https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&playsinline=1"
         allow="autoplay; encrypted-media; picture-in-picture"
         allowfullscreen>
       </iframe>
+
+      <div class="videoNote">AUTO RELOAD / AUTO SWITCH</div>
     </div>
 
   </div>
@@ -536,15 +541,19 @@ html,body{
         </div>
         <div id="highImpactList"></div>
       </div>
-      <div class="eventDetail" id="eventDetail">
-        <div class="eventDetailTitle">EVENT DETAIL</div>
-        <div class="eventDetailText">指標を押すと説明を表示します。</div>
+      <div class="detailBox" id="eventDetail">
+        <div class="detailTitle">EVENT DETAIL</div>
+        <div class="detailText">指標を押すと説明を表示します。</div>
       </div>
     </div>
 
     <div class="panel">
       <div class="label">LIVE HEADLINES / SPEECH ALERT</div>
       <div class="headlineScroll" id="headlineList"></div>
+      <div class="detailBox" id="headlineDetail">
+        <div class="detailTitle">HEADLINE DETAIL</div>
+        <div class="detailText">ニュースを押すと説明を表示します。</div>
+      </div>
     </div>
 
   </div>
@@ -555,37 +564,27 @@ html,body{
 
 <script>
 const highImpactEvents=[
-  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K",detail:"ADP雇用統計。NFP前の雇用先行指標。強ければドル買い・金売り圧力、弱ければ金買い材料になりやすい。"},
-  {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6",detail:"米サービス業の景況感。50超えは拡大。強い数字は利下げ後退、金には重し。"},
-  {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6",detail:"ISM非製造業。米景気とインフレ圧力を見る重要指標。XAUUSDは発表直後に大きく動きやすい。"},
-
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K",detail:"米雇用統計NFP。最重要指標。予想より強いとドル高・金下落、弱いと金上昇になりやすい。"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%",detail:"失業率。雇用の弱さが出ると利下げ観測が強まり、金買い材料になりやすい。"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Average Hourly Earnings m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"平均時給。賃金インフレを見る指標。高いとインフレ懸念、金は乱高下しやすい。"},
-
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"コアCPI。食品・エネルギー除くインフレ指標。FRB政策に直結し、金への影響が大きい。"},
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.3%",detail:"CPI前月比。インフレ加速ならドル高・金売り、鈍化なら金買いになりやすい。"},
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%",detail:"CPI前年比。インフレトレンド確認。XAUUSDは発表後の初動と戻しに注意。"},
-
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Initial Jobless Claims",impact:"HIGH",forecast:"---",previous:"---",detail:"新規失業保険申請件数。雇用悪化が見えると金買い材料になりやすい。"},
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%",detail:"生産者物価指数。企業側インフレ。CPIへの先行材料として注目。"},
-  {date:"2026-06-11",time:"21:30",currency:"USD",event:"Core PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"0.1%",detail:"コアPPI。物価圧力の確認。強いと利下げ観測後退、金には売り圧力。"},
-
-  {date:"2026-06-12",time:"23:00",currency:"USD",event:"Prelim UoM Consumer Sentiment",impact:"HIGH",forecast:"53.0",previous:"52.2",detail:"ミシガン消費者信頼感。景気心理とインフレ期待に反応しやすい。"},
-  {date:"2026-06-17",time:"21:30",currency:"USD",event:"Retail Sales m/m",impact:"HIGH",forecast:"0.3%",previous:"0.0%",detail:"小売売上高。米消費の強さを示す。強いとドル買い、金売りになりやすい。"},
-  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%",detail:"FOMC政策金利。金利見通しと声明文でXAUUSDが大きく動く。"},
-  {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---",detail:"FRB議長会見。発言内容で金利見通しが変わり、金が急変動しやすい。"},
-  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%",detail:"FRBが重視するインフレ指標。CPI以上に政策判断へ影響する場合がある。"}
+  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K",detail:"ADP雇用統計。NFP前の雇用先行指標。強ければドル買い・金売り圧力、弱ければ金買い材料。"},
+  {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6",detail:"米サービス業PMI。景況感が強いと利下げ後退、金には重し。"},
+  {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6",detail:"ISM非製造業。米景気・インフレ圧力を見る重要指標。XAUUSDは急変動しやすい。"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K",detail:"米雇用統計NFP。強いとドル高・金売り、弱いと金買いになりやすい。"},
+  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%",detail:"失業率。悪化なら利下げ観測が強まり、金買い材料。"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"コアCPI。FRB政策に直結。予想上振れは金売り、下振れは金買いになりやすい。"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%",detail:"CPI前年比。インフレトレンド確認。金利見通しに影響。"},
+  {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%",detail:"生産者物価指数。CPIへの先行材料。"},
+  {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%",detail:"FOMC政策金利。声明とドットチャートでXAUUSDが大きく動きやすい。"},
+  {date:"2026-06-18",time:"03:30",currency:"USD",event:"FOMC Press Conference",impact:"HIGH",forecast:"---",previous:"---",detail:"FRB議長会見。発言で金利見通しが変わり、金が急変動しやすい。"},
+  {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%",detail:"FRBが重視するインフレ指標。政策判断に影響。"}
 ];
 
 let headlines=[
-  {id:"h1",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false,detail:"FRB高官発言。利下げ時期・インフレ認識・雇用認識に注目。"},
-  {id:"h2",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false,detail:"ホワイトハウス発言。地政学・通商・制裁関連は金に影響。"},
-  {id:"h3",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false,detail:"米金利の動き。実質金利上昇は金に重し。"},
-  {id:"h4",source:"MARKET",region:"US",text:"XAUUSD sensitivity elevated into high impact US data.",breaking:false,detail:"重要指標前は流動性低下と急変動に注意。"},
-  {id:"h5",source:"DXY",region:"US",text:"Dollar strength remains a key pressure factor for gold.",breaking:false,detail:"DXY上昇はXAUUSDの下押し要因。"},
-  {id:"h6",source:"US10Y",region:"US",text:"Treasury yield movement watched closely by gold traders.",breaking:false,detail:"10年債利回りの急変動は金価格に直結しやすい。"},
-  {id:"h7",source:"OIL",region:"ENERGY",text:"Energy headlines remain important for inflation expectations.",breaking:false,detail:"原油上昇はインフレ再燃懸念につながる。"},
+  {id:"h1",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false,detail:"FRB高官発言。利下げ時期・インフレ認識に注目。金利低下方向なら金買い材料。"},
+  {id:"h2",source:"POWELL",region:"FED",text:"Powell remarks remain critical for rate expectations.",breaking:false,detail:"パウエル発言。タカ派なら金売り、ハト派なら金買いに反応しやすい。"},
+  {id:"h3",source:"TRUMP",region:"US",text:"Trump comments monitored for tariff and dollar impact.",breaking:false,detail:"関税・ドル・地政学発言は金の安全資産需要に影響。"},
+  {id:"h4",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false,detail:"ホワイトハウス発言。中東・制裁・軍事関連は金買い材料になりやすい。"},
+  {id:"h5",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false,detail:"米金利上昇は金売り、低下は金買い要因。"},
+  {id:"h6",source:"DXY",region:"US",text:"Dollar strength remains a key pressure factor for gold.",breaking:false,detail:"DXY上昇はXAUUSD下落圧力。"},
+  {id:"h7",source:"US10Y",region:"US",text:"Treasury yield movement watched closely by gold traders.",breaking:false,detail:"米10年債利回りは金価格と逆相関になりやすい。"},
   {id:"h8",source:"MIDDLE EAST",region:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true,detail:"中東リスクは安全資産需要を高め、金買い材料になりやすい。"},
   {id:"h9",source:"UKRAINE",region:"UKRAINE",text:"Ukraine conflict headlines remain on gold desk watch.",breaking:false,detail:"ウクライナ情勢はエネルギー・地政学リスクに影響。"},
   {id:"h10",source:"TAIWAN",region:"TAIWAN",text:"Taiwan Strait risk remains on geopolitical watchlist.",breaking:false,detail:"台湾海峡リスクはリスクオフ材料。"}
@@ -601,19 +600,26 @@ const regionMap={
   "ENERGY":{lat:26,lng:50}
 };
 
-const videoUrls={
-  sky:"https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&playsinline=1",
-  dw:"https://www.youtube.com/embed/GE_SfNVNyqk?autoplay=1&mute=1&controls=1&playsinline=1",
-  abc:"https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1&mute=1&controls=1&playsinline=1",
-  nbc:"https://www.youtube.com/embed/HpL5ZkN2u6o?autoplay=1&mute=1&controls=1&playsinline=1",
-  cspan:"https://www.youtube.com/embed/live_stream?channel=UCb--64Gl51jIEVE-GLDAVTg&autoplay=1&mute=1&controls=1&playsinline=1"
-};
+const videoUrls=[
+  "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&controls=1&playsinline=1",
+  "https://www.youtube.com/embed/GE_SfNVNyqk?autoplay=1&mute=1&controls=1&playsinline=1",
+  "https://www.youtube.com/embed/w_Ma8oQLmSM?autoplay=1&mute=1&controls=1&playsinline=1",
+  "https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1&mute=1&controls=1&playsinline=1"
+];
 
-function setVideo(type){
-  document.getElementById("videoFrame").src=videoUrls[type];
-  ["sky","dw","abc","nbc","cspan"].forEach(x=>{
-    document.getElementById("btn-"+x).classList.toggle("active",x===type);
-  });
+let currentVideoIndex=0;
+
+function setVideo(index){
+  currentVideoIndex=index;
+  document.getElementById("videoFrame").src=videoUrls[index]+"&reload="+Date.now();
+  for(let i=0;i<videoUrls.length;i++){
+    document.getElementById("videoBtn"+i).classList.toggle("active",i===index);
+  }
+}
+
+function autoRotateVideo(){
+  currentVideoIndex=(currentVideoIndex+1)%videoUrls.length;
+  setVideo(currentVideoIndex);
 }
 
 function getEventDate(e){
@@ -644,7 +650,6 @@ function isWithin24h(target){
 function renderHighImpact(){
   const list=document.getElementById("highImpactList");
   list.innerHTML="";
-
   [...highImpactEvents]
     .map(e=>({...e,target:getEventDate(e)}))
     .sort((a,b)=>a.target-b.target)
@@ -652,7 +657,6 @@ function renderHighImpact(){
       const cd=countdown(e.target);
       if(cd===null)return;
       const blink=isWithin24h(e.target)?"blink24":"";
-
       list.innerHTML+=`
         <div class="newsRow ${blink}" onclick="selectEvent(${i}, this)">
           <div class="dateCell">${e.date.slice(5)}</div>
@@ -662,24 +666,21 @@ function renderHighImpact(){
           <div>${e.forecast}</div>
           <div>${e.previous}</div>
           <div class="countCell ${blink?"redCount":""}">${cd}</div>
-        </div>
-      `;
+        </div>`;
     });
 }
 
-function selectEvent(index, el){
+function selectEvent(index,el){
   document.querySelectorAll(".newsRow").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
-
   const e=highImpactEvents[index];
   document.getElementById("eventDetail").innerHTML=`
-    <div class="eventDetailTitle">${e.currency} ${e.event}</div>
-    <div class="eventDetailText">
+    <div class="detailTitle">${e.currency} ${e.event}</div>
+    <div class="detailText">
       DATE ${e.date} / TIME ${e.time}<br>
       予想 ${e.forecast} / 前回 ${e.previous}<br>
-      GOLD IMPACT: ${e.detail}
-    </div>
-  `;
+      XAUUSD IMPACT: ${e.detail}
+    </div>`;
 }
 
 function renderCalendar(){
@@ -689,31 +690,16 @@ function renderCalendar(){
   const grid=document.getElementById("calendarGrid");
   document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
   grid.innerHTML="";
-
-  const eventDays=new Set(
-    highImpactEvents.map(e=>{
-      const d=new Date(e.date+"T00:00:00");
-      return d.getFullYear()===y&&d.getMonth()===m?d.getDate():null;
-    }).filter(Boolean)
-  );
-
-  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>{
-    grid.innerHTML+=`<div class="calHead">${h}</div>`;
-  });
-
+  const eventDays=new Set(highImpactEvents.map(e=>{
+    const d=new Date(e.date+"T00:00:00");
+    return d.getFullYear()===y&&d.getMonth()===m?d.getDate():null;
+  }).filter(Boolean));
+  ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>grid.innerHTML+=`<div class="calHead">${h}</div>`);
   const first=new Date(y,m,1);
   const last=new Date(y,m+1,0);
-
-  for(let i=0;i<first.getDay();i++){
-    grid.innerHTML+=`<div class="calDay"></div>`;
-  }
-
+  for(let i=0;i<first.getDay();i++)grid.innerHTML+=`<div class="calDay"></div>`;
   for(let d=1;d<=last.getDate();d++){
-    grid.innerHTML+=`
-      <div class="calDay ${d===now.getDate()?"today":""} ${eventDays.has(d)?"eventDot":""}">
-        ${d}
-      </div>
-    `;
+    grid.innerHTML+=`<div class="calDay ${d===now.getDate()?"today":""} ${eventDays.has(d)?"eventDot":""}">${d}</div>`;
   }
 }
 
@@ -734,8 +720,7 @@ function sessionHtml(name,time,isOpen,cd){
       ${name}<br>
       <span class="sessionTime">${time}</span><br>
       ${isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`}
-    </div>
-  `;
+    </div>`;
 }
 
 function getSessionState(now){
@@ -751,9 +736,6 @@ function updateSession(now){
   target.setHours(state.nextHour,0,0,0);
   if(target<=now)target.setDate(target.getDate()+1);
   const cd=countdown(target);
-
-  document.getElementById("topSession").textContent=state.open;
-
   if(sessionMarkers.asia){
     sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd),iconSize:[120,88]}));
     sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd),iconSize:[125,88]}));
@@ -764,31 +746,23 @@ function updateSession(now){
 function initMap(){
   map=L.map("map",{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,tap:false}).setView([20,10],2);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:5,minZoom:2}).addTo(map);
-
   sessionMarkers.us=L.marker([39,-98],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
   sessionMarkers.london=L.marker([51,-1],{icon:L.divIcon({className:"",html:"",iconSize:[125,88]})}).addTo(map);
   sessionMarkers.asia=L.marker([35,120],{icon:L.divIcon({className:"",html:"",iconSize:[120,88]})}).addTo(map);
-
   setTimeout(()=>map.invalidateSize(),300);
 }
 
 function triggerMapAlert(item){
   const r=regionMap[item.region];
   if(!r||!map)return;
-
   const point=L.marker([r.lat,r.lng],{
     icon:L.divIcon({className:"",html:`<div class="flashPoint"></div>`,iconSize:[24,24]})
   }).addTo(map);
-
   const popup=L.popup({closeButton:false,autoClose:false,className:""})
     .setLatLng([r.lat,r.lng])
     .setContent(`<div class="alertPopup"><b>BREAKING</b><br>${item.region}<br>${item.text}</div>`)
     .openOn(map);
-
-  setTimeout(()=>{
-    map.removeLayer(point);
-    map.closePopup(popup);
-  },15000);
+  setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},15000);
 }
 
 function renderHeadlines(){
@@ -800,20 +774,37 @@ function renderHeadlines(){
         <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
         <div class="headlineText">${h.text}</div>
       </div>
-    </div>
-  `).join("");
-
+    </div>`).join("");
   document.getElementById("headlineList").innerHTML=html;
+
+  const breaking=headlines.filter(h=>h.breaking);
+  const box=document.getElementById("breakingBox");
+  if(!breaking.length){
+    box.innerHTML=`<div class="noBreaking">NO BREAKING NEWS</div>`;
+  }else{
+    box.innerHTML=breaking.map((h,i)=>`
+      <div class="breakingItem" onclick="selectBreaking(${i}, this)">
+        <div><span class="breakingTime">${h.time||now}</span> <span class="breakingSource">${h.source}</span></div>
+        <div class="breakingText">${h.text}</div>
+      </div>`).join("");
+  }
 }
 
-function selectHeadline(index, el){
+function selectHeadline(index,el){
   document.querySelectorAll(".headlineItem").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
-
   const h=headlines[index];
-  if(h.breaking){
-    triggerMapAlert(h);
-  }
+  document.getElementById("headlineDetail").innerHTML=`
+    <div class="detailTitle">${h.source}</div>
+    <div class="detailText">${h.text}<br>XAUUSD IMPACT: ${h.detail}</div>`;
+  if(h.breaking)triggerMapAlert(h);
+}
+
+function selectBreaking(index,el){
+  document.querySelectorAll(".breakingItem").forEach(r=>r.classList.remove("selected"));
+  el.classList.add("selected");
+  const h=headlines.filter(x=>x.breaking)[index];
+  triggerMapAlert(h);
 }
 
 async function loadHeadlines(){
@@ -832,7 +823,6 @@ async function loadHeadlines(){
       }
     }
   }catch(e){}
-
   renderHeadlines();
 }
 
@@ -841,11 +831,14 @@ renderCalendar();
 renderHighImpact();
 updateClock();
 renderHeadlines();
+setVideo(0);
 
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(renderCalendar,30000);
 setInterval(loadHeadlines,5000);
+setInterval(()=>setVideo(currentVideoIndex),300000);
+setInterval(autoRotateVideo,900000);
 </script>
 
 </body>
