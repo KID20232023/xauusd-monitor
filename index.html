@@ -34,7 +34,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .breakingBox{height:118px;overflow-y:auto;padding-right:4px}
 .breakingItem{border-bottom:1px solid #181818;padding:8px 0;cursor:pointer}
 .breakingTime{color:var(--green);font-weight:900;font-size:12px}
-.breakingSource{color:var(--red);font-weight:900;font-size:12px;animation:redPulse 1s infinite}
+.breakingSource{color:var(--red);font-weight:900;font-size:12px}
 .breakingText{color:var(--text);font-size:12px;margin-top:4px}
 .noBreaking{color:var(--muted);font-size:13px;padding-top:18px}
 
@@ -71,7 +71,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .impactCell{color:var(--red);font-weight:900}
 .countCell{color:var(--gold);font-weight:900}
 .redCount{color:var(--red)!important}
-.blink24{animation:redPulse 1s infinite}
+.blinkRecent{animation:redPulse 1s infinite}
 
 .detailBox{height:82px;margin-top:8px;border-top:1px solid #181818;padding-top:8px;font-size:12px;color:var(--text);overflow-y:auto}
 .detailTitle{color:var(--gold);font-weight:900;margin-bottom:5px}
@@ -81,10 +81,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .headlineTop{display:grid;grid-template-columns:82px 96px 1fr;gap:8px;align-items:center}
 .headlineTime{color:var(--green);font-weight:900;font-size:11px}
 .headlineSource{color:var(--gold);font-weight:900}
-.headlineSource.breaking{color:var(--red);animation:redPulse 1s infinite}
+.headlineSource.breaking{color:var(--red)}
 .headlineText{color:var(--text);font-weight:700}
 
-.alertPopup{background:rgba(5,5,5,.92);border:1px solid rgba(255,45,45,.8);border-radius:8px;color:var(--text);padding:9px 12px;min-width:180px;box-shadow:0 0 22px rgba(255,45,45,.35)}
+.alertPopup{background:rgba(5,5,5,.92);border:1px solid rgba(255,45,45,.8);border-radius:8px;color:var(--text);padding:9px 12px;min-width:220px;box-shadow:0 0 22px rgba(255,45,45,.35)}
 .alertPopup b{color:var(--red)}
 .flashPoint{width:22px;height:22px;border-radius:50%;background:var(--red);box-shadow:0 0 25px var(--red);animation:mapFlash 1s infinite}
 @keyframes mapFlash{0%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.25}100%{transform:scale(1);opacity:1}}
@@ -208,6 +208,7 @@ const highImpactEvents=[
 
 let headlines=[];
 let seenBreakingIds=new Set();
+let activeAlerts=[];
 let map;
 let sessionMarkers={};
 
@@ -232,26 +233,11 @@ const regionMap={
 
 function toJapaneseSource(source){
   const map={
-    "FED":"FRB",
-    "POWELL":"パウエル",
-    "TRUMP":"トランプ",
-    "WHITE HOUSE":"ホワイトハウス",
-    "TREASURY":"米国債",
-    "DXY":"ドル指数",
-    "US10Y":"米10年債",
-    "MIDDLE EAST":"中東",
-    "IRAN":"イラン",
-    "ISRAEL":"イスラエル",
-    "UKRAINE":"ウクライナ",
-    "RUSSIA":"ロシア",
-    "TAIWAN":"台湾",
-    "CHINA":"中国",
-    "OIL":"原油",
-    "GOLD":"ゴールド",
-    "MARKET":"市場",
-    "US":"米国",
-    "ENERGY":"エネルギー",
-    "RSS":"RSS"
+    "FED":"FRB","POWELL":"パウエル","TRUMP":"トランプ","WHITE HOUSE":"ホワイトハウス",
+    "TREASURY":"米国債","DXY":"ドル指数","US10Y":"米10年債","MIDDLE EAST":"中東",
+    "IRAN":"イラン","ISRAEL":"イスラエル","UKRAINE":"ウクライナ","RUSSIA":"ロシア",
+    "TAIWAN":"台湾","CHINA":"中国","OIL":"原油","GOLD":"ゴールド","MARKET":"市場",
+    "US":"米国","ENERGY":"エネルギー","RSS":"RSS"
   };
   return map[source] || source;
 }
@@ -328,8 +314,18 @@ async function fetchRSS(feed){
   });
 }
 
+function clearActiveAlerts(){
+  if(!map)return;
+  activeAlerts.forEach(a=>{
+    if(a.marker) map.removeLayer(a.marker);
+    if(a.popup) map.closePopup(a.popup);
+  });
+  activeAlerts=[];
+}
+
 async function loadHeadlines(){
   let all=[];
+  clearActiveAlerts();
 
   for(const feed of RSS_FEEDS){
     try{
@@ -364,8 +360,7 @@ async function loadHeadlines(){
   }
 
   headlines.forEach(item=>{
-    if((item.isRecent||item.breaking)&&item.id&&!seenBreakingIds.has(item.id)){
-      seenBreakingIds.add(item.id);
+    if(item.isRecent){
       triggerMapAlert(item);
     }
   });
@@ -379,26 +374,26 @@ function renderRightSideRealtime(){
 
   const latestImportant =
     headlines.find(h=>h.isRecent&&h.breaking) ||
-    headlines.find(h=>h.breaking) ||
+    headlines.find(h=>h.isRecent) ||
     headlines[0];
 
-  if(latestImportant) updateMainDetail(latestImportant);
+  if(latestImportant) updateMainDetail(latestImportant,false);
 }
 
 function renderBreakingNews(){
   const box=document.getElementById("breakingBox");
 
   const nowItems=headlines
-    .filter(h=>h.isRecent||h.breaking)
+    .filter(h=>h.isRecent)
     .slice(0,6);
 
   if(!nowItems.length){
-    box.innerHTML=`<div class="noBreaking">現在の重要速報なし</div>`;
+    box.innerHTML=`<div class="noBreaking">発表から1時間以内の速報なし</div>`;
     return;
   }
 
   box.innerHTML=nowItems.map((h,i)=>`
-    <div class="breakingItem ${h.isRecent?"blink24":""}" onclick="selectNowAlert(${i}, this)">
+    <div class="breakingItem blinkRecent" onclick="selectNowAlert(${i}, this)">
       <div>
         <span class="breakingTime">${h.date} ${h.time}</span>
         <span class="breakingSource">${h.sourceJa}</span>
@@ -410,10 +405,10 @@ function renderBreakingNews(){
 
 function renderHeadlines(){
   const html=headlines.map((h,i)=>`
-    <div class="headlineItem ${h.isRecent?"blink24":""}" onclick="selectHeadline(${i}, this)">
+    <div class="headlineItem ${h.isRecent?"blinkRecent":""}" onclick="selectHeadline(${i}, this)">
       <div class="headlineTop">
         <div class="headlineTime">${h.date}<br>${h.time}</div>
-        <div class="headlineSource ${h.breaking?"breaking":""}">${h.sourceJa}</div>
+        <div class="headlineSource ${h.isRecent?"breaking":""}">${h.sourceJa}</div>
         <div class="headlineText">${h.text}</div>
       </div>
     </div>
@@ -422,7 +417,7 @@ function renderHeadlines(){
   document.getElementById("headlineList").innerHTML=html;
 }
 
-function updateMainDetail(item){
+function updateMainDetail(item,doFlash=true){
   document.getElementById("nowAlertContent").innerHTML=`
     <div class="alertTitle">${item.sourceJa}</div>
     <div class="alertText">
@@ -440,7 +435,7 @@ function updateMainDetail(item){
   document.getElementById("detailGold").textContent=item.detail||"XAUUSDへの影響を監視";
   document.getElementById("detailScenario").textContent="ニュース内容 → ドル・金利・リスクオフ反応を確認 → XAUUSDの方向を判断";
 
-  if(item.isRecent||item.breaking) triggerMapAlert(item);
+  if(doFlash&&item.isRecent) triggerMapAlert(item);
 }
 
 function selectHeadline(index,el){
@@ -460,16 +455,16 @@ function selectHeadline(index,el){
     </div>
   `;
 
-  updateMainDetail(h);
+  updateMainDetail(h,true);
 }
 
 function selectNowAlert(index,el){
   document.querySelectorAll(".breakingItem").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
 
-  const nowItems=headlines.filter(h=>h.isRecent||h.breaking).slice(0,6);
+  const nowItems=headlines.filter(h=>h.isRecent).slice(0,6);
   const h=nowItems[index];
-  updateMainDetail(h);
+  updateMainDetail(h,true);
 }
 
 function getEventDate(e){
@@ -501,7 +496,7 @@ function renderHighImpact(){
   [...highImpactEvents].map(e=>({...e,target:getEventDate(e)})).sort((a,b)=>a.target-b.target).forEach((e,i)=>{
     const cd=countdown(e.target);
     if(cd===null)return;
-    const blink=isWithin24h(e.target)?"blink24":"";
+    const blink=isWithin24h(e.target)?"blinkRecent":"";
     list.innerHTML+=`
       <div class="newsRow ${blink}" onclick="selectEvent(${i}, this)">
         <div class="dateCell">${e.date.slice(5)}</div>
@@ -539,8 +534,8 @@ function selectEvent(index,el){
     impact:"HIGH",
     date:e.date,
     time:e.time,
-    isRecent:true
-  });
+    isRecent:false
+  },false);
 }
 
 function renderCalendar(){
@@ -618,6 +613,8 @@ function initMap(){
 }
 
 function triggerMapAlert(item){
+  if(!item.isRecent)return;
+
   const r=regionMap[item.region];
   if(!r||!map)return;
 
@@ -627,10 +624,10 @@ function triggerMapAlert(item){
 
   const popup=L.popup({closeButton:false,autoClose:false,className:""})
     .setLatLng([r.lat,r.lng])
-    .setContent(`<div class="alertPopup"><b>速報</b><br>${item.regionJa||toJapaneseSource(item.region)}<br>${item.text}</div>`)
+    .setContent(`<div class="alertPopup"><b>発表から1時間以内</b><br>${item.regionJa||toJapaneseSource(item.region)}<br>${item.date} ${item.time}<br>${item.text}</div>`)
     .openOn(map);
 
-  setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},3600000);
+  activeAlerts.push({marker:point,popup:popup,timestamp:item.timestamp});
 }
 
 initMap();
