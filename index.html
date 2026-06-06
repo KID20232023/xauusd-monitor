@@ -4,459 +4,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XAUUSD WAR ROOM</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 :root{
-  --bg:#050505;
-  --panel:#0b0b0b;
-  --panel2:#101010;
-  --border:#202020;
-  --text:#8a8a8a;
-  --muted:#5f5f5f;
-  --gold:#b89b5e;
-  --green:#00ff88;
-  --red:#ff2d2d;
-  --white:#d8d8d8;
+  --bg:#050505;--panel:#0b0b0b;--panel2:#101010;--border:#202020;
+  --text:#8a8a8a;--muted:#5f5f5f;--gold:#b89b5e;--green:#00ff88;
+  --red:#ff2d2d;--white:#d8d8d8;
 }
-
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:var(--bg);
-  color:var(--text);
-}
-
-.wrap{
-  width:100vw;
-  height:100vh;
-  padding:8px;
-  display:grid;
-  grid-template-rows:150px 1fr 250px;
-  gap:8px;
-}
-
-.panel{
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px;
-  overflow:hidden;
-}
-
-.top{
-  display:grid;
-  grid-template-columns:28% 37% 35%;
-  gap:8px;
-}
-
-.label{
-  font-size:11px;
-  color:var(--text);
-  letter-spacing:1.3px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+.wrap{width:100vw;height:100vh;padding:8px;display:grid;grid-template-rows:150px 1fr 250px;gap:8px}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:10px;padding:10px;overflow:hidden}
+.top{display:grid;grid-template-columns:28% 37% 35%;gap:8px}
+.label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:800;margin-bottom:6px}
 .tvBox{height:120px;overflow:hidden}
-
-.clockCal{
-  display:grid;
-  grid-template-columns:36% 64%;
-  gap:10px;
-}
-
-.clock{
-  font-size:40px;
-  font-weight:900;
-  color:var(--green);
-  line-height:1;
-}
-
-.date{
-  margin-top:8px;
-  font-size:13px;
-}
-
-.monthTitle{
-  text-align:center;
-  font-size:12px;
-  font-weight:800;
-  margin-bottom:4px;
-}
-
-.calGrid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:2px;
-}
-
-.calHead,.calDay{
-  position:relative;
-  text-align:center;
-  font-size:10px;
-  color:var(--text);
-  padding:3px 0;
-}
-
+.clockCal{display:grid;grid-template-columns:36% 64%;gap:10px}
+.clock{font-size:40px;font-weight:900;color:var(--green);line-height:1}
+.date{margin-top:8px;font-size:13px}
+.monthTitle{text-align:center;font-size:12px;font-weight:800;margin-bottom:4px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.calHead,.calDay{position:relative;text-align:center;font-size:10px;color:var(--text);padding:3px 0}
 .calHead{color:var(--muted)}
+.today{background:rgba(255,45,45,.14);border-radius:5px}
+.eventDot::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:eventBlink 1.2s infinite}
+@keyframes eventBlink{0%{opacity:1}50%{opacity:.25}100%{opacity:1}}
 
-.today{
-  background:rgba(255,45,45,.14);
-  border-radius:5px;
-}
+.breakingBox{height:118px;overflow-y:auto;padding-right:4px}
+.breakingItem{border-bottom:1px solid #181818;padding:8px 0;cursor:pointer}
+.breakingTime{color:var(--green);font-weight:900;font-size:12px}
+.breakingSource{color:var(--red);font-weight:900;font-size:12px;animation:redPulse 1s infinite}
+.breakingText{color:var(--text);font-size:12px;margin-top:4px}
+.noBreaking{color:var(--muted);font-size:13px;padding-top:18px}
 
-.eventDot::after{
-  content:"";
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--gold);
-  box-shadow:0 0 8px var(--gold);
-  animation:eventBlink 1.2s infinite;
-}
-
-@keyframes eventBlink{
-  0%{opacity:1}
-  50%{opacity:.25}
-  100%{opacity:1}
-}
-
-.breakingBox{
-  height:118px;
-  overflow-y:auto;
-  padding-right:4px;
-}
-
-.breakingItem{
-  border-bottom:1px solid #181818;
-  padding:8px 0;
-  cursor:pointer;
-}
-
-.breakingTime{
-  color:var(--green);
-  font-weight:900;
-  font-size:12px;
-}
-
-.breakingSource{
-  color:var(--red);
-  font-weight:900;
-  font-size:12px;
-  animation:redPulse 1s infinite;
-}
-
-.breakingText{
-  color:var(--text);
-  font-size:12px;
-  margin-top:4px;
-}
-
-.noBreaking{
-  color:var(--muted);
-  font-size:13px;
-  padding-top:18px;
-}
-
-.main{
-  display:grid;
-  grid-template-columns:65% 35%;
-  gap:8px;
-  min-height:0;
-}
-
+.main{display:grid;grid-template-columns:65% 35%;gap:8px;min-height:0}
 .mapPanel{position:relative}
+.mapTitle{position:absolute;top:12px;left:14px;z-index:50;color:var(--text);font-size:13px;font-weight:800;letter-spacing:1px}
+#map{position:absolute;left:12px;right:12px;top:42px;bottom:12px;border:1px solid #171717;border-radius:10px;overflow:hidden;background:#050505}
+.leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
 
-.mapTitle{
-  position:absolute;
-  top:12px;
-  left:14px;
-  z-index:50;
-  color:var(--text);
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1px;
-}
+.sessionLabel{background:rgba(255,255,255,.025);border:1px solid rgba(160,160,160,.16);border-radius:6px;padding:5px 8px;font-size:12px;line-height:1.45;letter-spacing:.8px;text-align:center;min-width:112px;color:#6f6f6f}
+.sessionLabel.open{color:var(--white);border:1px solid rgba(220,220,220,.28)}
+.sessionTime,.sessionCountdown{color:var(--green);font-weight:900}
+.openText{color:var(--red);font-weight:900;animation:redPulse 1s infinite}
 
-#map{
-  position:absolute;
-  left:12px;
-  right:12px;
-  top:42px;
-  bottom:12px;
-  border:1px solid #171717;
-  border-radius:10px;
-  overflow:hidden;
-  background:#050505;
-}
+.alertDetailPanel{display:grid;grid-template-rows:34% 66%;gap:8px;min-height:0}
+.nowAlertBox,.eventDetailBox{background:rgba(255,255,255,.02);border:1px solid rgba(160,160,160,.16);border-radius:8px;padding:10px;overflow-y:auto}
+.alertTitle{color:var(--red);font-size:18px;font-weight:900;margin-bottom:8px}
+.alertText{color:var(--text);font-size:13px;line-height:1.5}
+.detailRow{display:flex;justify-content:space-between;border-bottom:1px solid #181818;padding:7px 0;font-size:12px}
+.detailRow span{color:var(--muted)}
+.detailRow b{color:var(--green)}
+.detailBlock{margin-top:12px;padding-top:10px;border-top:1px solid #181818;font-size:12px;line-height:1.5}
+.detailLabel{color:var(--gold);font-weight:900;margin-bottom:5px}
 
-.leaflet-control-attribution,
-.leaflet-control-zoom{display:none!important}
-
-.sessionLabel{
-  background:rgba(255,255,255,.025);
-  border:1px solid rgba(160,160,160,.16);
-  border-radius:6px;
-  padding:5px 8px;
-  font-size:12px;
-  line-height:1.45;
-  letter-spacing:.8px;
-  text-align:center;
-  min-width:112px;
-  color:#6f6f6f;
-}
-
-.sessionLabel.open{
-  color:var(--white);
-  border:1px solid rgba(220,220,220,.28);
-}
-
-.sessionTime,.sessionCountdown{
-  color:var(--green);
-  font-weight:900;
-}
-
-.openText{
-  color:var(--red);
-  font-weight:900;
-  animation:redPulse 1s infinite;
-}
-
-.alertDetailPanel{
-  display:grid;
-  grid-template-rows:34% 66%;
-  gap:8px;
-  min-height:0;
-}
-
-.nowAlertBox,
-.eventDetailBox{
-  background:rgba(255,255,255,.02);
-  border:1px solid rgba(160,160,160,.16);
-  border-radius:8px;
-  padding:10px;
-  overflow-y:auto;
-}
-
-.alertTitle{
-  color:var(--red);
-  font-size:18px;
-  font-weight:900;
-  margin-bottom:8px;
-}
-
-.alertText{
-  color:var(--text);
-  font-size:13px;
-  line-height:1.5;
-}
-
-.detailRow{
-  display:flex;
-  justify-content:space-between;
-  border-bottom:1px solid #181818;
-  padding:7px 0;
-  font-size:12px;
-}
-
-.detailRow span{
-  color:var(--muted);
-}
-
-.detailRow b{
-  color:var(--green);
-}
-
-.detailBlock{
-  margin-top:12px;
-  padding-top:10px;
-  border-top:1px solid #181818;
-  font-size:12px;
-  line-height:1.5;
-}
-
-.detailLabel{
-  color:var(--gold);
-  font-weight:900;
-  margin-bottom:5px;
-}
-
-.bottom{
-  display:grid;
-  grid-template-columns:52% 48%;
-  gap:8px;
-  min-height:0;
-}
-
+.bottom{display:grid;grid-template-columns:52% 48%;gap:8px;min-height:0}
 .newsPanel{overflow:hidden}
-
-.newsTable{
-  height:150px;
-  overflow-y:auto;
-  padding-right:4px;
-}
-
-.newsHead,.newsRow{
-  display:grid;
-  grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;
-  gap:8px;
-  align-items:center;
-}
-
-.newsHead{
-  padding:8px 0;
-  border-bottom:1px solid #1b1b1b;
-  font-size:11px;
-  color:var(--muted);
-  position:sticky;
-  top:0;
-  background:#0b0b0b;
-  z-index:5;
-}
-
-.newsRow{
-  padding:8px 0;
-  border-bottom:1px solid #181818;
-  font-size:12px;
-  cursor:pointer;
-}
-
-.newsRow:hover,
-.newsRow.selected,
-.headlineItem:hover,
-.headlineItem.selected,
-.breakingItem:hover,
-.breakingItem.selected{
-  background:rgba(184,155,94,.08);
-}
-
-.dateCell,.timeCell{
-  color:var(--green);
-  font-weight:900;
-}
-
-.eventCell{
-  font-weight:800;
-  color:var(--text);
-}
-
-.impactCell{
-  color:var(--red);
-  font-weight:900;
-}
-
-.countCell{
-  color:var(--gold);
-  font-weight:900;
-}
-
+.newsTable{height:150px;overflow-y:auto;padding-right:4px}
+.newsHead,.newsRow{display:grid;grid-template-columns:68px 52px 1fr 62px 64px 64px 88px;gap:8px;align-items:center}
+.newsHead{padding:8px 0;border-bottom:1px solid #1b1b1b;font-size:11px;color:var(--muted);position:sticky;top:0;background:#0b0b0b;z-index:5}
+.newsRow{padding:8px 0;border-bottom:1px solid #181818;font-size:12px;cursor:pointer}
+.newsRow:hover,.newsRow.selected,.headlineItem:hover,.headlineItem.selected,.breakingItem:hover,.breakingItem.selected{background:rgba(184,155,94,.08)}
+.dateCell,.timeCell{color:var(--green);font-weight:900}
+.eventCell{font-weight:800;color:var(--text)}
+.impactCell{color:var(--red);font-weight:900}
+.countCell{color:var(--gold);font-weight:900}
 .redCount{color:var(--red)!important}
-
 .blink24{animation:redPulse 1s infinite}
 
-.detailBox{
-  height:82px;
-  margin-top:8px;
-  border-top:1px solid #181818;
-  padding-top:8px;
-  font-size:12px;
-  color:var(--text);
-  overflow-y:auto;
-}
+.detailBox{height:82px;margin-top:8px;border-top:1px solid #181818;padding-top:8px;font-size:12px;color:var(--text);overflow-y:auto}
+.detailTitle{color:var(--gold);font-weight:900;margin-bottom:5px}
+.detailText{color:var(--text);line-height:1.45}
+.headlineScroll{height:220px;overflow-y:auto;padding-right:4px}
+.headlineItem{border-bottom:1px solid #181818;padding:7px 0;font-size:12px;cursor:pointer}
+.headlineTop{display:grid;grid-template-columns:56px 96px 1fr;gap:8px;align-items:center}
+.headlineTime{color:var(--green);font-weight:900}
+.headlineSource{color:var(--gold);font-weight:900}
+.headlineSource.breaking{color:var(--red);animation:redPulse 1s infinite}
+.headlineText{color:var(--text);font-weight:700}
 
-.detailTitle{
-  color:var(--gold);
-  font-weight:900;
-  margin-bottom:5px;
-}
-
-.detailText{
-  color:var(--text);
-  line-height:1.45;
-}
-
-.headlineScroll{
-  height:220px;
-  overflow-y:auto;
-  padding-right:4px;
-}
-
-.headlineItem{
-  border-bottom:1px solid #181818;
-  padding:7px 0;
-  font-size:12px;
-  cursor:pointer;
-}
-
-.headlineTop{
-  display:grid;
-  grid-template-columns:56px 96px 1fr;
-  gap:8px;
-  align-items:center;
-}
-
-.headlineTime{
-  color:var(--green);
-  font-weight:900;
-}
-
-.headlineSource{
-  color:var(--gold);
-  font-weight:900;
-}
-
-.headlineSource.breaking{
-  color:var(--red);
-  animation:redPulse 1s infinite;
-}
-
-.headlineText{
-  color:var(--text);
-  font-weight:700;
-}
-
-.alertPopup{
-  background:rgba(5,5,5,.92);
-  border:1px solid rgba(255,45,45,.8);
-  border-radius:8px;
-  color:var(--text);
-  padding:9px 12px;
-  min-width:180px;
-  box-shadow:0 0 22px rgba(255,45,45,.35);
-}
-
+.alertPopup{background:rgba(5,5,5,.92);border:1px solid rgba(255,45,45,.8);border-radius:8px;color:var(--text);padding:9px 12px;min-width:180px;box-shadow:0 0 22px rgba(255,45,45,.35)}
 .alertPopup b{color:var(--red)}
-
-.flashPoint{
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  background:var(--red);
-  box-shadow:0 0 25px var(--red);
-  animation:mapFlash 1s infinite;
-}
-
-@keyframes mapFlash{
-  0%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.8);opacity:.25}
-  100%{transform:scale(1);opacity:1}
-}
-
-@keyframes redPulse{
-  0%{opacity:1;text-shadow:0 0 5px var(--red)}
-  50%{opacity:.25;text-shadow:0 0 20px var(--red)}
-  100%{opacity:1;text-shadow:0 0 5px var(--red)}
-}
-
+.flashPoint{width:22px;height:22px;border-radius:50%;background:var(--red);box-shadow:0 0 25px var(--red);animation:mapFlash 1s infinite}
+@keyframes mapFlash{0%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.25}100%{transform:scale(1);opacity:1}}
+@keyframes redPulse{0%{opacity:1;text-shadow:0 0 5px var(--red)}50%{opacity:.25;text-shadow:0 0 20px var(--red)}100%{opacity:1;text-shadow:0 0 5px var(--red)}}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#090909}
 ::-webkit-scrollbar-thumb{background:#2b2b2b;border-radius:10px}
@@ -467,20 +98,13 @@ html,body{
 <div class="wrap">
 
   <div class="top">
-
     <div class="panel">
       <div class="label">XAUUSD</div>
       <div class="tvBox">
         <div class="tradingview-widget-container">
           <div class="tradingview-widget-container__widget"></div>
           <script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
-          {
-            "symbol":"OANDA:XAUUSD",
-            "width":"100%",
-            "isTransparent":true,
-            "colorTheme":"dark",
-            "locale":"ja"
-          }
+          {"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}
           </script>
         </div>
       </div>
@@ -492,7 +116,6 @@ html,body{
         <div class="clock" id="clock">00:00:00</div>
         <div class="date" id="dateText">----</div>
       </div>
-
       <div>
         <div class="monthTitle" id="monthTitle">----</div>
         <div class="calGrid" id="calendarGrid"></div>
@@ -500,14 +123,12 @@ html,body{
     </div>
 
     <div class="panel">
-      <div class="label">BREAKING NEWS</div>
+      <div class="label">速報</div>
       <div class="breakingBox" id="breakingBox"></div>
     </div>
-
   </div>
 
   <div class="main">
-
     <div class="panel mapPanel">
       <div class="mapTitle">WORLD MONITOR</div>
       <div id="map"></div>
@@ -515,70 +136,42 @@ html,body{
 
     <div class="panel alertDetailPanel">
       <div class="nowAlertBox">
-        <div class="label">NOW ALERT</div>
+        <div class="label">現在の重要情報</div>
         <div id="nowAlertContent">
-          <div class="alertTitle">MIDDLE EAST</div>
-          <div class="alertText">
-            Regional headlines remain important for safe-haven demand.
-          </div>
+          <div class="alertTitle">RSS取得待機中</div>
+          <div class="alertText">リアルタイムニュースを取得中です。</div>
         </div>
       </div>
 
       <div class="eventDetailBox">
-        <div class="label">EVENT DETAIL</div>
-
-        <div class="detailRow">
-          <span>TIME</span>
-          <b id="detailTime">--:-- JST</b>
-        </div>
-
-        <div class="detailRow">
-          <span>SOURCE</span>
-          <b id="detailSource">RSS / NEWS</b>
-        </div>
-
-        <div class="detailRow">
-          <span>REGION</span>
-          <b id="detailRegion">MIDDLE EAST</b>
-        </div>
-
-        <div class="detailRow">
-          <span>IMPACT</span>
-          <b class="red" id="detailImpact">HIGH</b>
-        </div>
+        <div class="label">詳細説明</div>
+        <div class="detailRow"><span>時間</span><b id="detailTime">--:-- JST</b></div>
+        <div class="detailRow"><span>情報元</span><b id="detailSource">RSS</b></div>
+        <div class="detailRow"><span>地域</span><b id="detailRegion">---</b></div>
+        <div class="detailRow"><span>重要度</span><b class="red" id="detailImpact">監視</b></div>
 
         <div class="detailBlock">
-          <div class="detailLabel">EVENT</div>
-          <div id="detailEvent">Regional headlines remain important for safe-haven demand.</div>
+          <div class="detailLabel">内容</div>
+          <div id="detailEvent">ニュースを押すと内容を表示します。</div>
         </div>
-
         <div class="detailBlock">
-          <div class="detailLabel">XAUUSD</div>
-          <div id="detailGold">BULLISH / Risk Off → Gold Demand ↑</div>
+          <div class="detailLabel">ゴールドへの影響</div>
+          <div id="detailGold">XAUUSDへの影響を表示します。</div>
         </div>
-
         <div class="detailBlock">
-          <div class="detailLabel">SCENARIO</div>
-          <div id="detailScenario">地政学リスク上昇 → 安全資産買い → XAUUSD上昇警戒。</div>
+          <div class="detailLabel">想定シナリオ</div>
+          <div id="detailScenario">ドル・金利・リスクオフ反応を確認します。</div>
         </div>
       </div>
     </div>
-
   </div>
 
   <div class="bottom">
-
     <div class="panel newsPanel">
       <div class="label">HIGH IMPACT NEWS</div>
       <div class="newsTable">
         <div class="newsHead">
-          <div>DATE</div>
-          <div>TIME</div>
-          <div>EVENT</div>
-          <div>IMPACT</div>
-          <div>予想</div>
-          <div>前回</div>
-          <div>COUNT</div>
+          <div>DATE</div><div>TIME</div><div>EVENT</div><div>IMPACT</div><div>予想</div><div>前回</div><div>COUNT</div>
         </div>
         <div id="highImpactList"></div>
       </div>
@@ -589,14 +182,13 @@ html,body{
     </div>
 
     <div class="panel">
-      <div class="label">LIVE HEADLINES / SPEECH ALERT</div>
+      <div class="label">リアルタイム速報 / 発言速報</div>
       <div class="headlineScroll" id="headlineList"></div>
       <div class="detailBox" id="headlineDetail">
         <div class="detailTitle">HEADLINE DETAIL</div>
         <div class="detailText">ニュースを押すと説明を表示します。</div>
       </div>
     </div>
-
   </div>
 
 </div>
@@ -605,12 +197,7 @@ html,body{
 
 <script>
 const highImpactEvents=[
-  {date:"2026-06-03",time:"21:15",currency:"USD",event:"ADP Employment Change",impact:"HIGH",forecast:"115K",previous:"102K",detail:"ADP雇用統計。NFP前の雇用先行指標。強ければドル買い・金売り圧力、弱ければ金買い材料。"},
-  {date:"2026-06-03",time:"22:45",currency:"USD",event:"S&P Global Services PMI",impact:"HIGH",forecast:"52.3",previous:"51.6",detail:"米サービス業PMI。景況感が強いと利下げ後退、金には重し。"},
-  {date:"2026-06-03",time:"23:00",currency:"USD",event:"ISM Services PMI",impact:"HIGH",forecast:"50.8",previous:"51.6",detail:"ISM非製造業。米景気・インフレ圧力を見る重要指標。XAUUSDは急変動しやすい。"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Non-Farm Payrolls",impact:"HIGH",forecast:"138K",previous:"177K",detail:"米雇用統計NFP。強いとドル高・金売り、弱いと金買いになりやすい。"},
-  {date:"2026-06-05",time:"21:30",currency:"USD",event:"Unemployment Rate",impact:"HIGH",forecast:"3.9%",previous:"3.9%",detail:"失業率。悪化なら利下げ観測が強まり、金買い材料。"},
-  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"コアCPI。FRB政策に直結。予想上振れは金売り、下振れは金買いになりやすい。"},
+  {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"コアCPI。FRB政策に直結。予想上振れはドル高・金売り、下振れはドル安・金買いになりやすい。"},
   {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%",detail:"CPI前年比。インフレトレンド確認。金利見通しに影響。"},
   {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%",detail:"生産者物価指数。CPIへの先行材料。"},
   {date:"2026-06-18",time:"03:00",currency:"USD",event:"FOMC Rate Decision",impact:"HIGH",forecast:"4.50%",previous:"4.50%",detail:"FOMC政策金利。声明とドットチャートでXAUUSDが大きく動きやすい。"},
@@ -618,28 +205,134 @@ const highImpactEvents=[
   {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%",detail:"FRBが重視するインフレ指標。政策判断に影響。"}
 ];
 
-let headlines=[
-  {id:"h1",source:"FED",region:"FED",text:"Fed speaker comments monitored for rate-cut timing.",breaking:false,detail:"FRB高官発言。利下げ時期・インフレ認識に注目。金利低下方向なら金買い材料。"},
-  {id:"h2",source:"POWELL",region:"FED",text:"Powell remarks remain critical for rate expectations.",breaking:false,detail:"パウエル発言。タカ派なら金売り、ハト派なら金買いに反応しやすい。"},
-  {id:"h3",source:"TRUMP",region:"US",text:"Trump comments monitored for tariff and dollar impact.",breaking:false,detail:"関税・ドル・地政学発言は金の安全資産需要に影響。"},
-  {id:"h4",source:"WHITE HOUSE",region:"US",text:"US administration comments watched for geopolitical risk.",breaking:false,detail:"ホワイトハウス発言。中東・制裁・軍事関連は金買い材料になりやすい。"},
-  {id:"h5",source:"TREASURY",region:"US",text:"Treasury yield move remains key driver for gold.",breaking:false,detail:"米金利上昇は金売り、低下は金買い要因。"},
-  {id:"h6",source:"DXY",region:"US",text:"Dollar strength remains a key pressure factor for gold.",breaking:false,detail:"DXY上昇はXAUUSD下落圧力。"},
-  {id:"h7",source:"US10Y",region:"US",text:"Treasury yield movement watched closely by gold traders.",breaking:false,detail:"米10年債利回りは金価格と逆相関になりやすい。"},
-  {id:"h8",source:"MIDDLE EAST",region:"MIDDLE EAST",text:"Regional headlines remain important for safe-haven demand.",breaking:true,detail:"中東リスクは安全資産需要を高め、金買い材料になりやすい。"},
-  {id:"h9",source:"UKRAINE",region:"UKRAINE",text:"Ukraine conflict headlines remain on gold desk watch.",breaking:false,detail:"ウクライナ情勢はエネルギー・地政学リスクに影響。"},
-  {id:"h10",source:"TAIWAN",region:"TAIWAN",text:"Taiwan Strait risk remains on geopolitical watchlist.",breaking:false,detail:"台湾海峡リスクはリスクオフ材料。"}
+let headlines=[];
+
+const RSS_FEEDS=[
+  {source:"INVESTING LIVE",url:"https://www.investinglive.com/feed/"},
+  {source:"YAHOO FINANCE",url:"https://finance.yahoo.com/news/rssindex"},
+  {source:"BBC WORLD",url:"http://feeds.bbci.co.uk/news/world/rss.xml"}
 ];
 
 const regionMap={
   "MIDDLE EAST":{lat:31,lng:35},
-  "RED SEA":{lat:19,lng:38},
+  "IRAN":{lat:32,lng:53},
+  "ISRAEL":{lat:31.5,lng:35},
   "UKRAINE":{lat:49,lng:32},
   "TAIWAN":{lat:23.7,lng:121},
+  "CHINA":{lat:35,lng:103},
+  "RUSSIA":{lat:55,lng:90},
   "US":{lat:39,lng:-98},
   "FED":{lat:38.9,lng:-77},
   "ENERGY":{lat:26,lng:50}
 };
+
+function classifyNews(title){
+  const t=(title||"").toLowerCase();
+
+  if(t.includes("powell")) return {region:"FED",source:"POWELL",impact:"HIGH"};
+  if(t.includes("fed")||t.includes("federal reserve")||t.includes("fomc")) return {region:"FED",source:"FED",impact:"HIGH"};
+  if(t.includes("trump")||t.includes("tariff")) return {region:"US",source:"TRUMP",impact:"HIGH"};
+  if(t.includes("white house")) return {region:"US",source:"WHITE HOUSE",impact:"HIGH"};
+  if(t.includes("treasury yield")||t.includes("10-year")||t.includes("us10y")) return {region:"US",source:"US10Y",impact:"WATCH"};
+  if(t.includes("dollar")||t.includes("dxy")) return {region:"US",source:"DXY",impact:"WATCH"};
+  if(t.includes("iran")) return {region:"IRAN",source:"IRAN",impact:"HIGH"};
+  if(t.includes("israel")||t.includes("gaza")||t.includes("middle east")||t.includes("missile")) return {region:"MIDDLE EAST",source:"MIDDLE EAST",impact:"HIGH"};
+  if(t.includes("ukraine")) return {region:"UKRAINE",source:"UKRAINE",impact:"HIGH"};
+  if(t.includes("russia")) return {region:"RUSSIA",source:"RUSSIA",impact:"HIGH"};
+  if(t.includes("taiwan")) return {region:"TAIWAN",source:"TAIWAN",impact:"HIGH"};
+  if(t.includes("china")) return {region:"CHINA",source:"CHINA",impact:"WATCH"};
+  if(t.includes("oil")||t.includes("energy")) return {region:"ENERGY",source:"OIL",impact:"WATCH"};
+  if(t.includes("gold")||t.includes("xauusd")) return {region:"US",source:"GOLD",impact:"WATCH"};
+
+  return {region:"US",source:"MARKET",impact:"WATCH"};
+}
+
+function buildJapaneseImpact(item){
+  if(item.region==="IRAN"||item.region==="ISRAEL"||item.region==="MIDDLE EAST"){
+    return "中東リスク関連です。緊張が高まるとリスクオフになり、安全資産買いでXAUUSDは上昇しやすくなります。";
+  }
+  if(item.region==="FED"){
+    return "FRB関連ニュースです。利下げ後退なら金売り、利下げ期待なら金買いになりやすいです。";
+  }
+  if(item.source==="DXY"){
+    return "ドル指数関連です。DXY上昇はXAUUSDの下落圧力、DXY下落はXAUUSDの上昇材料です。";
+  }
+  if(item.source==="US10Y"){
+    return "米10年債利回り関連です。利回り上昇は金に重く、利回り低下は金に追い風です。";
+  }
+  if(item.region==="UKRAINE"||item.region==="TAIWAN"||item.region==="RUSSIA"||item.region==="CHINA"){
+    return "地政学リスク関連です。緊張が高まると安全資産需要でXAUUSDが反応しやすいです。";
+  }
+  return "市場関連ニュースです。ドル・金利・地政学リスクへの波及を確認してください。";
+}
+
+async function fetchRSS(feed){
+  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feed.url);
+  const res=await fetch(api);
+  if(!res.ok) throw new Error("RSS取得失敗");
+  const data=await res.json();
+  if(!data.items) return [];
+
+  return data.items.slice(0,10).map(item=>{
+    const cls=classifyNews(item.title||"");
+    const d=item.pubDate?new Date(item.pubDate):new Date();
+
+    return{
+      id:item.guid||item.link||item.title,
+      time:d.toLocaleTimeString("ja-JP",{hour12:false}),
+      date:d.toLocaleDateString("ja-JP"),
+      source:cls.source,
+      region:cls.region,
+      text:item.title||"No title",
+      link:item.link||"",
+      breaking:cls.impact==="HIGH",
+      impact:cls.impact,
+      detail:buildJapaneseImpact(cls)
+    };
+  });
+}
+
+async function loadHeadlines(){
+  let all=[];
+
+  for(const feed of RSS_FEEDS){
+    try{
+      const items=await fetchRSS(feed);
+      all=all.concat(items);
+    }catch(e){
+      console.log(feed.source+" RSS error",e);
+    }
+  }
+
+  headlines=all
+    .filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i)
+    .slice(0,30);
+
+  if(!headlines.length){
+    headlines=[
+      {
+        id:"rss-error",
+        time:new Date().toLocaleTimeString("ja-JP",{hour12:false}),
+        source:"RSS",
+        region:"US",
+        text:"RSS取得待機中、またはCORS/API制限で取得できていません。",
+        breaking:false,
+        impact:"WATCH",
+        detail:"RSS取得が失敗している可能性があります。api.rss2json.comの制限、またはRSS側の制限を確認してください。"
+      }
+    ];
+  }
+
+  headlines.forEach(item=>{
+    if(item.breaking&&item.id&&!seenBreakingIds.has(item.id)){
+      seenBreakingIds.add(item.id);
+      triggerMapAlert(item);
+      updateMainDetail(item);
+    }
+  });
+
+  renderHeadlines();
+}
 
 function getEventDate(e){
   const [y,m,d]=e.date.split("-").map(Number);
@@ -656,9 +349,7 @@ function countdown(target){
   const h=Math.floor((t%86400)/3600);
   const m=Math.floor((t%3600)/60);
   const s=t%60;
-  return d>0
-    ?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
-    :`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return d>0?`${d}D ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`:`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 function isWithin24h(target){
@@ -669,43 +360,44 @@ function isWithin24h(target){
 function renderHighImpact(){
   const list=document.getElementById("highImpactList");
   list.innerHTML="";
-  [...highImpactEvents]
-    .map(e=>({...e,target:getEventDate(e)}))
-    .sort((a,b)=>a.target-b.target)
-    .forEach((e,i)=>{
-      const cd=countdown(e.target);
-      if(cd===null)return;
-      const blink=isWithin24h(e.target)?"blink24":"";
-      list.innerHTML+=`
-        <div class="newsRow ${blink}" onclick="selectEvent(${i}, this)">
-          <div class="dateCell">${e.date.slice(5)}</div>
-          <div class="timeCell">${e.time}</div>
-          <div class="eventCell">${e.currency} ${e.event}</div>
-          <div class="impactCell">${e.impact}</div>
-          <div>${e.forecast}</div>
-          <div>${e.previous}</div>
-          <div class="countCell ${blink?"redCount":""}">${cd}</div>
-        </div>`;
-    });
+  [...highImpactEvents].map(e=>({...e,target:getEventDate(e)})).sort((a,b)=>a.target-b.target).forEach((e,i)=>{
+    const cd=countdown(e.target);
+    if(cd===null)return;
+    const blink=isWithin24h(e.target)?"blink24":"";
+    list.innerHTML+=`
+      <div class="newsRow ${blink}" onclick="selectEvent(${i}, this)">
+        <div class="dateCell">${e.date.slice(5)}</div>
+        <div class="timeCell">${e.time}</div>
+        <div class="eventCell">${e.currency} ${e.event}</div>
+        <div class="impactCell">${e.impact}</div>
+        <div>${e.forecast}</div>
+        <div>${e.previous}</div>
+        <div class="countCell ${blink?"redCount":""}">${cd}</div>
+      </div>`;
+  });
 }
 
 function selectEvent(index,el){
   document.querySelectorAll(".newsRow").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
   const e=highImpactEvents[index];
+
   document.getElementById("eventDetail").innerHTML=`
     <div class="detailTitle">${e.currency} ${e.event}</div>
     <div class="detailText">
       DATE ${e.date} / TIME ${e.time}<br>
       予想 ${e.forecast} / 前回 ${e.previous}<br>
-      XAUUSD IMPACT: ${e.detail}
+      XAUUSD影響：${e.detail}
     </div>`;
+
   updateMainDetail({
     source:e.currency,
     region:"US",
     text:e.event,
     detail:e.detail,
-    breaking:true
+    breaking:true,
+    impact:"HIGH",
+    time:e.time
   });
 }
 
@@ -716,10 +408,12 @@ function renderCalendar(){
   const grid=document.getElementById("calendarGrid");
   document.getElementById("monthTitle").textContent=`${y} / ${String(m+1).padStart(2,"0")}`;
   grid.innerHTML="";
+
   const eventDays=new Set(highImpactEvents.map(e=>{
     const d=new Date(e.date+"T00:00:00");
     return d.getFullYear()===y&&d.getMonth()===m?d.getDate():null;
   }).filter(Boolean));
+
   ["SUN","MON","TUE","WED","THU","FRI","SAT"].forEach(h=>grid.innerHTML+=`<div class="calHead">${h}</div>`);
   const first=new Date(y,m,1);
   const last=new Date(y,m+1,0);
@@ -740,20 +434,26 @@ let map;
 let sessionMarkers={};
 let seenBreakingIds=new Set();
 
-function sessionHtml(name,time,isOpen,cd){
-  return `
+function sessionHtml(name,time,isOpen,cd,isWeekend){
+  return`
     <div class="sessionLabel ${isOpen?"open":""}">
       ${name}<br>
       <span class="sessionTime">${time}</span><br>
-      ${isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`}
+      ${isWeekend?`CLOSED<br><span class="sessionCountdown">WEEKEND</span>`:(isOpen?`<span class="openText">● OPEN</span><br><span class="sessionCountdown">${cd}</span>`:`CLOSED`)}
     </div>`;
 }
 
 function getSessionState(now){
+  const day=now.getDay();
   const h=now.getHours();
-  if(h>=7&&h<15)return{open:"ASIA",nextHour:15};
-  if(h>=15&&h<21)return{open:"LONDON",nextHour:21};
-  return{open:"US",nextHour:7};
+
+  if(day===0||day===6){
+    return{open:"CLOSED",nextHour:7,isWeekend:true};
+  }
+
+  if(h>=7&&h<15)return{open:"ASIA",nextHour:15,isWeekend:false};
+  if(h>=15&&h<21)return{open:"LONDON",nextHour:21,isWeekend:false};
+  return{open:"US",nextHour:7,isWeekend:false};
 }
 
 function updateSession(now){
@@ -761,11 +461,12 @@ function updateSession(now){
   const target=new Date(now);
   target.setHours(state.nextHour,0,0,0);
   if(target<=now)target.setDate(target.getDate()+1);
-  const cd=countdown(target);
+  const cd=countdown(target)||"--:--";
+
   if(sessionMarkers.asia){
-    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd),iconSize:[120,88]}));
-    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd),iconSize:[125,88]}));
-    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",state.open==="US",cd),iconSize:[120,88]}));
+    sessionMarkers.asia.setIcon(L.divIcon({className:"",html:sessionHtml("ASIA","07:00-15:00",state.open==="ASIA",cd,state.isWeekend),iconSize:[120,88]}));
+    sessionMarkers.london.setIcon(L.divIcon({className:"",html:sessionHtml("LONDON","15:00-21:00",state.open==="LONDON",cd,state.isWeekend),iconSize:[125,88]}));
+    sessionMarkers.us.setIcon(L.divIcon({className:"",html:sessionHtml("US","21:00-06:00",state.open==="US",cd,state.isWeekend),iconSize:[120,88]}));
   }
 }
 
@@ -781,55 +482,57 @@ function initMap(){
 function triggerMapAlert(item){
   const r=regionMap[item.region];
   if(!r||!map)return;
+
   const point=L.marker([r.lat,r.lng],{
     icon:L.divIcon({className:"",html:`<div class="flashPoint"></div>`,iconSize:[24,24]})
   }).addTo(map);
+
   const popup=L.popup({closeButton:false,autoClose:false,className:""})
     .setLatLng([r.lat,r.lng])
-    .setContent(`<div class="alertPopup"><b>BREAKING</b><br>${item.region}<br>${item.text}</div>`)
+    .setContent(`<div class="alertPopup"><b>速報</b><br>${item.region}<br>${item.text}</div>`)
     .openOn(map);
+
   setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},15000);
 }
 
 function updateMainDetail(item){
-  const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
-
   document.getElementById("nowAlertContent").innerHTML=`
     <div class="alertTitle">${item.source}</div>
-    <div class="alertText">${item.text}</div>
+    <div class="alertText">${item.time||"--:--"}　${item.text}</div>
   `;
 
-  document.getElementById("detailTime").textContent=now+" JST";
-  document.getElementById("detailSource").textContent=item.source;
-  document.getElementById("detailRegion").textContent=item.region;
-  document.getElementById("detailImpact").textContent=item.breaking?"HIGH":"WATCH";
-  document.getElementById("detailEvent").textContent=item.text;
-  document.getElementById("detailGold").textContent=item.breaking?"BULLISH / Risk Off → Gold Demand ↑":"WATCH";
-  document.getElementById("detailScenario").textContent=item.detail || "XAUUSDに影響する可能性があるため監視。";
+  document.getElementById("detailTime").textContent=(item.time||"--:--")+" JST";
+  document.getElementById("detailSource").textContent=item.source||"RSS";
+  document.getElementById("detailRegion").textContent=item.region||"不明";
+  document.getElementById("detailImpact").textContent=item.impact||"監視";
+  document.getElementById("detailEvent").textContent=item.text||"ニュースなし";
+  document.getElementById("detailGold").textContent=item.detail||"XAUUSDへの影響を監視";
+  document.getElementById("detailScenario").textContent="ニュース内容 → ドル・金利・リスクオフ反応を確認 → XAUUSDの方向を判断";
 
-  if(item.breaking) triggerMapAlert(item);
+  if(item.breaking)triggerMapAlert(item);
 }
 
 function renderHeadlines(){
-  const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
   const html=headlines.map((h,i)=>`
     <div class="headlineItem" onclick="selectHeadline(${i}, this)">
       <div class="headlineTop">
-        <div class="headlineTime">${h.time||now}</div>
+        <div class="headlineTime">${h.time}</div>
         <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
         <div class="headlineText">${h.text}</div>
       </div>
     </div>`).join("");
+
   document.getElementById("headlineList").innerHTML=html;
 
-  const breaking=headlines.filter(h=>h.breaking);
+  const breaking=headlines.filter(h=>h.breaking).slice(0,5);
   const box=document.getElementById("breakingBox");
+
   if(!breaking.length){
-    box.innerHTML=`<div class="noBreaking">NO BREAKING NEWS</div>`;
+    box.innerHTML=`<div class="noBreaking">現在の重要速報なし</div>`;
   }else{
     box.innerHTML=breaking.map((h,i)=>`
       <div class="breakingItem" onclick="selectBreaking(${i}, this)">
-        <div><span class="breakingTime">${h.time||now}</span> <span class="breakingSource">${h.source}</span></div>
+        <div><span class="breakingTime">${h.time}</span> <span class="breakingSource">${h.source}</span></div>
         <div class="breakingText">${h.text}</div>
       </div>`).join("");
   }
@@ -838,51 +541,39 @@ function renderHeadlines(){
 function selectHeadline(index,el){
   document.querySelectorAll(".headlineItem").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
+
   const h=headlines[index];
+
   document.getElementById("headlineDetail").innerHTML=`
     <div class="detailTitle">${h.source}</div>
-    <div class="detailText">${h.text}<br>XAUUSD IMPACT: ${h.detail}</div>`;
+    <div class="detailText">
+      時間：${h.time} JST<br>
+      地域：${h.region}<br>
+      内容：${h.text}<br>
+      XAUUSD影響：${h.detail}
+    </div>`;
+
   updateMainDetail(h);
 }
 
 function selectBreaking(index,el){
   document.querySelectorAll(".breakingItem").forEach(r=>r.classList.remove("selected"));
   el.classList.add("selected");
+
   const h=headlines.filter(x=>x.breaking)[index];
   updateMainDetail(h);
-}
-
-async function loadHeadlines(){
-  try{
-    const res=await fetch("./headlines.json?t="+Date.now(),{cache:"no-store"});
-    if(res.ok){
-      const data=await res.json();
-      if(Array.isArray(data)){
-        data.forEach(item=>{
-          if(item.breaking&&item.id&&!seenBreakingIds.has(item.id)){
-            seenBreakingIds.add(item.id);
-            triggerMapAlert(item);
-            updateMainDetail(item);
-          }
-        });
-        headlines=data;
-      }
-    }
-  }catch(e){}
-  renderHeadlines();
 }
 
 initMap();
 renderCalendar();
 renderHighImpact();
 updateClock();
-renderHeadlines();
-updateMainDetail(headlines.find(h=>h.breaking) || headlines[0]);
+loadHeadlines();
 
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(renderCalendar,30000);
-setInterval(loadHeadlines,5000);
+setInterval(loadHeadlines,60000);
 </script>
 
 </body>
