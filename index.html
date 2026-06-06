@@ -19,6 +19,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .top{display:grid;grid-template-columns:28% 37% 35%;gap:8px}
 .label{font-size:11px;color:var(--text);letter-spacing:1.3px;font-weight:800;margin-bottom:6px}
 .tvBox{height:120px;overflow:hidden}
+
 .clockCal{display:grid;grid-template-columns:36% 64%;gap:10px}
 .clock{font-size:40px;font-weight:900;color:var(--green);line-height:1}
 .date{margin-top:8px;font-size:13px}
@@ -77,8 +78,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .detailText{color:var(--text);line-height:1.45}
 .headlineScroll{height:220px;overflow-y:auto;padding-right:4px}
 .headlineItem{border-bottom:1px solid #181818;padding:7px 0;font-size:12px;cursor:pointer}
-.headlineTop{display:grid;grid-template-columns:56px 96px 1fr;gap:8px;align-items:center}
-.headlineTime{color:var(--green);font-weight:900}
+.headlineTop{display:grid;grid-template-columns:82px 96px 1fr;gap:8px;align-items:center}
+.headlineTime{color:var(--green);font-weight:900;font-size:11px}
 .headlineSource{color:var(--gold);font-weight:900}
 .headlineSource.breaking{color:var(--red);animation:redPulse 1s infinite}
 .headlineText{color:var(--text);font-weight:700}
@@ -145,7 +146,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 
       <div class="eventDetailBox">
         <div class="label">詳細説明</div>
-        <div class="detailRow"><span>時間</span><b id="detailTime">--:-- JST</b></div>
+        <div class="detailRow"><span>日付・時間</span><b id="detailTime">--</b></div>
         <div class="detailRow"><span>情報元</span><b id="detailSource">RSS</b></div>
         <div class="detailRow"><span>地域</span><b id="detailRegion">---</b></div>
         <div class="detailRow"><span>重要度</span><b class="red" id="detailImpact">監視</b></div>
@@ -206,11 +207,14 @@ const highImpactEvents=[
 ];
 
 let headlines=[];
+let seenBreakingIds=new Set();
+let map;
+let sessionMarkers={};
 
 const RSS_FEEDS=[
-  {source:"INVESTING LIVE",url:"https://www.investinglive.com/feed/"},
-  {source:"YAHOO FINANCE",url:"https://finance.yahoo.com/news/rssindex"},
-  {source:"BBC WORLD",url:"http://feeds.bbci.co.uk/news/world/rss.xml"}
+  {source:"InvestingLive",url:"https://www.investinglive.com/feed/"},
+  {source:"Yahoo Finance",url:"https://finance.yahoo.com/news/rssindex"},
+  {source:"BBC World",url:"https://feeds.bbci.co.uk/news/world/rss.xml"}
 ];
 
 const regionMap={
@@ -225,6 +229,32 @@ const regionMap={
   "FED":{lat:38.9,lng:-77},
   "ENERGY":{lat:26,lng:50}
 };
+
+function toJapaneseSource(source){
+  const map={
+    "FED":"FRB",
+    "POWELL":"パウエル",
+    "TRUMP":"トランプ",
+    "WHITE HOUSE":"ホワイトハウス",
+    "TREASURY":"米国債",
+    "DXY":"ドル指数",
+    "US10Y":"米10年債",
+    "MIDDLE EAST":"中東",
+    "IRAN":"イラン",
+    "ISRAEL":"イスラエル",
+    "UKRAINE":"ウクライナ",
+    "RUSSIA":"ロシア",
+    "TAIWAN":"台湾",
+    "CHINA":"中国",
+    "OIL":"原油",
+    "GOLD":"ゴールド",
+    "MARKET":"市場",
+    "US":"米国",
+    "ENERGY":"エネルギー",
+    "RSS":"RSS"
+  };
+  return map[source] || source;
+}
 
 function classifyNews(title){
   const t=(title||"").toLowerCase();
@@ -249,10 +279,10 @@ function classifyNews(title){
 
 function buildJapaneseImpact(item){
   if(item.region==="IRAN"||item.region==="ISRAEL"||item.region==="MIDDLE EAST"){
-    return "中東リスク関連です。緊張が高まるとリスクオフになり、安全資産買いでXAUUSDは上昇しやすくなります。";
+    return "中東リスクです。緊張が高まるとリスクオフになり、安全資産買いでXAUUSDは上昇しやすくなります。";
   }
   if(item.region==="FED"){
-    return "FRB関連ニュースです。利下げ後退なら金売り、利下げ期待なら金買いになりやすいです。";
+    return "FRB関連です。利下げ後退なら金売り、利下げ期待なら金買いになりやすいです。";
   }
   if(item.source==="DXY"){
     return "ドル指数関連です。DXY上昇はXAUUSDの下落圧力、DXY下落はXAUUSDの上昇材料です。";
@@ -261,7 +291,7 @@ function buildJapaneseImpact(item){
     return "米10年債利回り関連です。利回り上昇は金に重く、利回り低下は金に追い風です。";
   }
   if(item.region==="UKRAINE"||item.region==="TAIWAN"||item.region==="RUSSIA"||item.region==="CHINA"){
-    return "地政学リスク関連です。緊張が高まると安全資産需要でXAUUSDが反応しやすいです。";
+    return "地政学リスクです。緊張が高まると安全資産需要でXAUUSDが反応しやすいです。";
   }
   return "市場関連ニュースです。ドル・金利・地政学リスクへの波及を確認してください。";
 }
@@ -270,20 +300,26 @@ async function fetchRSS(feed){
   const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feed.url);
   const res=await fetch(api);
   if(!res.ok) throw new Error("RSS取得失敗");
+
   const data=await res.json();
   if(!data.items) return [];
 
-  return data.items.slice(0,10).map(item=>{
+  return data.items.slice(0,12).map(item=>{
     const cls=classifyNews(item.title||"");
     const d=item.pubDate?new Date(item.pubDate):new Date();
+    const ageMs=Date.now()-d.getTime();
 
     return{
       id:item.guid||item.link||item.title,
-      time:d.toLocaleTimeString("ja-JP",{hour12:false}),
       date:d.toLocaleDateString("ja-JP"),
+      time:d.toLocaleTimeString("ja-JP",{hour12:false}),
+      timestamp:d.getTime(),
+      isRecent:ageMs>=0&&ageMs<=3600000,
       source:cls.source,
+      sourceJa:toJapaneseSource(cls.source),
       region:cls.region,
-      text:item.title||"No title",
+      regionJa:toJapaneseSource(cls.region),
+      text:item.title||"タイトルなし",
       link:item.link||"",
       breaking:cls.impact==="HIGH",
       impact:cls.impact,
@@ -306,32 +342,134 @@ async function loadHeadlines(){
 
   headlines=all
     .filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i)
-    .slice(0,30);
+    .sort((a,b)=>b.timestamp-a.timestamp)
+    .slice(0,40);
 
   if(!headlines.length){
-    headlines=[
-      {
-        id:"rss-error",
-        time:new Date().toLocaleTimeString("ja-JP",{hour12:false}),
-        source:"RSS",
-        region:"US",
-        text:"RSS取得待機中、またはCORS/API制限で取得できていません。",
-        breaking:false,
-        impact:"WATCH",
-        detail:"RSS取得が失敗している可能性があります。api.rss2json.comの制限、またはRSS側の制限を確認してください。"
-      }
-    ];
+    headlines=[{
+      id:"rss-error",
+      date:new Date().toLocaleDateString("ja-JP"),
+      time:new Date().toLocaleTimeString("ja-JP",{hour12:false}),
+      timestamp:Date.now(),
+      source:"RSS",
+      sourceJa:"RSS",
+      region:"US",
+      regionJa:"米国",
+      text:"RSS取得待機中、または取得制限でニュースを取得できていません。",
+      breaking:false,
+      impact:"WATCH",
+      isRecent:false,
+      detail:"RSS取得が失敗している可能性があります。時間を置いて再読み込みしてください。"
+    }];
   }
 
   headlines.forEach(item=>{
-    if(item.breaking&&item.id&&!seenBreakingIds.has(item.id)){
+    if((item.isRecent||item.breaking)&&item.id&&!seenBreakingIds.has(item.id)){
       seenBreakingIds.add(item.id);
       triggerMapAlert(item);
-      updateMainDetail(item);
     }
   });
 
+  renderRightSideRealtime();
+}
+
+function renderRightSideRealtime(){
+  renderBreakingNews();
   renderHeadlines();
+
+  const latestImportant =
+    headlines.find(h=>h.isRecent&&h.breaking) ||
+    headlines.find(h=>h.breaking) ||
+    headlines[0];
+
+  if(latestImportant) updateMainDetail(latestImportant);
+}
+
+function renderBreakingNews(){
+  const box=document.getElementById("breakingBox");
+
+  const nowItems=headlines
+    .filter(h=>h.isRecent||h.breaking)
+    .slice(0,6);
+
+  if(!nowItems.length){
+    box.innerHTML=`<div class="noBreaking">現在の重要速報なし</div>`;
+    return;
+  }
+
+  box.innerHTML=nowItems.map((h,i)=>`
+    <div class="breakingItem ${h.isRecent?"blink24":""}" onclick="selectNowAlert(${i}, this)">
+      <div>
+        <span class="breakingTime">${h.date} ${h.time}</span>
+        <span class="breakingSource">${h.sourceJa}</span>
+      </div>
+      <div class="breakingText">${h.text}</div>
+    </div>
+  `).join("");
+}
+
+function renderHeadlines(){
+  const html=headlines.map((h,i)=>`
+    <div class="headlineItem ${h.isRecent?"blink24":""}" onclick="selectHeadline(${i}, this)">
+      <div class="headlineTop">
+        <div class="headlineTime">${h.date}<br>${h.time}</div>
+        <div class="headlineSource ${h.breaking?"breaking":""}">${h.sourceJa}</div>
+        <div class="headlineText">${h.text}</div>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("headlineList").innerHTML=html;
+}
+
+function updateMainDetail(item){
+  document.getElementById("nowAlertContent").innerHTML=`
+    <div class="alertTitle">${item.sourceJa}</div>
+    <div class="alertText">
+      日付：${item.date||"---"}<br>
+      時間：${item.time||"--:--"} JST<br>
+      内容：${item.text}
+    </div>
+  `;
+
+  document.getElementById("detailTime").textContent=`${item.date||"---"} ${item.time||"--:--"} JST`;
+  document.getElementById("detailSource").textContent=item.sourceJa||"RSS";
+  document.getElementById("detailRegion").textContent=item.regionJa||"不明";
+  document.getElementById("detailImpact").textContent=item.impact==="HIGH"?"高":"監視";
+  document.getElementById("detailEvent").textContent=item.text||"ニュースなし";
+  document.getElementById("detailGold").textContent=item.detail||"XAUUSDへの影響を監視";
+  document.getElementById("detailScenario").textContent="ニュース内容 → ドル・金利・リスクオフ反応を確認 → XAUUSDの方向を判断";
+
+  if(item.isRecent||item.breaking) triggerMapAlert(item);
+}
+
+function selectHeadline(index,el){
+  document.querySelectorAll(".headlineItem").forEach(r=>r.classList.remove("selected"));
+  el.classList.add("selected");
+
+  const h=headlines[index];
+
+  document.getElementById("headlineDetail").innerHTML=`
+    <div class="detailTitle">${h.sourceJa}</div>
+    <div class="detailText">
+      日付：${h.date}<br>
+      時間：${h.time} JST<br>
+      地域：${h.regionJa}<br>
+      内容：${h.text}<br>
+      XAUUSD影響：${h.detail}
+    </div>
+  `;
+
+  updateMainDetail(h);
+}
+
+function selectNowAlert(index,el){
+  document.querySelectorAll(".breakingItem").forEach(r=>r.classList.remove("selected"));
+  el.classList.add("selected");
+
+  const nowItems=headlines.filter(h=>h.isRecent||h.breaking).slice(0,6);
+  const h=nowItems[index];
+  updateMainDetail(h);
 }
 
 function getEventDate(e){
@@ -392,12 +530,16 @@ function selectEvent(index,el){
 
   updateMainDetail({
     source:e.currency,
+    sourceJa:e.currency,
     region:"US",
+    regionJa:"米国",
     text:e.event,
     detail:e.detail,
     breaking:true,
     impact:"HIGH",
-    time:e.time
+    date:e.date,
+    time:e.time,
+    isRecent:true
   });
 }
 
@@ -429,10 +571,6 @@ function updateClock(){
   document.getElementById("dateText").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
   updateSession(now);
 }
-
-let map;
-let sessionMarkers={};
-let seenBreakingIds=new Set();
 
 function sessionHtml(name,time,isOpen,cd,isWeekend){
   return`
@@ -489,79 +627,10 @@ function triggerMapAlert(item){
 
   const popup=L.popup({closeButton:false,autoClose:false,className:""})
     .setLatLng([r.lat,r.lng])
-    .setContent(`<div class="alertPopup"><b>速報</b><br>${item.region}<br>${item.text}</div>`)
+    .setContent(`<div class="alertPopup"><b>速報</b><br>${item.regionJa||toJapaneseSource(item.region)}<br>${item.text}</div>`)
     .openOn(map);
 
-  setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},15000);
-}
-
-function updateMainDetail(item){
-  document.getElementById("nowAlertContent").innerHTML=`
-    <div class="alertTitle">${item.source}</div>
-    <div class="alertText">${item.time||"--:--"}　${item.text}</div>
-  `;
-
-  document.getElementById("detailTime").textContent=(item.time||"--:--")+" JST";
-  document.getElementById("detailSource").textContent=item.source||"RSS";
-  document.getElementById("detailRegion").textContent=item.region||"不明";
-  document.getElementById("detailImpact").textContent=item.impact||"監視";
-  document.getElementById("detailEvent").textContent=item.text||"ニュースなし";
-  document.getElementById("detailGold").textContent=item.detail||"XAUUSDへの影響を監視";
-  document.getElementById("detailScenario").textContent="ニュース内容 → ドル・金利・リスクオフ反応を確認 → XAUUSDの方向を判断";
-
-  if(item.breaking)triggerMapAlert(item);
-}
-
-function renderHeadlines(){
-  const html=headlines.map((h,i)=>`
-    <div class="headlineItem" onclick="selectHeadline(${i}, this)">
-      <div class="headlineTop">
-        <div class="headlineTime">${h.time}</div>
-        <div class="headlineSource ${h.breaking?"breaking":""}">${h.source}</div>
-        <div class="headlineText">${h.text}</div>
-      </div>
-    </div>`).join("");
-
-  document.getElementById("headlineList").innerHTML=html;
-
-  const breaking=headlines.filter(h=>h.breaking).slice(0,5);
-  const box=document.getElementById("breakingBox");
-
-  if(!breaking.length){
-    box.innerHTML=`<div class="noBreaking">現在の重要速報なし</div>`;
-  }else{
-    box.innerHTML=breaking.map((h,i)=>`
-      <div class="breakingItem" onclick="selectBreaking(${i}, this)">
-        <div><span class="breakingTime">${h.time}</span> <span class="breakingSource">${h.source}</span></div>
-        <div class="breakingText">${h.text}</div>
-      </div>`).join("");
-  }
-}
-
-function selectHeadline(index,el){
-  document.querySelectorAll(".headlineItem").forEach(r=>r.classList.remove("selected"));
-  el.classList.add("selected");
-
-  const h=headlines[index];
-
-  document.getElementById("headlineDetail").innerHTML=`
-    <div class="detailTitle">${h.source}</div>
-    <div class="detailText">
-      時間：${h.time} JST<br>
-      地域：${h.region}<br>
-      内容：${h.text}<br>
-      XAUUSD影響：${h.detail}
-    </div>`;
-
-  updateMainDetail(h);
-}
-
-function selectBreaking(index,el){
-  document.querySelectorAll(".breakingItem").forEach(r=>r.classList.remove("selected"));
-  el.classList.add("selected");
-
-  const h=headlines.filter(x=>x.breaking)[index];
-  updateMainDetail(h);
+  setTimeout(()=>{map.removeLayer(point);map.closePopup(popup)},3600000);
 }
 
 initMap();
