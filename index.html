@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>XAUUSD WAR ROOM</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>
 :root{--bg:#050505;--panel:#0b0b0b;--panel2:#101010;--border:#202020;--text:#8a8a8a;--muted:#5f5f5f;--gold:#b89b5e;--green:#00ff88;--red:#ff2d2d;--white:#d8d8d8}
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
@@ -89,7 +90,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 </div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
-const highImpactEvents=[
+const fallbackHighImpactEvents=[
 {date:"2026-06-10",time:"21:30",currency:"USD",event:"Core CPI m/m",impact:"HIGH",forecast:"0.3%",previous:"0.2%",detail:"コアCPI。FRB政策に直結。予想上振れはドル高・金売り、下振れはドル安・金買いになりやすい。"},
 {date:"2026-06-10",time:"21:30",currency:"USD",event:"CPI y/y",impact:"HIGH",forecast:"2.3%",previous:"2.4%",detail:"CPI前年比。インフレトレンド確認。金利見通しに影響。"},
 {date:"2026-06-11",time:"21:30",currency:"USD",event:"PPI m/m",impact:"HIGH",forecast:"0.2%",previous:"-0.1%",detail:"生産者物価指数。CPIへの先行材料。"},
@@ -98,13 +99,23 @@ const highImpactEvents=[
 {date:"2026-06-26",time:"21:30",currency:"USD",event:"Core PCE Price Index m/m",impact:"HIGH",forecast:"0.2%",previous:"0.2%",detail:"FRBが重視するインフレ指標。政策判断に影響。"}
 ];
 
-let headlines=[],activeAlerts=[],map,sessionMarkers={};
+let highImpactEvents=[...fallbackHighImpactEvents],renderedHighImpactEvents=[],headlines=[],activeAlerts=[],map,sessionMarkers={},calendarUpdatedAt=null;
 
 const RSS_FEEDS=[
 {source:"ForexLive",url:"https://www.forexlive.com/feed/news"},
 {source:"Investing",url:"https://www.investing.com/rss/news_25.rss"},
 {source:"Myfxbook",url:"https://www.myfxbook.com/rss/forex-news"},
 {source:"BBC World",url:"https://feeds.bbci.co.uk/news/world/rss.xml"}
+];
+
+const ECONOMIC_CALENDAR_FEEDS=[
+"https://nfs.faireconomy.media/ff_calendar_thisweek.xml",
+"https://nfs.faireconomy.media/ff_calendar_nextweek.xml"
+];
+const CALENDAR_PROXIES=[
+url=>url,
+url=>"https://api.allorigins.win/raw?url="+encodeURIComponent(url),
+url=>"https://corsproxy.io/?"+encodeURIComponent(url)
 ];
 
 const regionMap={
@@ -223,7 +234,98 @@ el.classList.add("selected");
 updateMainDetail(headlines.filter(h=>h.isRecent).slice(0,6)[index],true);
 }
 
+function textFrom(node,tag){
+return node.querySelector(tag)?.textContent?.trim()||"";
+}
+
+function parseCalendarDate(dateText,timeText){
+const parts=(dateText||"").split("-").map(Number);
+if(parts.length!==3||parts.some(Number.isNaN))return null;
+let hour=0,minute=0,isTimed=true;
+const clean=(timeText||"").trim().toLowerCase();
+const match=clean.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/);
+if(match){
+hour=Number(match[1])%12;
+minute=Number(match[2]||0);
+if(match[3]==="pm")hour+=12;
+}else{
+isTimed=false;
+}
+return{date:new Date(Date.UTC(parts[2],parts[0]-1,parts[1],hour,minute,0)),isTimed};
+}
+
+function calendarImpactLabel(impact){
+const value=(impact||"").toLowerCase();
+if(value==="high")return"HIGH";
+if(value==="medium")return"MED";
+if(value==="low")return"LOW";
+return(value||"WATCH").toUpperCase();
+}
+
+function buildCalendarImpact(event){
+const name=(event.event||"").toLowerCase();
+if(event.currency==="USD"||name.includes("fed")||name.includes("fomc"))return"米国指標・FRB関連です。ドルと米金利に反応しやすく、XAUUSDの方向感に直結します。";
+if(name.includes("cpi")||name.includes("ppi")||name.includes("inflation"))return"インフレ指標です。上振れは金利高・金売り、下振れは金利低下・金買いになりやすいです。";
+if(name.includes("rate")||name.includes("policy")||name.includes("press conference"))return"金融政策イベントです。声明・会見のトーンで金利見通しが変わり、XAUUSDが急変しやすいです。";
+return"重要経済イベントです。発表前後のドル、米金利、リスクオフ反応を確認してください。";
+}
+
+function normalizeCalendarEvent(node){
+const parsed=parseCalendarDate(textFrom(node,"date"),textFrom(node,"time"));
+if(!parsed)return null;
+const d=parsed.date;
+const event={
+date:d.toLocaleDateString("sv-SE"),
+time:parsed.isTimed?d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}):"終日",
+timestamp:d.getTime(),
+currency:textFrom(node,"country")||"ALL",
+event:textFrom(node,"title")||"Economic Event",
+impact:calendarImpactLabel(textFrom(node,"impact")),
+forecast:textFrom(node,"forecast")||"---",
+previous:textFrom(node,"previous")||"---",
+url:textFrom(node,"url"),
+isTimed:parsed.isTimed
+};
+event.detail=buildCalendarImpact(event);
+return event;
+}
+
+async function fetchCalendarXml(url){
+let lastError;
+for(const makeUrl of CALENDAR_PROXIES){
+try{
+const res=await fetch(makeUrl(url),{cache:"no-store"});
+if(!res.ok)throw new Error("calendar fetch failed");
+return await res.text();
+}catch(e){lastError=e}
+}
+throw lastError;
+}
+
+async function loadEconomicCalendar(){
+try{
+const docs=await Promise.all(ECONOMIC_CALENDAR_FEEDS.map(async url=>{
+const xml=await fetchCalendarXml(url);
+return new DOMParser().parseFromString(xml,"text/xml");
+}));
+const events=docs.flatMap(doc=>[...doc.querySelectorAll("event")].map(normalizeCalendarEvent).filter(Boolean))
+.filter(e=>["USD","EUR","GBP","JPY","CNY","CAD","AUD","ALL"].includes(e.currency))
+.filter(e=>["HIGH","MED"].includes(e.impact)||e.currency==="USD")
+.filter((e,i,a)=>a.findIndex(x=>`${x.timestamp}-${x.currency}-${x.event}`===`${e.timestamp}-${e.currency}-${e.event}`)===i)
+.sort((a,b)=>a.timestamp-b.timestamp);
+if(events.length){
+highImpactEvents=events;
+calendarUpdatedAt=new Date();
+renderCalendar();
+renderHighImpact();
+}
+}catch(e){
+console.log("Economic calendar error",e);
+}
+}
+
 function getEventDate(e){
+if(e.timestamp)return new Date(e.timestamp);
 const[y,m,d]=e.date.split("-").map(Number);
 const[hh,mm]=e.time.split(":").map(Number);
 return new Date(y,m-1,d,hh,mm,0,0)
@@ -245,18 +347,20 @@ return diff>0&&diff<=86400000;
 function renderHighImpact(){
 const list=document.getElementById("highImpactList");
 list.innerHTML="";
-[...highImpactEvents].map(e=>({...e,target:getEventDate(e)})).sort((a,b)=>a.target-b.target).forEach((e,i)=>{
+renderedHighImpactEvents=[...highImpactEvents].map(e=>({...e,target:getEventDate(e)})).sort((a,b)=>a.target-b.target);
+renderedHighImpactEvents.forEach((e,i)=>{
 const cd=countdown(e.target);
 if(cd===null)return;
 const blink=isWithin24h(e.target)?"blinkRecent":"";
 list.innerHTML+=`<div class="newsRow ${blink}" onclick="selectEvent(${i},this)"><div class="dateCell">${e.date.slice(5)}</div><div class="timeCell">${e.time}</div><div class="eventCell">${e.currency} ${e.event}</div><div class="impactCell">${e.impact}</div><div>${e.forecast}</div><div>${e.previous}</div><div class="countCell ${blink?"redCount":""}">${cd}</div></div>`;
 })
+if(!list.innerHTML)list.innerHTML=`<div class="noBreaking">次の重要イベントを取得中...</div>`;
 }
 
 function selectEvent(index,el){
 document.querySelectorAll(".newsRow").forEach(r=>r.classList.remove("selected"));
 el.classList.add("selected");
-const e=highImpactEvents[index];
+const e=renderedHighImpactEvents[index];
 document.getElementById("eventDetail").innerHTML=`<div class="detailTitle">${e.currency} ${e.event}</div><div class="detailText">DATE ${e.date} / TIME ${e.time}<br>予想 ${e.forecast} / 前回 ${e.previous}<br>XAUUSD影響：${e.detail}</div>`;
 updateMainDetail({source:e.currency,sourceJa:e.currency,region:"US",regionJa:"米国",text:e.event,detail:e.detail,breaking:true,impact:"HIGH",date:e.date,time:e.time,isRecent:false},false);
 }
@@ -321,9 +425,11 @@ const popup=L.popup({closeButton:false,autoClose:false,className:""}).setLatLng(
 activeAlerts.push({marker:point,popup:popup,timestamp:item.timestamp});
 }
 
-initMap();renderCalendar();renderHighImpact();updateClock();loadHeadlines();
+initMap();renderCalendar();renderHighImpact();updateClock();loadHeadlines();loadEconomicCalendar();
 setInterval(updateClock,1000);
 setInterval(renderHighImpact,1000);
 setInterval(renderCalendar,30000);
-setInterval(loadHeadlines,15000);
+setInterval(loadHeadlines,10000);
+setInterval(loadEconomicCalendar,300000);
 </script></body></html>
+```
