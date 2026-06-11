@@ -10,16 +10,16 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
 body{letter-spacing:.1px}
-.app{height:100vh;display:grid;grid-template-rows:42px 1fr 258px;background:#050706}
-.topbar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#090d0c;padding:0 10px;gap:10px}
-.brand{display:flex;align-items:center;gap:10px;min-width:240px}
+.app{height:100vh;display:grid;grid-template-rows:58px minmax(320px,1fr) minmax(320px,36vh);background:#050706}
+.topbar{display:flex;align-items:center;justify-content:space-between;min-height:58px;border-bottom:1px solid var(--line);background:#090d0c;padding:6px 10px;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:230px}
 .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 16px var(--green);animation:pulse 1.2s infinite}
 .brand h1{font-size:13px;letter-spacing:1.6px;color:#f2e1b4}
 .brand small{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-top:2px}
-.ticker{flex:1;min-width:0;height:34px;overflow:hidden}
+.ticker{flex:1;min-width:320px;height:46px;overflow:hidden}
 .topMeta{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);white-space:nowrap}
 .clock{color:var(--green);font-size:16px;font-weight:900}
-.main{display:grid;grid-template-columns:230px 1fr 340px;min-height:0}
+.main{display:grid;grid-template-columns:230px minmax(360px,1fr) 340px;min-height:0}
 .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);overflow:hidden}
 .left{border-width:0 1px 0 0;padding:10px;display:grid;grid-template-rows:auto auto 1fr;gap:10px}
 .sectionTitle{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:1.1px;margin-bottom:8px}
@@ -42,9 +42,9 @@ body{letter-spacing:.1px}
 .hudPill strong{color:var(--text)}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
 .legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
-.right{border-width:0 0 0 1px;display:grid;grid-template-rows:132px 1fr 88px;gap:0}
+.right{border-width:0 0 0 1px;display:grid;grid-template-rows:142px minmax(0,1fr) 88px;gap:0;min-height:0}
 .quoteBox{padding:8px;border-bottom:1px solid var(--line)}
-.tvQuote{height:116px;overflow:hidden}
+.tvQuote{height:126px;overflow:hidden}
 .intel{padding:10px;overflow:auto}
 .intelTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .intelTitle h2{font-size:13px;color:#f2e1b4;letter-spacing:.8px}
@@ -60,21 +60,21 @@ body{letter-spacing:.1px}
 .actionBtn{border:1px solid #263a34;background:#0d1412;color:var(--text);font-size:11px;font-weight:800;border-radius:4px;cursor:pointer}
 .actionBtn:hover{border-color:var(--gold);color:var(--gold)}
 .bottom{display:grid;grid-template-columns:32% 35% 33%;border-top:1px solid var(--line);min-height:0}
-.bottom .panel{border-width:0 1px 0 0;padding:8px}
+.bottom .panel{border-width:0 1px 0 0;padding:8px;min-height:0;display:flex;flex-direction:column}
 .bottom .panel:last-child{border-right:0}
-.calendarBox{height:224px;overflow:hidden;border:1px solid #18241f;background:#050706}
+.calendarBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
 .calendarBox iframe{width:100%;height:100%;border:0;background:#050706}
-.headlineList{height:224px;overflow:auto}
+.headlineList{flex:1;min-height:0;overflow:auto}
 .headline{border-bottom:1px solid #14201c;padding:8px 0;cursor:pointer}
 .headline:hover{background:rgba(215,180,106,.06)}
 .headlineTop{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .headlineSrc{font-size:11px;font-weight:900;color:var(--gold)}
 .headlineTime{font-size:10px;color:var(--green);font-weight:900}
 .headlineText{font-size:12px;line-height:1.35;color:var(--text)}
-.marketGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:224px}
-.marketCard{border:1px solid #18241f;background:#080d0c;border-radius:4px;overflow:hidden;min-height:0}
+.marketGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;min-height:0}
+.marketCard{border:1px solid #18241f;background:#080d0c;border-radius:4px;overflow:hidden;min-height:0;display:flex;flex-direction:column}
 .marketCard .cardTitle{font-size:10px;color:var(--muted);font-weight:900;padding:6px 7px;border-bottom:1px solid #14201c}
-.marketEmbed{height:94px;overflow:hidden}
+.marketEmbed{flex:1;min-height:86px;overflow:hidden}
 .marker{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:rgba(5,8,7,.8);box-shadow:0 0 18px currentColor;animation:markerPulse 1.4s infinite}
 .marker.high{color:var(--red)}.marker.watch{color:var(--gold)}.marker.macro{color:var(--blue)}.marker.energy{color:var(--amber)}
 .leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
@@ -87,27 +87,29 @@ body{letter-spacing:.1px}
 html,body{overflow:auto}
 .app{height:auto;min-height:100vh;grid-template-rows:auto 620px auto}
 .topbar{flex-wrap:wrap;height:auto;padding:8px}
+.ticker{order:3;flex-basis:100%;min-width:0}
 .main{grid-template-columns:1fr;grid-template-rows:auto 420px auto}
 .left,.right{border:0;border-bottom:1px solid var(--line)}
 .bottom{grid-template-columns:1fr}
+.calendarBox,.headlineList,.marketGrid{min-height:240px}
 }
 </style>
 </head>
 <body>
 <div class="app">
 <header class="topbar">
-<div class="brand"><span class="pulse"></span><div><h1>XAUUSD WORLD MONITOR</h1><small>Gold, Dollar, Rates, Risk, Energy</small></div></div>
-<div class="ticker"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"TVC:DXY","title":"DXY"},{"proName":"TVC:US10Y","title":"US10Y"},{"proName":"TVC:US02Y","title":"US02Y"},{"proName":"TVC:USOIL","title":"WTI"},{"proName":"FOREXCOM:SPXUSD","title":"S&P500"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="topMeta"><span id="statusText">LIVE OSINT</span><span class="clock" id="clock">00:00:00</span></div>
+<div class="brand"><span class="pulse"></span><div><h1>金相場ワールドモニター</h1><small>XAUUSD・ドル・米金利・地政学</small></div></div>
+<div class="ticker"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"TVC:DXY","title":"DXY"},{"proName":"TVC:US10Y","title":"US10Y"},{"proName":"TVC:US02Y","title":"US02Y"},{"proName":"TVC:USOIL","title":"WTI"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script></div></div>
+<div class="topMeta"><span id="statusText">リアルタイム監視</span><span class="clock" id="clock">00:00:00</span></div>
 </header>
 <main class="main">
 <aside class="left">
 <section>
-<div class="sectionTitle">XAUUSD LAYERS</div>
+<div class="sectionTitle">監視レイヤー</div>
 <div class="layerList" id="layerList"></div>
 </section>
 <section class="riskBox">
-<div class="sectionTitle">GOLD RISK SCORE</div>
+<div class="sectionTitle">金相場リスク指数</div>
 <div class="riskScore" id="riskScore">--</div>
 <div class="riskText" id="riskText">RSS、地政学、FRB、ドル、金利、原油関連ニュースを集約中。</div>
 </section>
@@ -116,46 +118,46 @@ html,body{overflow:auto}
 <section class="mapWrap">
 <div id="map"></div>
 <div class="mapHud">
-<div class="hudPill"><strong id="mapMode">GLOBAL</strong> VIEW</div>
-<div class="hudPill">RANGE <strong>LIVE</strong></div>
-<div class="hudPill">FOCUS <strong>XAUUSD</strong></div>
+<div class="hudPill"><strong id="mapMode">GLOBAL</strong> 表示</div>
+<div class="hudPill">範囲 <strong>LIVE</strong></div>
+<div class="hudPill">対象 <strong>XAUUSD</strong></div>
 </div>
 <div class="mapLegend" id="mapLegend"></div>
 </section>
 <aside class="right panel">
 <section class="quoteBox"><div class="tvQuote"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></section>
 <section class="intel" id="intel">
-<div class="intelTitle"><h2>INTELLIGENCE DETAIL</h2><span class="tag" id="intelTag">AUTO</span></div>
+<div class="intelTitle"><h2>材料の詳細</h2><span class="tag" id="intelTag">AUTO</span></div>
 <div class="alertTitle" id="intelTitle">監視開始</div>
 <div class="alertBody" id="intelBody">ニュースと市場レイヤーを取得しています。地図上のマーカー、左の速報、または右下のニュースを押すと詳細を表示します。</div>
 <div class="detailGrid">
-<div class="detailCell"><span>SOURCE</span><b id="intelSource">RSS</b></div>
-<div class="detailCell"><span>REGION</span><b id="intelRegion">GLOBAL</b></div>
-<div class="detailCell"><span>IMPACT</span><b id="intelImpact">WATCH</b></div>
-<div class="detailCell"><span>TIME</span><b id="intelTime">--</b></div>
+<div class="detailCell"><span>情報元</span><b id="intelSource">RSS</b></div>
+<div class="detailCell"><span>地域</span><b id="intelRegion">GLOBAL</b></div>
+<div class="detailCell"><span>影響度</span><b id="intelImpact">WATCH</b></div>
+<div class="detailCell"><span>時間</span><b id="intelTime">--</b></div>
 </div>
 <div class="scenario" id="intelScenario">判断軸: ドル指数、米金利、地政学リスク、原油、米経済指標。XAUUSDはこれらの合成で反応します。</div>
 </section>
 <section class="actions">
-<button class="actionBtn" onclick="focusRegion('GLOBAL')">GLOBAL</button>
-<button class="actionBtn" onclick="focusRegion('MIDDLE EAST')">MIDDLE EAST</button>
+<button class="actionBtn" onclick="focusRegion('GLOBAL')">全体</button>
+<button class="actionBtn" onclick="focusRegion('MIDDLE EAST')">中東</button>
 </section>
 </aside>
 </main>
 <footer class="bottom">
 <section class="panel">
-<div class="sectionTitle">REALTIME ECONOMIC CALENDAR</div>
+<div class="sectionTitle">リアルタイム経済指標</div>
 <div class="calendarBox"><iframe title="TradingView Economic Calendar" loading="eager" src="https://www.tradingview-widget.com/embed-widget/events/?locale=ja#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%2C%22currencyFilter%22%3A%22USD%2CEUR%2CJPY%2CGBP%2CCNY%2CCAD%2CAUD%22%7D"></iframe></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">XAUUSD LIVE HEADLINES</div>
+<div class="sectionTitle">金相場ライブ速報</div>
 <div class="headlineList" id="headlineList"></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">MARKET CONFIRMATION</div>
+<div class="sectionTitle">関連市場チェック</div>
 <div class="marketGrid">
 <div class="marketCard"><div class="cardTitle">DXY</div><div class="marketEmbed"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:DXY","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></div>
-<div class="marketCard"><div class="cardTitle">US10Y</div><div class="marketEmbed"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:US10Y","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></div>
+<div class="marketCard"><div class="cardTitle">米10年金利</div><div class="marketEmbed"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:US10Y","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></div>
 <div class="marketCard"><div class="cardTitle">WTI</div><div class="marketEmbed"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"TVC:USOIL","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></div>
 <div class="marketCard"><div class="cardTitle">S&P500</div><div class="marketEmbed"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"FOREXCOM:SPXUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></div>
 </div>
@@ -165,12 +167,12 @@ html,body{overflow:auto}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const layerDefs=[
-{id:"fed",label:"FED / US DATA",color:"var(--blue)",type:"macro",keywords:["fed","fomc","powell","cpi","ppi","pce","inflation","payroll","nfp","jobs","claims","gdp"],regions:["FED","US"]},
-{id:"dollar",label:"DXY / YIELDS",color:"var(--green)",type:"macro",keywords:["dollar","dxy","yield","treasury","10-year","2-year","rate"],regions:["US"]},
-{id:"middleEast",label:"MIDDLE EAST",color:"var(--red)",type:"high",keywords:["iran","israel","gaza","middle east","red sea","houthi","missile","attack"],regions:["IRAN","ISRAEL","MIDDLE EAST"]},
-{id:"energy",label:"OIL / ENERGY",color:"var(--amber)",type:"energy",keywords:["oil","crude","energy","opec","gas","brent","wti"],regions:["ENERGY"]},
-{id:"risk",label:"GEOPOL RISK",color:"var(--red)",type:"high",keywords:["ukraine","russia","china","taiwan","war","conflict","sanction","military"],regions:["UKRAINE","RUSSIA","CHINA","TAIWAN"]},
-{id:"gold",label:"GOLD FLOW",color:"var(--gold)",type:"watch",keywords:["gold","xauusd","bullion","safe haven"],regions:["US","GLOBAL"]}
+{id:"fed",label:"FRB・米指標",color:"var(--blue)",type:"macro",keywords:["fed","fomc","powell","cpi","ppi","pce","inflation","payroll","nfp","jobs","claims","gdp"],regions:["FED","US"]},
+{id:"dollar",label:"ドル・米金利",color:"var(--green)",type:"macro",keywords:["dollar","dxy","yield","treasury","10-year","2-year","rate"],regions:["US"]},
+{id:"middleEast",label:"中東リスク",color:"var(--red)",type:"high",keywords:["iran","israel","gaza","middle east","red sea","houthi","missile","attack"],regions:["IRAN","ISRAEL","MIDDLE EAST"]},
+{id:"energy",label:"原油・エネルギー",color:"var(--amber)",type:"energy",keywords:["oil","crude","energy","opec","gas","brent","wti"],regions:["ENERGY"]},
+{id:"risk",label:"地政学リスク",color:"var(--red)",type:"high",keywords:["ukraine","russia","china","taiwan","war","conflict","sanction","military"],regions:["UKRAINE","RUSSIA","CHINA","TAIWAN"]},
+{id:"gold",label:"金関連ニュース",color:"var(--gold)",type:"watch",keywords:["gold","xauusd","bullion","safe haven"],regions:["US","GLOBAL"]}
 ];
 const regionMap={
 GLOBAL:{lat:20,lng:10,zoom:2},US:{lat:39,lng:-98,zoom:4},FED:{lat:38.9,lng:-77,zoom:6},"MIDDLE EAST":{lat:31,lng:38,zoom:5},IRAN:{lat:32,lng:53,zoom:5},ISRAEL:{lat:31.5,lng:35,zoom:6},ENERGY:{lat:26,lng:50,zoom:5},UKRAINE:{lat:49,lng:32,zoom:6},RUSSIA:{lat:55,lng:90,zoom:3},CHINA:{lat:35,lng:103,zoom:4},TAIWAN:{lat:23.7,lng:121,zoom:6}
@@ -236,7 +238,7 @@ headlines=[{id:"standby",source:"SYSTEM",title:"ライブニュース取得待�
 }
 renderAll();
 }
-function renderAll(){renderMarkers();renderHeadlines();renderRisk();selectItem(headlines[0]);document.getElementById("statusText").textContent=`${headlines.length} SIGNALS`}
+function renderAll(){renderMarkers();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=`${headlines.length} SIGNALS`}
 function renderMarkers(){
 markers.forEach(m=>map.removeLayer(m));markers=[];
 headlines.filter(h=>activeLayers.has(h.layer.id)).slice(0,30).forEach((h,i)=>{
@@ -259,8 +261,9 @@ const score=Math.min(99,Math.round(25+recent.length*4+recent.filter(h=>h.impact=
 document.getElementById("riskScore").textContent=score;
 document.getElementById("riskText").textContent=score>=70?"金が急変しやすいニュース密度です。DXY・米金利・中東リスクを同時確認。":score>=45?"監視強め。米指標、FRB発言、地政学ヘッドラインの組み合わせに注意。":"通常監視。新着ニュースと経済カレンダー待ち。";
 }
-function selectItemById(id){const item=headlines.find(h=>cssSafe(h.id)===id);if(item)selectItem(item)}
-function selectItem(item){
+function selectItemById(id){const item=headlines.find(h=>cssSafe(h.id)===id);if(item)showItem(item,true)}
+function selectItem(item){showItem(item,true)}
+function showItem(item,moveMap){
 if(!item)return;
 document.getElementById("intelTag").textContent=item.layer.label;
 document.getElementById("intelTitle").textContent=item.impact==="HIGH"?"HIGH IMPACT SIGNAL":item.impact==="MACRO"?"MACRO SIGNAL":"WATCH SIGNAL";
@@ -271,12 +274,12 @@ document.getElementById("intelImpact").textContent=item.impact;
 document.getElementById("intelTime").textContent=`${item.date} ${item.time}`;
 document.getElementById("intelScenario").textContent=impactText(item);
 const r=regionMap[item.region]||regionMap.US;
-map.flyTo([r.lat,r.lng],Math.max(3,r.zoom-1),{duration:.8});
+if(moveMap)map.flyTo([r.lat,r.lng],Math.min(5,Math.max(3,r.zoom-1)),{duration:.8});
 }
 function focusRegion(name){
 const r=regionMap[name]||regionMap.GLOBAL;
-document.getElementById("mapMode").textContent=name;
-map.flyTo([r.lat,r.lng],r.zoom,{duration:.8});
+document.getElementById("mapMode").textContent=name==="MIDDLE EAST"?"中東":"全体";
+map.flyTo([r.lat,r.lng],Math.min(5,r.zoom),{duration:.8});
 }
 function updateClock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString("ja-JP",{hour12:false})}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
