@@ -6,14 +6,14 @@
 <title>XAUUSD World Monitor</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--bg:#050706;--panel:#0b100e;--panel2:#111816;--line:#1e2b27;--text:#d7dfdc;--muted:#7c8d87;--soft:#43534e;--gold:#d7b46a;--green:#38ff9a;--red:#ff4d4d;--blue:#6db7ff;--amber:#ffb84d}
+:root{--bg:#050706;--panel:#0b100e;--panel2:#111816;--line:#1e2b27;--text:#d7dfdc;--muted:#7c8d87;--soft:#43534e;--gold:#d7b46a;--green:#38ff9a;--red:#ff4d4d;--blue:#2f8cff;--amber:#ffb84d}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
 html,body{width:100%;min-height:100%;overflow-x:hidden;overflow-y:auto;background:var(--bg);color:var(--text)}
 body{letter-spacing:.1px}
 .app{min-height:100vh;display:grid;grid-template-rows:58px minmax(380px,calc(100vh - 378px)) 320px;background:#050706}
 .topbar{display:flex;align-items:center;justify-content:space-between;min-height:58px;border-bottom:1px solid var(--line);background:#090d0c;padding:6px 10px;gap:10px}
 .brand{display:flex;align-items:center;gap:10px;min-width:230px}
-.pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 16px var(--green);animation:pulse 1.2s infinite}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
 .brand h1{font-size:13px;letter-spacing:1.6px;color:#f2e1b4}
 .brand small{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-top:2px}
 .ticker{flex:1;min-width:320px;height:46px;overflow:hidden}
@@ -36,7 +36,8 @@ body{letter-spacing:.1px}
 .miniItem{padding:7px;border:1px solid #203029;background:#080d0c;border-radius:4px;margin-bottom:6px;font-size:11px;line-height:1.25;cursor:pointer}
 .miniItem:hover{border-color:var(--gold);background:rgba(215,180,106,.08)}
 .miniWhen{display:block;color:var(--green);font-size:11px;font-weight:900;margin-bottom:3px}
-.miniBias{display:inline-block;color:#06100c;background:var(--green);font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-bottom:4px}
+.miniBias{display:inline-block;color:#06100c;background:var(--blue);font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-bottom:4px}
+.miniBias.sell{background:var(--red);color:#fff}.miniBias.wait{background:var(--gold);color:#06100c}
 .miniLabel{display:block;color:var(--gold);font-size:11px;font-weight:900;margin-bottom:3px}
 .miniTitle{display:block;color:#eef6f2;font-size:11px;line-height:1.25;max-height:28px;overflow:hidden}
 .mapWrap{position:relative;min-width:0;min-height:0;background:#020504}
@@ -58,8 +59,8 @@ body{letter-spacing:.1px}
 .intelTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .intelTitle h2{font-size:13px;color:#f2e1b4;letter-spacing:.8px}
 .tag{font-size:10px;border:1px solid #30443e;color:var(--muted);padding:4px 6px;border-radius:3px}
-.alertTitle{font-size:18px;font-weight:900;color:var(--red);margin-bottom:8px}
-.alertBody{font-size:13px;line-height:1.55;color:var(--text)}
+.alertTitle{font-size:26px;font-weight:900;color:var(--gold);margin-bottom:8px;line-height:1.1}
+.alertBody{font-size:14px;line-height:1.55;color:var(--text);font-weight:800}
 .detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
 .detailCell{background:#090e0d;border:1px solid #1d2a26;border-radius:4px;padding:8px}
 .detailCell span{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
@@ -76,7 +77,8 @@ body{letter-spacing:.1px}
 .headlineTop{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .headlineSrc{font-size:11px;font-weight:900;color:var(--gold)}
 .headlineTime{font-size:10px;color:var(--green);font-weight:900}
-.headlineImpact{font-size:10px;color:#06100c;background:var(--green);font-weight:900;padding:2px 5px;border-radius:3px}
+.headlineImpact{font-size:10px;color:#06100c;background:var(--blue);font-weight:900;padding:2px 5px;border-radius:3px}
+.headlineImpact.sell{background:var(--red);color:#fff}.headlineImpact.wait{background:var(--gold);color:#06100c}
 .headlineText{font-size:12px;line-height:1.35;color:var(--text)}
 .liquidityBox{flex:1;min-height:0;border:1px solid #18241f;background:#070b0a;border-radius:4px;overflow:auto;padding:10px}
 .bookHeader{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #14201c;padding-bottom:8px;margin-bottom:8px}
@@ -86,21 +88,19 @@ body{letter-spacing:.1px}
 .bookStatus strong{color:var(--green)}
 .bookRows{display:grid;gap:5px}
 .bookRow{display:grid;grid-template-columns:82px 1fr 86px;gap:8px;align-items:center;border:1px solid #16231f;background:#0b1110;border-radius:4px;padding:7px;font-size:11px}
-.bookRow.ask{border-color:rgba(255,77,77,.35)}.bookRow.bid{border-color:rgba(56,255,154,.35)}
-.bookSide{font-weight:900}.ask .bookSide{color:var(--red)}.bid .bookSide{color:var(--green)}
+.bookRow.ask{border-color:rgba(255,77,77,.35)}.bookRow.bid{border-color:rgba(47,140,255,.45)}
+.bookSide{font-weight:900}.ask .bookSide{color:var(--red)}.bid .bookSide{color:var(--blue)}
 .bookBar{height:8px;background:#13221d;border-radius:99px;overflow:hidden}
-.bookFill{height:100%;border-radius:99px}.ask .bookFill{background:var(--red)}.bid .bookFill{background:var(--green)}
+.bookFill{height:100%;border-radius:99px}.ask .bookFill{background:var(--red)}.bid .bookFill{background:var(--blue)}
 .bookPrice{text-align:right;color:var(--text);font-weight:900}
 .bookNote{margin-top:10px;border-top:1px solid #14201c;padding-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
-.waterwayLabel{background:rgba(5,8,7,.84);border:1px solid rgba(255,184,77,.7);border-radius:4px;color:var(--amber);font-size:10px;font-weight:900;padding:4px 6px;white-space:nowrap;box-shadow:0 0 12px rgba(255,184,77,.25)}
-.marker{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:rgba(5,8,7,.8);box-shadow:0 0 18px currentColor;animation:markerPulse 1.4s infinite}
-.marker.high{color:var(--red)}.marker.watch{color:var(--gold)}.marker.macro{color:var(--blue)}.marker.energy{color:var(--amber)}
+.marker{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:rgba(5,8,7,.86);box-shadow:0 0 12px currentColor}
+.marker.high{color:var(--red);animation:markerDanger 1s infinite}.marker.watch{color:var(--gold)}.marker.macro{color:var(--blue)}.marker.energy{color:var(--amber)}
 .leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
 .popup{background:#07100d;border:1px solid #334840;border-radius:4px;color:var(--text);padding:9px;min-width:220px}
 .popup b{color:var(--gold)}
 .popup small{color:var(--muted)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-@keyframes markerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25);opacity:.55}}
+@keyframes markerDanger{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.22);opacity:.55}}
 @media(max-width:980px){
 html,body{overflow:auto}
 .app{height:auto;min-height:100vh;grid-template-rows:auto auto auto}
@@ -116,7 +116,7 @@ html,body{overflow:auto}
 <body>
 <div class="app">
 <header class="topbar">
-<div class="brand"><span class="pulse"></span><div><h1>金相場ワールドモニター</h1><small>XAUUSD・ドル・米金利・地政学</small></div></div>
+<div class="brand"><span class="pulse"></span><div><h1>金相場リアルタイム監視</h1><small>価格・ニュース・板情報のみ</small></div></div>
 <div class="ticker"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"TVC:DXY","title":"DXY"},{"proName":"TVC:US10Y","title":"US10Y"},{"proName":"TVC:US02Y","title":"US02Y"},{"proName":"TVC:USOIL","title":"WTI"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script></div></div>
 <div class="topMeta"><span id="statusText">リアルタイム監視</span><span class="clock" id="clock">00:00:00</span></div>
 </header>
@@ -125,7 +125,7 @@ html,body{overflow:auto}
 <section class="riskBox">
 <div class="riskTop"><span>急変リスク</span><b class="riskBadge" id="riskBadge">通常</b></div>
 <div class="riskMain"><div class="riskScore" id="riskScore">--</div><div class="riskUnit">/100</div></div>
-<div class="riskText" id="riskText">直近ニュースの量と重要度から、XAUUSDが急に動きやすい状態かを表示します。</div>
+<div class="riskText" id="riskText">GDELTライブニュースだけで急変しやすさを判定します。</div>
 <div class="riskUpdated" id="riskUpdated">更新待ち</div>
 </section>
 <section class="feedMini" id="miniFeed"></section>
@@ -144,16 +144,16 @@ html,body{overflow:auto}
 <aside class="right panel">
 <section class="quoteBox"><div class="tvQuote"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></section>
 <section class="intel" id="intel">
-<div class="intelTitle"><h2>XAUUSD売買判断</h2><span class="tag" id="intelTag">自動更新</span></div>
-<div class="alertTitle" id="intelTitle">材料待ち</div>
-<div class="alertBody" id="intelBody">最新ニュースから、金が上がりやすい材料か下がりやすい材料かを日本語で表示します。</div>
+<div class="intelTitle"><h2>今の結論</h2><span class="tag" id="intelTag">自動更新</span></div>
+<div class="alertTitle" id="intelTitle">待ち</div>
+<div class="alertBody" id="intelBody">GDELTライブニュースから、買い・売り・待ちだけを表示します。</div>
 <div class="detailGrid">
-<div class="detailCell"><span>発生日時</span><b id="intelTime">--</b></div>
+<div class="detailCell"><span>方向</span><b id="intelImpact">待ち</b></div>
+<div class="detailCell"><span>見るもの</span><b id="intelRegion">DXY/米金利</b></div>
+<div class="detailCell"><span>時刻</span><b id="intelTime">--</b></div>
 <div class="detailCell"><span>情報元</span><b id="intelSource">--</b></div>
-<div class="detailCell"><span>判断</span><b id="intelImpact">確認待ち</b></div>
-<div class="detailCell"><span>確認項目</span><b id="intelRegion">DXY/米金利</b></div>
 </div>
-<div class="scenario" id="intelScenario">売買判断の順番: 米10年金利、DXY、中東リスク、原油、米経済指標を同時に見ます。</div>
+<div class="scenario" id="intelScenario">固定情報は使わず、更新されるニュースだけで判断します。</div>
 </section>
 </aside>
 </main>
@@ -163,7 +163,7 @@ html,body{overflow:auto}
 <div class="calendarBox"><iframe title="TradingView Economic Calendar" loading="eager" src="https://www.tradingview-widget.com/embed-widget/events/?locale=ja#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%2C%22currencyFilter%22%3A%22USD%2CEUR%2CJPY%2CGBP%2CCNY%2CCAD%2CAUD%22%7D"></iframe></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">金相場ライブ速報</div>
+<div class="sectionTitle">GDELTライブ速報</div>
 <div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
 </section>
 <section class="panel">
@@ -198,21 +198,8 @@ const layerDefs=[
 const regionMap={
 GLOBAL:{lat:20,lng:10,zoom:2},US:{lat:39,lng:-98,zoom:4},FED:{lat:38.9,lng:-77,zoom:6},"MIDDLE EAST":{lat:31,lng:38,zoom:5},IRAN:{lat:32,lng:53,zoom:5},ISRAEL:{lat:31.5,lng:35,zoom:6},ENERGY:{lat:26,lng:50,zoom:5},UKRAINE:{lat:49,lng:32,zoom:6},RUSSIA:{lat:55,lng:90,zoom:3},CHINA:{lat:35,lng:103,zoom:4},TAIWAN:{lat:23.7,lng:121,zoom:6},"RED SEA":{lat:18,lng:39,zoom:5},HORMUZ:{lat:26.5,lng:56.2,zoom:6},SUEZ:{lat:30.6,lng:32.3,zoom:6},PANAMA:{lat:9,lng:-79.6,zoom:6}
 };
-const waterways=[
-{name:"紅海",region:"RED SEA",lat:18,lng:39,why:"中東緊張、原油、物流リスク"},
-{name:"ホルムズ海峡",region:"HORMUZ",lat:26.5,lng:56.2,why:"原油供給・イランリスク"},
-{name:"スエズ運河",region:"SUEZ",lat:30.6,lng:32.3,why:"欧州/中東物流リスク"},
-{name:"台湾海峡",region:"TAIWAN",lat:24.2,lng:120.8,why:"米中リスク・半導体"},
-{name:"パナマ運河",region:"PANAMA",lat:9,lng:-79.6,why:"物流・インフレ波及"}
-];
-const feeds=[
-{source:"ForexLive",url:"https://www.forexlive.com/feed/news"},
-{source:"Investing",url:"https://www.investing.com/rss/news_25.rss"},
-{source:"Myfxbook",url:"https://www.myfxbook.com/rss/forex-news"},
-{source:"BBC World",url:"https://feeds.bbci.co.uk/news/world/rss.xml"}
-];
 const gdeltQuery='(gold OR XAUUSD OR bullion OR dollar OR treasury OR yields OR fed OR powell OR inflation OR iran OR israel OR "red sea" OR oil)';
-let map,markers=[],waterwayMarkers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+let map,markers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
 
 function initMap(){
 map=L.map("map",{zoomControl:false,attributionControl:false,worldCopyJump:true}).setView([20,10],2);
@@ -224,7 +211,7 @@ document.getElementById("mapLegend").innerHTML=layerDefs.map(l=>`<button class="
 function toggleLayer(id,btn){
 if(activeLayers.has(id)){activeLayers.delete(id);btn.classList.remove("active");btn.querySelector("b").textContent="OFF"}
 else{activeLayers.add(id);btn.classList.add("active");btn.querySelector("b").textContent="ON"}
-renderMarkers();renderWaterways();renderHeadlines();
+renderMarkers();renderHeadlines();
 }
 function classify(text){
 const t=(text||"").toLowerCase();
@@ -254,12 +241,11 @@ return item.impact==="HIGH"?"急変注意":item.impact==="MACRO"?"マクロ材�
 }
 function xauBias(item){
 const t=(item.title||"").toLowerCase();
-if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"金は上がりやすい";
-if(item.layer.id==="energy")return"金は上がりやすい";
-if(t.includes("cut")||t.includes("weaker")||t.includes("falls")||t.includes("drop")||t.includes("lower yield")||t.includes("dovish"))return"金は上がりやすい";
-if(t.includes("higher yield")||t.includes("hawkish")||t.includes("strong dollar")||t.includes("hot inflation")||t.includes("rate hike"))return"金は下がりやすい";
-if(item.layer.id==="fed"||item.layer.id==="dollar")return"米金利とDXYで確認";
-return"方向確認";
+if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"買い";
+if(item.layer.id==="energy")return"買い";
+if(t.includes("cut")||t.includes("weaker")||t.includes("falls")||t.includes("drop")||t.includes("lower yield")||t.includes("dovish"))return"買い";
+if(t.includes("higher yield")||t.includes("hawkish")||t.includes("strong dollar")||t.includes("hot inflation")||t.includes("rate hike"))return"売り注意";
+return"待ち";
 }
 function checkPoint(item){
 if(item.layer.id==="fed")return"米10年金利";
@@ -268,6 +254,21 @@ if(item.layer.id==="middleEast"||item.layer.id==="risk")return"有事リスク";
 if(item.layer.id==="energy")return"原油/WTI";
 if(item.layer.id==="waterway")return"海上輸送";
 return"金ニュース";
+}
+function decisionReason(item){
+if(item.layer.id==="middleEast")return"理由: 中東リスクは安全資産の金が買われやすい材料です。ドルが強すぎる時だけ注意です。";
+if(item.layer.id==="risk")return"理由: 戦争・制裁・軍事ニュースはリスク回避で金が買われやすい材料です。";
+if(item.layer.id==="waterway")return"理由: 海上リスクは原油高とインフレ警戒につながり、金が買われやすい材料です。";
+if(item.layer.id==="energy")return"理由: 原油高はインフレ警戒につながり、金が買われやすい材料です。";
+if(item.layer.id==="fed")return"理由: FRB・米指標だけでは方向が決まりません。米10年金利が下がれば買い、上がれば売り注意です。";
+if(item.layer.id==="dollar")return"理由: ドルと米金利で決まります。DXY上昇は売り注意、DXY低下は買いです。";
+return"理由: 金ニュースだけではまだ判断不足です。DXYと米10年金利が同じ方向に動くまで待ちです。";
+}
+function decisionTitle(item){
+const bias=xauBias(item);
+if(bias==="買い")return"買い優勢";
+if(bias==="売り注意")return"売り注意";
+return"待ち";
 }
 function formatFullTime(ts){
 const d=new Date(ts||Date.now());
@@ -283,16 +284,11 @@ return`${Math.floor(min/60)}時間前`;
 function headlineMeta(item){
 return `${formatFullTime(item.timestamp)} / ${ageText(item.timestamp)} / ${item.source}`;
 }
-async function fetchRSS(feed){
-const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feed.url)+"&_="+Date.now();
-const res=await fetchWithTimeout(api,5000);
-if(!res.ok)throw new Error("RSS fetch failed");
-const data=await res.json();
-return(data.items||[]).slice(0,18).map(item=>{
-const d=item.pubDate?new Date(item.pubDate):new Date();
-const c=classify(item.title||"");
-return{id:item.guid||item.link||item.title,source:feed.source,title:item.title||"No title",link:item.link||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime(),isRecent:Date.now()-d.getTime()<=7200000,...c};
-});
+function biasClass(item){
+const b=xauBias(item);
+if(b==="売り注意")return"sell";
+if(b==="待ち")return"wait";
+return"buy";
 }
 async function fetchGDELT(){
 const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(gdeltQuery)+"&mode=ArtList&format=json&maxrecords=30&sort=HybridRel&timespan=24h";
@@ -309,11 +305,11 @@ return{id:article.url||title,source:article.domain||"GDELT",title,link:article.u
 }
 async function loadNews(){
 let all=[];
-const jobs=[fetchGDELT(),...feeds.map(feed=>fetchRSS(feed))];
+const jobs=[fetchGDELT()];
 const results=await Promise.allSettled(jobs);
 results.forEach((result,index)=>{
 if(result.status==="fulfilled")all=all.concat(result.value);
-else console.log(index===0?"GDELT":feeds[index-1]?.source,result.reason);
+else console.log("GDELT",result.reason);
 });
 headlines=all.filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>b.timestamp-a.timestamp).slice(0,60);
 if(!headlines.length){
@@ -326,7 +322,7 @@ headlines=[
 }
 renderAll();
 }
-function renderAll(){renderMarkers();renderWaterways();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=`${headlines.length} SIGNALS`}
+function renderAll(){renderMarkers();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=`${headlines.length} LIVE`}
 function renderMarkers(){
 markers.forEach(m=>map.removeLayer(m));markers=[];
 headlines.filter(h=>activeLayers.has(h.layer.id)).slice(0,30).forEach((h,i)=>{
@@ -338,20 +334,10 @@ marker.on("click",()=>selectItem(h));
 markers.push(marker);
 });
 }
-function renderWaterways(){
-waterwayMarkers.forEach(m=>map.removeLayer(m));waterwayMarkers=[];
-if(!activeLayers.has("waterway"))return;
-waterways.forEach(w=>{
-const marker=L.marker([w.lat,w.lng],{icon:L.divIcon({className:"",html:`<div class="waterwayLabel">${w.name}</div>`,iconSize:[88,22]})}).addTo(map);
-marker.bindPopup(`<div class="popup"><b>${w.name}</b><br><small>海上リスク</small><br>${w.why}<br>XAUUSD: リスクオフ/原油/インフレ期待を監視</div>`);
-marker.on("click",()=>showItem({layer:layerDefs.find(l=>l.id==="waterway"),source:"海上リスク",title:`${w.name}: ${w.why}`,region:w.region,impact:"WATCH",date:new Date().toLocaleDateString("ja-JP"),time:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false})},true));
-waterwayMarkers.push(marker);
-});
-}
 function renderHeadlines(){
 const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
-document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">選択中レイヤーに一致するニュースはありません。</div>`;
-document.getElementById("miniFeed").innerHTML=visible.slice(0,12).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniWhen">${formatFullTime(h.timestamp)} / ${ageText(h.timestamp)}</span><span class="miniBias">${xauBias(h)}</span><span class="miniLabel">${h.layer.label} / ${h.source}</span><span class="miniTitle">${escapeHtml(h.title)}</span></div>`).join("");
+document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact ${biasClass(h)}">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">選択中レイヤーに一致するニュースはありません。</div>`;
+document.getElementById("miniFeed").innerHTML=visible.slice(0,12).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniWhen">${formatFullTime(h.timestamp)} / ${ageText(h.timestamp)}</span><span class="miniBias ${biasClass(h)}">${xauBias(h)}</span><span class="miniLabel">${h.layer.label} / ${h.source}</span><span class="miniTitle">${escapeHtml(h.title)}</span></div>`).join("");
 }
 function renderRisk(){
 const recent=headlines.filter(h=>h.isRecent);
@@ -359,7 +345,8 @@ const score=Math.min(99,Math.round(25+recent.length*4+recent.filter(h=>h.impact=
 document.getElementById("riskScore").textContent=score;
 const badge=document.getElementById("riskBadge");
 badge.textContent=score>=70?"急変":score>=45?"警戒":"通常";
-badge.style.background=score>=70?"var(--red)":score>=45?"var(--amber)":"var(--green)";
+badge.style.background=score>=70?"var(--red)":score>=45?"var(--amber)":"var(--blue)";
+badge.style.color=score>=70?"#fff":"#06100c";
 document.getElementById("riskText").textContent=score>=70?"金が飛びやすい。DXY・米10年金利・中東を確認。":score>=45?"材料あり。FRB・米指標・地政学に注意。":"大きな急変材料は少なめ。新着待ち。";
 document.getElementById("riskUpdated").textContent=`最終更新 ${new Date().toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})}`;
 }
@@ -368,13 +355,14 @@ function selectItem(item){showItem(item,true)}
 function showItem(item,moveMap){
 if(!item)return;
 document.getElementById("intelTag").textContent=item.layer.label;
-document.getElementById("intelTitle").textContent=`${xauBias(item)} / ${impactLabel(item)}`;
-document.getElementById("intelBody").textContent=`材料: ${item.title}`;
+document.getElementById("intelTitle").textContent=decisionTitle(item);
+document.getElementById("intelTitle").style.color=xauBias(item)==="買い"?"var(--blue)":xauBias(item)==="売り注意"?"var(--red)":"var(--gold)";
+document.getElementById("intelBody").textContent=decisionReason(item);
 document.getElementById("intelSource").textContent=item.source;
 document.getElementById("intelRegion").textContent=checkPoint(item);
 document.getElementById("intelImpact").textContent=xauBias(item);
 document.getElementById("intelTime").textContent=headlineMeta(item);
-document.getElementById("intelScenario").textContent=impactText(item);
+document.getElementById("intelScenario").textContent=`元ニュース: ${item.title}`;
 const r=regionMap[item.region]||regionMap.US;
 if(moveMap)map.flyTo([r.lat,r.lng],Math.min(5,Math.max(3,r.zoom-1)),{duration:.8});
 }
@@ -430,7 +418,7 @@ const controller=new AbortController();
 const timer=setTimeout(()=>controller.abort(),ms);
 return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearTimeout(timer));
 }
-initMap();buildLayers();renderWaterways();updateClock();loadNews();
+initMap();buildLayers();updateClock();loadNews();
 setInterval(updateClock,1000);
 setInterval(loadNews,30000);
 setInterval(updateOrderBook,1000);
