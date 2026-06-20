@@ -22,7 +22,8 @@ body{letter-spacing:.1px}
 .main{display:grid;grid-template-columns:285px minmax(360px,1fr) 340px;min-height:0}
 .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);overflow:hidden}
 .left{border-width:0 1px 0 0;padding:8px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;min-height:0}
-.sectionTitle{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.6px;margin-bottom:5px}
+.sectionTitle{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.6px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.liveDot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:liveBlink 1s infinite}
 .layerList{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .layerBtn{height:26px;border:1px solid #22332e;background:#0d1412;color:var(--muted);display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:5px;padding:0 6px;border-radius:4px;cursor:pointer;font-size:10px;text-align:left;opacity:.58}
 .layerBtn:hover{border-color:rgba(215,180,106,.65);background:rgba(215,180,106,.08);opacity:.9}
@@ -57,8 +58,7 @@ body{letter-spacing:.1px}
 .hudPill strong{color:var(--text)}
 .mapBtn{background:rgba(5,8,7,.86);border:1px solid rgba(215,180,106,.7);color:#f2e1b4;padding:7px 10px;border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;backdrop-filter:blur(8px)}
 .mapBtn:hover{background:rgba(215,180,106,.16);border-color:var(--gold)}
-.sessionLayer{position:absolute;z-index:505;inset:0;pointer-events:none}
-.marketSession{position:absolute;min-width:132px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.78);border-radius:4px;padding:7px 9px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.72}
+.marketSession{min-width:132px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.78);border-radius:4px;padding:7px 9px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.72}
 .marketSession.active{border-color:var(--gold);background:rgba(215,180,106,.16);box-shadow:0 0 20px rgba(215,180,106,.35),inset 0 0 0 1px rgba(255,255,255,.06);opacity:1}
 .marketSession.active .sessionDot{background:var(--green);box-shadow:0 0 12px var(--green)}
 .sessionName{display:flex;align-items:center;gap:6px;color:#fff;font-size:11px;font-weight:900;margin-bottom:3px}
@@ -68,7 +68,6 @@ body{letter-spacing:.1px}
 .marketSession.active .sessionState{color:var(--green)}
 .marketSession.closed{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.08);opacity:.85}
 .marketSession.closed .sessionState{color:var(--red)}
-.sessionAsia{left:66%;top:43%}.sessionLondon{left:48%;top:31%}.sessionUS{left:22%;top:35%}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
 .legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
 .mapLayerBtn{background:rgba(5,8,7,.86);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:10px;color:var(--muted);font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
@@ -126,6 +125,7 @@ body{letter-spacing:.1px}
 .popup b{color:var(--gold)}
 .popup small{color:var(--muted)}
 @keyframes markerDanger{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.22);opacity:.55}}
+@keyframes liveBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.78)}}
 @media(max-width:980px){
 html,body{overflow:auto}
 .app{height:auto;min-height:100vh;grid-template-rows:auto auto auto}
@@ -154,7 +154,7 @@ html,body{overflow:auto}
 <div class="riskUpdated" id="riskUpdated">更新待ち</div>
 </section>
 <section class="feedMini">
-<div class="sectionTitle">XAUUSDライブ速報</div>
+<div class="sectionTitle"><span class="liveDot"></span>XAUUSDライブ速報</div>
 <div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
 </section>
 </aside>
@@ -166,11 +166,6 @@ html,body{overflow:auto}
 <div class="hudPill">対象 <strong>XAUUSD</strong></div>
 <button class="mapBtn" onclick="focusRegion('GLOBAL')">全体</button>
 <button class="mapBtn" onclick="focusRegion('MIDDLE EAST')">中東</button>
-</div>
-<div class="sessionLayer">
-<div class="marketSession sessionAsia" id="sessionAsia"><div class="sessionName"><span class="sessionDot"></span>Asia session</div><div class="sessionTime">07:00-15:00 JST</div><div class="sessionState" id="sessionAsiaState">OFF</div></div>
-<div class="marketSession sessionLondon" id="sessionLondon"><div class="sessionName"><span class="sessionDot"></span>London session</div><div class="sessionTime">15:00-21:00 JST</div><div class="sessionState" id="sessionLondonState">OFF</div></div>
-<div class="marketSession sessionUS" id="sessionUS"><div class="sessionName"><span class="sessionDot"></span>US session</div><div class="sessionTime">21:00-06:00 JST</div><div class="sessionState" id="sessionUSState">OFF</div></div>
 </div>
 <div class="mapLegend" id="mapLegend"></div>
 </section>
@@ -192,19 +187,19 @@ html,body{overflow:auto}
 </main>
 <footer class="bottom">
 <section class="panel">
-<div class="sectionTitle">リアルタイム経済指標</div>
+<div class="sectionTitle"><span class="liveDot"></span>リアルタイム経済指標</div>
 <div class="calendarBox"><iframe title="TradingView Economic Calendar" loading="eager" src="https://www.tradingview-widget.com/embed-widget/events/?locale=ja#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%2C%22currencyFilter%22%3A%22USD%2CEUR%2CJPY%2CGBP%2CCNY%2CCAD%2CAUD%22%7D"></iframe></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">XAUUSDテクニカル</div>
+<div class="sectionTitle"><span class="liveDot"></span>XAUUSDテクニカル</div>
 <div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"15m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":true,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">XAUUSD比較チャート</div>
+<div class="sectionTitle"><span class="liveDot"></span>XAUUSD比較チャート</div>
 <div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>{"symbols":[["XAUUSD","OANDA:XAUUSD|1D"],["DXY","TVC:DXY|1D"],["米10年金利","TVC:US10Y|1D"],["WTI","TVC:USOIL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"ja","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":true,"hideDateRanges":false,"hideMarketStatus":false,"hideSymbolLogo":true,"scalePosition":"right","scaleMode":"Normal","fontFamily":"Arial, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","maLineColor":"#d7b46a","maLineWidth":1,"maLength":20,"lineWidth":2,"lineType":0,"dateRanges":["1d|15","5d|15","1m|60","3m|1D","6m|1D","12m|1D"]}</script></div></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">XAUUSD板情報 / 流動性</div>
+<div class="sectionTitle"><span class="liveDot"></span>XAUUSD板情報 / 流動性</div>
 <div class="liquidityBox">
 <div class="bookHeader"><b>流動性モニター</b><span id="bookClock">--:--:--</span></div>
 <div class="bookStatus"><span>取得元: <strong id="bookSource">MT5待機</strong></span><span id="bookSpread">Spread --</span></div>
@@ -257,11 +252,25 @@ const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
 ]);
-let map,markers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+let map,markers=[],sessionMarkers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+const marketSessions=[
+{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60},
+{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,start:15*60,end:21*60},
+{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",lat:40.7,lng:-74.0,start:21*60,end:6*60}
+];
 
 function initMap(){
 map=L.map("map",{zoomControl:false,attributionControl:false,worldCopyJump:true}).setView([20,10],2);
 L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:7,minZoom:2}).addTo(map);
+renderSessionMarkers();
+}
+function renderSessionMarkers(){
+sessionMarkers.forEach(m=>map.removeLayer(m));sessionMarkers=[];
+marketSessions.forEach(s=>{
+const html=`<div class="marketSession" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`;
+const marker=L.marker([s.lat,s.lng],{icon:L.divIcon({className:"",html,iconSize:[150,58],iconAnchor:[75,29]})}).addTo(map);
+sessionMarkers.push(marker);
+});
 }
 function buildLayers(){
 document.getElementById("mapLegend").innerHTML=layerDefs.map(l=>`<button class="mapLayerBtn active" data-layer="${l.id}" onclick="toggleLayer('${l.id}',this)"><span style="color:${l.color}">●</span><span>${l.label}</span><b>ON</b></button>`).join("");
@@ -444,17 +453,6 @@ const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
 const empty=headlines.length?"選択中レイヤーに一致するライブニュースはありません。":"XAUUSD関連ニュースを取得中です。API制限時は次の更新で再取得します。";
 document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact ${biasClass(h)}">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">${empty}</div>`;
 }
-function renderMiniSummary(visible){
-const buy=visible.filter(h=>xauBias(h)==="買い").length;
-const sell=visible.filter(h=>xauBias(h)==="売り注意").length;
-const wait=visible.filter(h=>xauBias(h)==="待ち").length;
-const high=visible.filter(h=>h.impact==="HIGH").length;
-const rows=layerDefs.map(l=>{
-const count=visible.filter(h=>h.layer.id===l.id).length;
-return`<div class="miniItem"><div class="summaryGrid"><span class="miniLabel">${l.label}</span><span class="summaryCount">${count}</span></div><div class="summaryMeta">地図レイヤー ${activeLayers.has(l.id)?"ON":"OFF"}</div></div>`;
-}).join("");
-document.getElementById("miniFeed").innerHTML=`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias buy">買い ${buy}</span> <span class="miniBias sell">売り注意 ${sell}</span> <span class="miniBias wait">待ち ${wait}</span><span class="miniTitle">危険材料 ${high}件 / 表示中ニュース ${visible.length}件</span></div>${rows}`;
-}
 function renderRisk(){
 const recent=headlines.filter(h=>h.isRecent);
 const score=headlines.length?Math.min(99,Math.round(10+recent.length*4+recent.filter(h=>h.impact==="HIGH").length*9+recent.filter(h=>h.impact==="MACRO").length*5)):0;
@@ -529,9 +527,7 @@ state.textContent=isClosed?"WEEKEND CLOSE":isOpen?"SESSION ON":"OFF";
 function updateMarketSessions(){
 const now=getJstMinutes();
 const closed=isJstWeekend();
-setSessionState("sessionAsia","sessionAsiaState",isSessionOpen(now,7*60,15*60),closed);
-setSessionState("sessionLondon","sessionLondonState",isSessionOpen(now,15*60,21*60),closed);
-setSessionState("sessionUS","sessionUSState",isSessionOpen(now,21*60,6*60),closed);
+marketSessions.forEach(s=>setSessionState(s.id,s.stateId,isSessionOpen(now,s.start,s.end),closed));
 }
 function setBookDisconnected(){
 document.getElementById("bookSource").textContent="MT5待機";
