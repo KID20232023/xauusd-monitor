@@ -33,10 +33,13 @@ body{letter-spacing:.1px}
 .riskBox{border:1px solid #22332e;background:#090e0d;padding:10px;border-radius:4px}
 .riskScore{font-size:42px;line-height:1;font-weight:900;color:var(--gold)}
 .riskText{font-size:12px;color:var(--muted);line-height:1.45;margin-top:7px}
+.riskUpdated{margin-top:8px;color:var(--green);font-size:11px;font-weight:900}
 .feedMini{overflow:auto;border-top:1px solid #17231f;padding-top:8px}
 .miniItem{padding:7px 0;border-bottom:1px solid #14201c;font-size:11px;line-height:1.35;cursor:pointer}
 .miniItem:hover{color:var(--gold)}
 .miniTime{color:var(--green);font-weight:900}
+.miniLabel{display:block;color:var(--gold);font-weight:900;margin-bottom:3px}
+.miniTitle{display:block;color:var(--text)}
 .mapWrap{position:relative;min-width:0;min-height:0;background:#020504}
 #map{position:absolute;inset:0;background:#020504}
 .mapHud{position:absolute;z-index:500;left:12px;top:12px;display:flex;gap:8px;align-items:center}
@@ -72,6 +75,7 @@ body{letter-spacing:.1px}
 .headlineTop{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .headlineSrc{font-size:11px;font-weight:900;color:var(--gold)}
 .headlineTime{font-size:10px;color:var(--green);font-weight:900}
+.headlineImpact{font-size:10px;color:#06100c;background:var(--green);font-weight:900;padding:2px 5px;border-radius:3px}
 .headlineText{font-size:12px;line-height:1.35;color:var(--text)}
 .liquidityBox{flex:1;min-height:0;border:1px solid #18241f;background:#070b0a;border-radius:4px;overflow:auto;padding:10px}
 .bookHeader{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #14201c;padding-bottom:8px;margin-bottom:8px}
@@ -122,9 +126,10 @@ html,body{overflow:auto}
 <div class="layerList" id="layerList"></div>
 </section>
 <section class="riskBox">
-<div class="sectionTitle">金相場リスク指数</div>
+<div class="sectionTitle">金相場リスク指数 0-100</div>
 <div class="riskScore" id="riskScore">--</div>
-<div class="riskText" id="riskText">RSS、地政学、FRB、ドル、金利、原油関連ニュースを集約中。</div>
+<div class="riskText" id="riskText">直近ニュースの量と重要度から、XAUUSDが急に動きやすい状態かを表示します。</div>
+<div class="riskUpdated" id="riskUpdated">更新待ち</div>
 </section>
 <section class="feedMini" id="miniFeed"></section>
 </aside>
@@ -140,16 +145,16 @@ html,body{overflow:auto}
 <aside class="right panel">
 <section class="quoteBox"><div class="tvQuote"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></section>
 <section class="intel" id="intel">
-<div class="intelTitle"><h2>XAUUSD判断材料</h2><span class="tag" id="intelTag">AUTO</span></div>
-<div class="alertTitle" id="intelTitle">金が動く材料を監視中</div>
-<div class="alertBody" id="intelBody">ニュースを選ぶと「金にプラスか、マイナスか」「次に何を見るか」をここに表示します。</div>
+<div class="intelTitle"><h2>XAUUSD売買判断</h2><span class="tag" id="intelTag">自動更新</span></div>
+<div class="alertTitle" id="intelTitle">材料待ち</div>
+<div class="alertBody" id="intelBody">最新ニュースから、金が上がりやすい材料か下がりやすい材料かを日本語で表示します。</div>
 <div class="detailGrid">
-<div class="detailCell"><span>情報元</span><b id="intelSource">RSS</b></div>
-<div class="detailCell"><span>地域</span><b id="intelRegion">全体</b></div>
-<div class="detailCell"><span>金への影響</span><b id="intelImpact">確認待ち</b></div>
-<div class="detailCell"><span>更新時刻</span><b id="intelTime">--</b></div>
+<div class="detailCell"><span>発生日時</span><b id="intelTime">--</b></div>
+<div class="detailCell"><span>情報元</span><b id="intelSource">--</b></div>
+<div class="detailCell"><span>判断</span><b id="intelImpact">確認待ち</b></div>
+<div class="detailCell"><span>確認項目</span><b id="intelRegion">DXY/米金利</b></div>
 </div>
-<div class="scenario" id="intelScenario">見る順番: 1. 米金利 2. DXY 3. 中東/戦争 4. 原油 5. 米経済指標。金は単独ニュースではなく、この組み合わせで判断します。</div>
+<div class="scenario" id="intelScenario">売買判断の順番: 米10年金利、DXY、中東リスク、原油、米経済指標を同時に見ます。</div>
 </section>
 <section class="actions">
 <button class="actionBtn" onclick="focusRegion('GLOBAL')">全体</button>
@@ -254,6 +259,37 @@ if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterw
 if(item.layer.id==="energy")return"インフレ材料";
 return item.impact==="HIGH"?"急変注意":item.impact==="MACRO"?"マクロ材料":"監視";
 }
+function xauBias(item){
+const t=(item.title||"").toLowerCase();
+if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"金は上がりやすい";
+if(item.layer.id==="energy")return"金は上がりやすい";
+if(t.includes("cut")||t.includes("weaker")||t.includes("falls")||t.includes("drop")||t.includes("lower yield")||t.includes("dovish"))return"金は上がりやすい";
+if(t.includes("higher yield")||t.includes("hawkish")||t.includes("strong dollar")||t.includes("hot inflation")||t.includes("rate hike"))return"金は下がりやすい";
+if(item.layer.id==="fed"||item.layer.id==="dollar")return"米金利とDXYで確認";
+return"方向確認";
+}
+function checkPoint(item){
+if(item.layer.id==="fed")return"米10年金利";
+if(item.layer.id==="dollar")return"DXY";
+if(item.layer.id==="middleEast"||item.layer.id==="risk")return"有事リスク";
+if(item.layer.id==="energy")return"原油/WTI";
+if(item.layer.id==="waterway")return"海上輸送";
+return"金ニュース";
+}
+function formatFullTime(ts){
+const d=new Date(ts||Date.now());
+return d.toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});
+}
+function ageText(ts){
+const diff=Math.max(0,Date.now()-(ts||Date.now()));
+const min=Math.floor(diff/60000);
+if(min<1)return"いま更新";
+if(min<60)return`${min}分前`;
+return`${Math.floor(min/60)}時間前`;
+}
+function headlineMeta(item){
+return `${formatFullTime(item.timestamp)} / ${ageText(item.timestamp)} / ${item.source}`;
+}
 async function fetchRSS(feed){
 const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feed.url)+"&_="+Date.now();
 const res=await fetchWithTimeout(api,5000);
@@ -321,26 +357,27 @@ waterwayMarkers.push(marker);
 }
 function renderHeadlines(){
 const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
-document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineTime">${h.time}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">選択中レイヤーに一致するニュースはありません。</div>`;
-document.getElementById("miniFeed").innerHTML=visible.slice(0,14).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniTime">${h.time}</span> ${escapeHtml(h.title)}</div>`).join("");
+document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">選択中レイヤーに一致するニュースはありません。</div>`;
+document.getElementById("miniFeed").innerHTML=visible.slice(0,14).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniLabel">${formatFullTime(h.timestamp)} / ${h.layer.label} / ${xauBias(h)}</span><span class="miniTitle">${escapeHtml(h.title)}</span></div>`).join("");
 }
 function renderRisk(){
 const recent=headlines.filter(h=>h.isRecent);
 const score=Math.min(99,Math.round(25+recent.length*4+recent.filter(h=>h.impact==="HIGH").length*9+recent.filter(h=>h.impact==="MACRO").length*5));
 document.getElementById("riskScore").textContent=score;
-document.getElementById("riskText").textContent=score>=70?"金が急変しやすいニュース密度です。DXY・米金利・中東リスクを同時確認。":score>=45?"監視強め。米指標、FRB発言、地政学ヘッドラインの組み合わせに注意。":"通常監視。新着ニュースと経済カレンダー待ち。";
+document.getElementById("riskText").textContent=score>=70?"急変警戒。直近ニュースが多く、XAUUSDが上下に飛びやすい状態です。米10年金利、DXY、中東リスクを同時確認。":score>=45?"警戒。材料は出ています。米指標、FRB発言、地政学ニュースの重なりに注意。":"通常。大きな急変材料は少なめです。新着ニュースと経済カレンダー待ち。";
+document.getElementById("riskUpdated").textContent=`最終更新 ${new Date().toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})}`;
 }
 function selectItemById(id){const item=headlines.find(h=>cssSafe(h.id)===id);if(item)showItem(item,true)}
 function selectItem(item){showItem(item,true)}
 function showItem(item,moveMap){
 if(!item)return;
 document.getElementById("intelTag").textContent=item.layer.label;
-document.getElementById("intelTitle").textContent=`${item.layer.label} / ${impactLabel(item)}`;
-document.getElementById("intelBody").textContent=`ニュース: ${item.title}`;
+document.getElementById("intelTitle").textContent=`${xauBias(item)} / ${impactLabel(item)}`;
+document.getElementById("intelBody").textContent=`材料: ${item.title}`;
 document.getElementById("intelSource").textContent=item.source;
-document.getElementById("intelRegion").textContent=item.region;
-document.getElementById("intelImpact").textContent=impactLabel(item);
-document.getElementById("intelTime").textContent=`${item.date} ${item.time}`;
+document.getElementById("intelRegion").textContent=checkPoint(item);
+document.getElementById("intelImpact").textContent=xauBias(item);
+document.getElementById("intelTime").textContent=headlineMeta(item);
 document.getElementById("intelScenario").textContent=impactText(item);
 const r=regionMap[item.region]||regionMap.US;
 if(moveMap)map.flyTo([r.lat,r.lng],Math.min(5,Math.max(3,r.zoom-1)),{duration:.8});
@@ -399,7 +436,7 @@ return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearT
 }
 initMap();buildLayers();renderWaterways();updateClock();loadNews();
 setInterval(updateClock,1000);
-setInterval(loadNews,60000);
+setInterval(loadNews,30000);
 setInterval(updateOrderBook,1000);
 updateOrderBook();
 </script>
