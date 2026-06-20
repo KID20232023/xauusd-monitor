@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
 html,body{width:100%;min-height:100%;overflow-x:hidden;overflow-y:auto;background:var(--bg);color:var(--text)}
 body{letter-spacing:.1px}
-.app{min-height:100vh;display:grid;grid-template-rows:58px minmax(380px,calc(100vh - 378px)) 320px;background:#050706}
+.app{min-height:100vh;display:grid;grid-template-rows:58px minmax(380px,calc(100vh - 418px)) 360px;background:#050706}
 .topbar{display:flex;align-items:center;justify-content:space-between;min-height:58px;border-bottom:1px solid var(--line);background:#090d0c;padding:6px 10px;gap:10px}
 .brand{display:flex;align-items:center;gap:10px;min-width:230px}
 .pulse{width:9px;height:9px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
@@ -23,6 +23,13 @@ body{letter-spacing:.1px}
 .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);overflow:hidden}
 .left{border-width:0 1px 0 0;padding:8px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;min-height:0}
 .sectionTitle{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.6px;margin-bottom:5px}
+.layerList{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.layerBtn{height:26px;border:1px solid #22332e;background:#0d1412;color:var(--muted);display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:5px;padding:0 6px;border-radius:4px;cursor:pointer;font-size:10px;text-align:left;opacity:.58}
+.layerBtn:hover{border-color:rgba(215,180,106,.65);background:rgba(215,180,106,.08);opacity:.9}
+.layerBtn.active{border-color:rgba(215,180,106,.95);background:linear-gradient(90deg,rgba(215,180,106,.24),rgba(56,255,154,.08));color:#fff;box-shadow:0 0 16px rgba(215,180,106,.18),inset 0 0 0 1px rgba(255,255,255,.04);opacity:1}
+.layerDot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.layerBtn b{font-size:9px;color:var(--soft);border:1px solid #263a34;border-radius:3px;padding:1px 3px;background:#090e0d}
+.layerBtn.active b{color:#06100c;background:var(--green);border-color:var(--green);box-shadow:0 0 10px rgba(56,255,154,.35)}
 .riskBox{border:1px solid rgba(215,180,106,.65);background:#090e0d;padding:8px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
 .riskTop{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
 .riskTop span{font-size:11px;color:#fff;font-weight:900}
@@ -47,7 +54,18 @@ body{letter-spacing:.1px}
 .hudPill strong{color:var(--text)}
 .mapBtn{background:rgba(5,8,7,.86);border:1px solid rgba(215,180,106,.7);color:#f2e1b4;padding:7px 10px;border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;backdrop-filter:blur(8px)}
 .mapBtn:hover{background:rgba(215,180,106,.16);border-color:var(--gold)}
+.sessionLayer{position:absolute;z-index:505;inset:0;pointer-events:none}
+.marketSession{position:absolute;min-width:132px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.78);border-radius:4px;padding:7px 9px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.72}
+.marketSession.active{border-color:var(--gold);background:rgba(215,180,106,.16);box-shadow:0 0 20px rgba(215,180,106,.35),inset 0 0 0 1px rgba(255,255,255,.06);opacity:1}
+.marketSession.active .sessionDot{background:var(--green);box-shadow:0 0 12px var(--green)}
+.sessionName{display:flex;align-items:center;gap:6px;color:#fff;font-size:11px;font-weight:900;margin-bottom:3px}
+.sessionDot{width:8px;height:8px;border-radius:50%;background:#42504b;box-shadow:none}
+.sessionTime{color:var(--muted);font-size:10px;font-weight:900}
+.sessionState{margin-top:3px;color:var(--muted);font-size:10px;font-weight:900}
+.marketSession.active .sessionState{color:var(--green)}
+.sessionAsia{left:66%;top:43%}.sessionLondon{left:48%;top:31%}.sessionUS{left:22%;top:35%}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
+.legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
 .mapLayerBtn{background:rgba(5,8,7,.86);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:10px;color:var(--muted);font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
 .mapLayerBtn.active{border-color:rgba(215,180,106,.9);color:#fff;background:rgba(215,180,106,.13)}
 .mapLayerBtn b{font-size:9px;color:#06100c;background:var(--green);border-radius:3px;padding:1px 4px}
@@ -66,9 +84,11 @@ body{letter-spacing:.1px}
 .detailCell span{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
 .detailCell b{font-size:12px;color:var(--green)}
 .scenario{border-top:1px solid #17231f;margin-top:12px;padding-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
-.bottom{display:grid;grid-template-columns:32% 35% 33%;border-top:1px solid var(--line);min-height:320px}
+.bottom{display:grid;grid-template-columns:20% 20% 24% 18% 18%;border-top:1px solid var(--line);min-height:360px}
 .bottom .panel{border-width:0 1px 0 0;padding:8px;min-height:0;display:flex;flex-direction:column}
 .bottom .panel:last-child{border-right:0}
+.tvWidgetBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
+.tvWidgetBox .tradingview-widget-container,.tvWidgetBox .tradingview-widget-container__widget{width:100%;height:100%}
 .calendarBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
 .calendarBox iframe{width:100%;height:100%;border:0;background:#050706}
 .headlineList{flex:1;min-height:0;overflow:auto}
@@ -139,6 +159,11 @@ html,body{overflow:auto}
 <button class="mapBtn" onclick="focusRegion('GLOBAL')">全体</button>
 <button class="mapBtn" onclick="focusRegion('MIDDLE EAST')">中東</button>
 </div>
+<div class="sessionLayer">
+<div class="marketSession sessionAsia" id="sessionAsia"><div class="sessionName"><span class="sessionDot"></span>Asia session</div><div class="sessionTime">07:00-15:00 JST</div><div class="sessionState" id="sessionAsiaState">OFF</div></div>
+<div class="marketSession sessionLondon" id="sessionLondon"><div class="sessionName"><span class="sessionDot"></span>London session</div><div class="sessionTime">15:00-21:00 JST</div><div class="sessionState" id="sessionLondonState">OFF</div></div>
+<div class="marketSession sessionUS" id="sessionUS"><div class="sessionName"><span class="sessionDot"></span>US session</div><div class="sessionTime">21:00-06:00 JST</div><div class="sessionState" id="sessionUSState">OFF</div></div>
+</div>
 <div class="mapLegend" id="mapLegend"></div>
 </section>
 <aside class="right panel">
@@ -146,7 +171,7 @@ html,body{overflow:auto}
 <section class="intel" id="intel">
 <div class="intelTitle"><h2>今の結論</h2><span class="tag" id="intelTag">自動更新</span></div>
 <div class="alertTitle" id="intelTitle">待ち</div>
-<div class="alertBody" id="intelBody">GDELTライブニュースから、買い・売り・待ちだけを表示します。</div>
+<div class="alertBody" id="intelBody">XAUUSD関連ニュースから、買い・売り・待ちだけを表示します。</div>
 <div class="detailGrid">
 <div class="detailCell"><span>方向</span><b id="intelImpact">待ち</b></div>
 <div class="detailCell"><span>見るもの</span><b id="intelRegion">DXY/米金利</b></div>
@@ -163,7 +188,15 @@ html,body{overflow:auto}
 <div class="calendarBox"><iframe title="TradingView Economic Calendar" loading="eager" src="https://www.tradingview-widget.com/embed-widget/events/?locale=ja#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%2C%22currencyFilter%22%3A%22USD%2CEUR%2CJPY%2CGBP%2CCNY%2CCAD%2CAUD%22%7D"></iframe></div>
 </section>
 <section class="panel">
-<div class="sectionTitle">GDELTライブ速報</div>
+<div class="sectionTitle">XAUUSDテクニカル</div>
+<div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"15m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":true,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+</section>
+<section class="panel">
+<div class="sectionTitle">XAUUSD比較チャート</div>
+<div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>{"symbols":[["XAUUSD","OANDA:XAUUSD|1D"],["DXY","TVC:DXY|1D"],["米10年金利","TVC:US10Y|1D"],["WTI","TVC:USOIL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"ja","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":true,"hideDateRanges":false,"hideMarketStatus":false,"hideSymbolLogo":true,"scalePosition":"right","scaleMode":"Normal","fontFamily":"Arial, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","maLineColor":"#d7b46a","maLineWidth":1,"maLength":20,"lineWidth":2,"lineType":0,"dateRanges":["1d|15","5d|15","1m|60","3m|1D","6m|1D","12m|1D"]}</script></div></div>
+</section>
+<section class="panel">
+<div class="sectionTitle">XAUUSDライブ速報</div>
 <div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
 </section>
 <section class="panel">
@@ -187,24 +220,39 @@ MT5ブリッジ起動後、ブローカーのXAUUSD気配値を自動表示。XA
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const layerDefs=[
-{id:"fed",label:"FRB・米指標",color:"var(--blue)",type:"macro",keywords:["fed","fomc","powell","cpi","ppi","pce","inflation","payroll","payrolls","nfp","jobs","claims","gdp","retail sales","ism","pmi","unemployment","jobless"],regions:["FED","US"]},
-{id:"dollar",label:"ドル・米金利",color:"var(--green)",type:"macro",keywords:["dollar","us dollar","dxy","dollar index","yield","yields","treasury","treasuries","10-year","10 year","2-year","2 year","real yield","real yields","rate","rates"],regions:["US"]},
+{id:"fed",label:"FRB・米指標",color:"var(--blue)",type:"macro",keywords:["fed","fomc","powell","cpi","ppi","pce","inflation","payroll","payrolls","nfp","jobs","claims","gdp","retail sales","ism","pmi","unemployment","jobless","beige book","rate cut","rate hike"],regions:["FED","US"]},
+{id:"dollar",label:"ドル・米金利",color:"var(--green)",type:"macro",keywords:["dollar","us dollar","dxy","dollar index","yield","yields","treasury","treasuries","10-year","10 year","2-year","2 year","real yield","real yields","rate","rates","bond","bonds","central bank","ecb","boj","boe","pboc"],regions:["US"]},
 {id:"middleEast",label:"中東リスク",color:"var(--red)",type:"high",keywords:["iran","israel","gaza","middle east","red sea","houthi","houthis","missile","attack","ceasefire","lebanon","hezbollah"],regions:["IRAN","ISRAEL","MIDDLE EAST"]},
-{id:"energy",label:"原油・エネルギー",color:"var(--amber)",type:"energy",keywords:["oil","crude","energy","opec","gas","brent","wti","inventory","inventories"],regions:["ENERGY"]},
-{id:"risk",label:"地政学リスク",color:"var(--red)",type:"high",keywords:["ukraine","russia","china","taiwan","war","conflict","sanction","sanctions","military","tariff","tariffs","trade war"],regions:["UKRAINE","RUSSIA","CHINA","TAIWAN"]},
+{id:"energy",label:"原油・エネルギー",color:"var(--amber)",type:"energy",keywords:["oil","crude","energy","opec","gas","brent","wti","inventory","inventories","saudi","uae","qatar","pipeline"],regions:["ENERGY"]},
+{id:"risk",label:"地政学リスク",color:"var(--red)",type:"high",keywords:["ukraine","russia","china","taiwan","war","conflict","sanction","sanctions","military","tariff","tariffs","trade war","nuclear","missile","drone","attack","election"],regions:["UKRAINE","RUSSIA","CHINA","TAIWAN"]},
 {id:"waterway",label:"海上リスク",color:"var(--amber)",type:"energy",keywords:["red sea","hormuz","suez","panama","shipping","waterway","strait","canal","tanker","vessel"],regions:["RED SEA","HORMUZ","SUEZ","PANAMA","TAIWAN"]},
-{id:"gold",label:"金関連ニュース",color:"var(--gold)",type:"watch",keywords:["gold","xauusd","bullion","spot gold","gold price","gold prices","gold futures","comex gold","precious metals","safe haven","safe-haven"],regions:["US","GLOBAL"]}
+{id:"gold",label:"金関連ニュース",color:"var(--gold)",type:"watch",keywords:["gold","xauusd","bullion","spot gold","gold price","gold prices","gold futures","comex gold","precious metals","safe haven","safe-haven","gold etf","gold demand","gold import","gold reserve","central bank gold"],regions:["US","GLOBAL"]}
 ];
 const regionMap={
 GLOBAL:{lat:20,lng:10,zoom:2},US:{lat:39,lng:-98,zoom:4},FED:{lat:38.9,lng:-77,zoom:6},"MIDDLE EAST":{lat:31,lng:38,zoom:5},IRAN:{lat:32,lng:53,zoom:5},ISRAEL:{lat:31.5,lng:35,zoom:6},ENERGY:{lat:26,lng:50,zoom:5},UKRAINE:{lat:49,lng:32,zoom:6},RUSSIA:{lat:55,lng:90,zoom:3},CHINA:{lat:35,lng:103,zoom:4},TAIWAN:{lat:23.7,lng:121,zoom:6},"RED SEA":{lat:18,lng:39,zoom:5},HORMUZ:{lat:26.5,lng:56.2,zoom:6},SUEZ:{lat:30.6,lng:32.3,zoom:6},PANAMA:{lat:9,lng:-79.6,zoom:6}
 };
-const gdeltQueries=[
-'(XAUUSD OR "spot gold" OR bullion OR "gold price" OR "gold prices" OR "gold futures" OR "COMEX gold" OR "precious metals" OR "safe haven")',
-'((gold OR bullion OR XAUUSD) AND ("US dollar" OR DXY OR "dollar index" OR treasury OR treasuries OR yield OR yields OR "10-year yield" OR "real yields"))',
-'((gold OR bullion OR XAUUSD) AND (Fed OR FOMC OR Powell OR CPI OR PCE OR inflation OR payrolls OR NFP OR "jobless claims" OR "retail sales" OR ISM OR PMI))',
-'((gold OR bullion OR XAUUSD OR oil) AND (Iran OR Israel OR Gaza OR Houthi OR "Red Sea" OR Hormuz OR Ukraine OR Russia OR China OR Taiwan OR sanctions OR tariffs))',
-'((oil OR crude OR Brent OR WTI OR OPEC) AND (inflation OR gold OR dollar OR yields))'
+const globalGoldTerms=[
+'"gold price"','"spot gold"','XAUUSD','bullion','"gold futures"','"COMEX gold"','"precious metals"','"safe haven"','"gold ETF"','"gold demand"','"central bank gold"',
+'"US dollar"','DXY','"dollar index"','treasury','treasuries','yields','"real yields"','"10-year yield"',
+'Fed','FOMC','Powell','CPI','PCE','inflation','payrolls','NFP','"jobless claims"','"retail sales"',
+'ECB','BOJ','BOE','PBOC','China','yuan','yen','euro',
+'Iran','Israel','Gaza','Houthi','"Red Sea"','Hormuz','Ukraine','Russia','Taiwan','sanctions','tariffs',
+'oil','crude','Brent','WTI','OPEC'
 ];
+const gdeltQuery='('+globalGoldTerms.join(' OR ')+')';
+const googleNewsQueries=[
+'(XAUUSD OR "spot gold" OR bullion OR "gold price" OR "gold futures" OR "COMEX gold" OR "gold ETF" OR "central bank gold") when:2d',
+'(("gold price" OR bullion OR XAUUSD) AND ("US dollar" OR DXY OR "dollar index" OR treasury OR yields OR "real yields")) when:2d',
+'(("gold price" OR bullion OR XAUUSD) AND (Fed OR FOMC OR Powell OR CPI OR PCE OR inflation OR payrolls OR NFP OR "jobless claims" OR "retail sales")) when:2d',
+'(("gold price" OR bullion OR XAUUSD) AND (ECB OR BOJ OR BOE OR PBOC OR China OR yuan OR yen OR euro OR "central bank")) when:2d',
+'((gold OR bullion OR XAUUSD OR oil) AND (Iran OR Israel OR Gaza OR Houthi OR "Red Sea" OR Hormuz OR Ukraine OR Russia OR Taiwan OR sanctions OR tariffs OR nuclear OR missile)) when:2d',
+'((oil OR crude OR Brent OR WTI OR OPEC OR gas) AND (inflation OR gold OR dollar OR yields OR "Red Sea" OR Hormuz)) when:2d',
+'(金価格 OR 金相場 OR XAUUSD OR ゴールド OR ドル指数 OR 米金利 OR FRB OR CPI OR インフレ OR 原油 OR 中東 OR 地政学) when:2d'
+];
+const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
+'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
+'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
+]);
 let map,markers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
 
 function initMap(){
@@ -281,8 +329,8 @@ if(b==="売り注意")return"sell";
 if(b==="待ち")return"wait";
 return"buy";
 }
-async function fetchGDELT(query){
-const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(query)+"&mode=ArtList&format=json&maxrecords=50&sort=HybridRel&timespan=24h";
+async function fetchGDELT(){
+const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(gdeltQuery)+"&mode=ArtList&format=json&maxrecords=75&sort=HybridRel&timespan=48h";
 const res=await fetchWithTimeout(url,5000);
 if(!res.ok)throw new Error("GDELT fetch failed");
 const data=await res.json();
@@ -294,23 +342,54 @@ const c=classify(title+" "+(article.domain||""));
 return{id:article.url||title,source:article.domain||"GDELT",title,link:article.url||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
 });
 }
+async function fetchGoogleNews(feedUrl){
+try{
+const url="https://api.allorigins.win/raw?url="+encodeURIComponent(feedUrl);
+const res=await fetchWithTimeout(url,7000);
+if(!res.ok)throw new Error("allorigins failed");
+const xml=await res.text();
+const doc=new DOMParser().parseFromString(xml,"text/xml");
+return Array.from(doc.querySelectorAll("item")).slice(0,80).map(item=>{
+const title=item.querySelector("title")?.textContent||"No title";
+const link=item.querySelector("link")?.textContent||"";
+const pub=item.querySelector("pubDate")?.textContent||"";
+const source=item.querySelector("source")?.textContent||"Google News";
+const d=pub?new Date(pub):new Date();
+const c=classify(title+" "+source);
+return{id:link||title,source,title,link,time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
+});
+}catch(e){
+const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feedUrl);
+const res=await fetchWithTimeout(url,7000);
+if(!res.ok)throw new Error("Google News RSS backup failed");
+const data=await res.json();
+return(data.items||[]).slice(0,80).map(article=>{
+const title=article.title||"No title";
+const d=article.pubDate?new Date(article.pubDate):new Date();
+const source=article.author||"Google News";
+const c=classify(title+" "+source);
+return{id:article.link||title,source,title,link:article.link||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
+});
+}
+}
 async function loadNews(){
 let all=[];
-const jobs=gdeltQueries.map(q=>fetchGDELT(q));
+const jobs=[fetchGDELT(),...googleNewsFeeds.map(feed=>fetchGoogleNews(feed))];
 const results=await Promise.allSettled(jobs);
 results.forEach((result,index)=>{
 if(result.status==="fulfilled")all=all.concat(result.value);
-else console.log("GDELT",gdeltQueries[index],result.reason);
+else console.log(index===0?"GDELT":"Google News",result.reason);
 });
-headlines=all.filter(isXauRelevant).filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>b.timestamp-a.timestamp).slice(0,100);
+headlines=all.filter(isXauRelevant).filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>b.timestamp-a.timestamp).slice(0,160);
 renderAll();
 }
 function isXauRelevant(item){
 const t=((item.title||"")+" "+(item.source||"")).toLowerCase();
 if(item.layer.id==="gold")return true;
-if(t.includes("gold")||t.includes("xauusd")||t.includes("bullion")||t.includes("precious metal"))return true;
-if(t.includes("dxy")||t.includes("dollar index")||t.includes("treasury")||t.includes("yield")||t.includes("fed")||t.includes("fomc")||t.includes("powell")||t.includes("inflation")||t.includes("cpi")||t.includes("pce")||t.includes("payroll"))return true;
-if(t.includes("iran")||t.includes("israel")||t.includes("gaza")||t.includes("houthi")||t.includes("red sea")||t.includes("hormuz")||t.includes("ukraine")||t.includes("oil")||t.includes("opec"))return true;
+if(t.includes("gold")||t.includes("xauusd")||t.includes("bullion")||t.includes("precious metal")||t.includes("金価格")||t.includes("金相場")||t.includes("ゴールド"))return true;
+if(t.includes("dxy")||t.includes("dollar index")||t.includes("treasury")||t.includes("yield")||t.includes("fed")||t.includes("fomc")||t.includes("powell")||t.includes("inflation")||t.includes("cpi")||t.includes("pce")||t.includes("payroll")||t.includes("米金利")||t.includes("ドル指数")||t.includes("インフレ"))return true;
+if(t.includes("ecb")||t.includes("boj")||t.includes("boe")||t.includes("pboc")||t.includes("central bank")||t.includes("china")||t.includes("yuan")||t.includes("yen"))return true;
+if(t.includes("iran")||t.includes("israel")||t.includes("gaza")||t.includes("houthi")||t.includes("red sea")||t.includes("hormuz")||t.includes("ukraine")||t.includes("oil")||t.includes("opec")||t.includes("sanction")||t.includes("tariff")||t.includes("原油")||t.includes("中東")||t.includes("地政学"))return true;
 return false;
 }
 function renderAll(){renderMarkers();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=headlines.length?`${headlines.length} LIVE`:"取得待ち"}
@@ -327,9 +406,9 @@ markers.push(marker);
 }
 function renderHeadlines(){
 const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
-const empty=headlines.length?"選択中レイヤーに一致するライブニュースはありません。":"GDELTからXAUUSD関連ニュースを取得中です。取得できたニュースだけを表示します。";
+const empty=headlines.length?"選択中レイヤーに一致するライブニュースはありません。":"XAUUSD関連ニュースを取得中です。API制限時は次の更新で再取得します。";
 document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact ${biasClass(h)}">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">${empty}</div>`;
-document.getElementById("miniFeed").innerHTML=visible.slice(0,12).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniWhen">${formatFullTime(h.timestamp)} / ${ageText(h.timestamp)}</span><span class="miniBias ${biasClass(h)}">${xauBias(h)}</span><span class="miniLabel">${h.layer.label} / ${h.source}</span><span class="miniTitle">${escapeHtml(h.title)}</span></div>`).join("")||`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias wait">取得待ち</span><span class="miniLabel">GDELTライブニュース</span><span class="miniTitle">固定の判断材料は表示しません。ライブ取得できたニュースだけ表示します。</span></div>`;
+document.getElementById("miniFeed").innerHTML=visible.slice(0,12).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniWhen">${formatFullTime(h.timestamp)} / ${ageText(h.timestamp)}</span><span class="miniBias ${biasClass(h)}">${xauBias(h)}</span><span class="miniLabel">${h.layer.label} / ${h.source}</span><span class="miniTitle">${escapeHtml(h.title)}</span></div>`).join("")||`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias wait">取得中</span><span class="miniLabel">XAUUSDライブニュース</span><span class="miniTitle">取得できたニュースだけ表示します。固定ニュースは出しません。</span></div>`;
 }
 function renderRisk(){
 const recent=headlines.filter(h=>h.isRecent);
@@ -339,7 +418,7 @@ const badge=document.getElementById("riskBadge");
 badge.textContent=headlines.length?(score>=70?"急変":score>=45?"警戒":"通常"):"取得待ち";
 badge.style.background=score>=70?"var(--red)":score>=45?"var(--amber)":"var(--blue)";
 badge.style.color=score>=70?"#fff":"#06100c";
-document.getElementById("riskText").textContent=!headlines.length?"ライブニュース取得待ち。固定材料では判定しません。":score>=70?"危険。金が飛びやすい材料が複数あります。DXY・米10年金利・中東を確認。":score>=45?"警戒。リアルタイム材料あり。FRB・米指標・地政学に注意。":"通常。直近ニュースだけでは大きな急変材料は少なめ。";
+document.getElementById("riskText").textContent=!headlines.length?"ニュース取得中。API制限時は次の更新で再取得します。":score>=70?"危険。金が飛びやすい材料が複数あります。DXY・米10年金利・中東を確認。":score>=45?"警戒。リアルタイム材料あり。FRB・米指標・地政学に注意。":"通常。直近ニュースだけでは大きな急変材料は少なめ。";
 document.getElementById("riskUpdated").textContent=`最終更新 ${new Date().toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})}`;
 }
 function selectItemById(id){const item=headlines.find(h=>cssSafe(h.id)===id);if(item)showItem(item,true)}
@@ -359,15 +438,15 @@ const r=regionMap[item.region]||regionMap.US;
 if(moveMap)map.flyTo([r.lat,r.lng],Math.min(5,Math.max(3,r.zoom-1)),{duration:.8});
 }
 function showEmptyIntel(){
-document.getElementById("intelTag").textContent="GDELTライブニュース";
-document.getElementById("intelTitle").textContent="取得待ち";
+document.getElementById("intelTag").textContent="XAUUSDライブニュース";
+document.getElementById("intelTitle").textContent="取得中";
 document.getElementById("intelTitle").style.color="var(--gold)";
-document.getElementById("intelBody").textContent="今はリアルタイム取得できたXAUUSD関連ニュースがありません。固定の買い材料・売り材料は表示しません。";
-document.getElementById("intelSource").textContent="GDELT";
+document.getElementById("intelBody").textContent="ニュースAPIを再取得中です。GDELTが制限中でもGoogle News RSSから取得します。固定の買い材料・売り材料は表示しません。";
+document.getElementById("intelSource").textContent="GDELT / Google News";
 document.getElementById("intelRegion").textContent="XAUUSD / DXY / 米金利";
 document.getElementById("intelImpact").textContent="待ち";
 document.getElementById("intelTime").textContent=formatFullTime(Date.now());
-document.getElementById("intelScenario").textContent="GDELTから取得できたニュースが入り次第、ここに買い・売り注意・待ちを表示します。";
+document.getElementById("intelScenario").textContent="取得できたニュースが入り次第、ここに買い・売り注意・待ちを表示します。";
 }
 function focusRegion(name){
 const r=regionMap[name]||regionMap.GLOBAL;
@@ -379,6 +458,29 @@ const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
 document.getElementById("clock").textContent=now;
 const book=document.getElementById("bookClock");
 if(book)book.textContent=now;
+updateMarketSessions();
+}
+function getJstMinutes(){
+const parts=new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
+const hour=Number(parts.find(p=>p.type==="hour")?.value||0);
+const minute=Number(parts.find(p=>p.type==="minute")?.value||0);
+return hour*60+minute;
+}
+function isSessionOpen(now,start,end){
+return start<end?now>=start&&now<end:now>=start||now<end;
+}
+function setSessionState(id,stateId,isOpen){
+const box=document.getElementById(id);
+const state=document.getElementById(stateId);
+if(!box||!state)return;
+box.classList.toggle("active",isOpen);
+state.textContent=isOpen?"SESSION ON":"OFF";
+}
+function updateMarketSessions(){
+const now=getJstMinutes();
+setSessionState("sessionAsia","sessionAsiaState",isSessionOpen(now,7*60,15*60));
+setSessionState("sessionLondon","sessionLondonState",isSessionOpen(now,15*60,21*60));
+setSessionState("sessionUS","sessionUSState",isSessionOpen(now,21*60,6*60));
 }
 function setBookDisconnected(){
 document.getElementById("bookSource").textContent="MT5待機";
@@ -423,7 +525,7 @@ return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearT
 }
 initMap();buildLayers();updateClock();loadNews();
 setInterval(updateClock,1000);
-setInterval(loadNews,30000);
+setInterval(loadNews,60000);
 setInterval(updateOrderBook,1000);
 updateOrderBook();
 </script>
