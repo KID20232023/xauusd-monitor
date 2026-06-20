@@ -80,7 +80,7 @@ body{letter-spacing:.1px}
 .bookStatus{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;color:var(--muted);font-size:11px}
 .bookStatus strong{color:var(--green)}
 .bookRows{display:grid;gap:5px}
-.bookRow{display:grid;grid-template-columns:64px 1fr 72px;gap:8px;align-items:center;border:1px solid #16231f;background:#0b1110;border-radius:4px;padding:7px;font-size:11px}
+.bookRow{display:grid;grid-template-columns:82px 1fr 86px;gap:8px;align-items:center;border:1px solid #16231f;background:#0b1110;border-radius:4px;padding:7px;font-size:11px}
 .bookRow.ask{border-color:rgba(255,77,77,.35)}.bookRow.bid{border-color:rgba(56,255,154,.35)}
 .bookSide{font-weight:900}.ask .bookSide{color:var(--red)}.bid .bookSide{color:var(--green)}
 .bookBar{height:8px;background:#13221d;border-radius:99px;overflow:hidden}
@@ -140,16 +140,16 @@ html,body{overflow:auto}
 <aside class="right panel">
 <section class="quoteBox"><div class="tvQuote"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></section>
 <section class="intel" id="intel">
-<div class="intelTitle"><h2>材料の詳細</h2><span class="tag" id="intelTag">AUTO</span></div>
-<div class="alertTitle" id="intelTitle">監視開始</div>
-<div class="alertBody" id="intelBody">ニュースと市場レイヤーを取得しています。地図上のマーカー、左の速報、または右下のニュースを押すと詳細を表示します。</div>
+<div class="intelTitle"><h2>XAUUSD判断材料</h2><span class="tag" id="intelTag">AUTO</span></div>
+<div class="alertTitle" id="intelTitle">金が動く材料を監視中</div>
+<div class="alertBody" id="intelBody">ニュースを選ぶと「金にプラスか、マイナスか」「次に何を見るか」をここに表示します。</div>
 <div class="detailGrid">
 <div class="detailCell"><span>情報元</span><b id="intelSource">RSS</b></div>
-<div class="detailCell"><span>地域</span><b id="intelRegion">GLOBAL</b></div>
-<div class="detailCell"><span>影響度</span><b id="intelImpact">WATCH</b></div>
-<div class="detailCell"><span>時間</span><b id="intelTime">--</b></div>
+<div class="detailCell"><span>地域</span><b id="intelRegion">全体</b></div>
+<div class="detailCell"><span>金への影響</span><b id="intelImpact">確認待ち</b></div>
+<div class="detailCell"><span>更新時刻</span><b id="intelTime">--</b></div>
 </div>
-<div class="scenario" id="intelScenario">判断軸: ドル指数、米金利、地政学リスク、原油、米経済指標。XAUUSDはこれらの合成で反応します。</div>
+<div class="scenario" id="intelScenario">見る順番: 1. 米金利 2. DXY 3. 中東/戦争 4. 原油 5. 米経済指標。金は単独ニュースではなく、この組み合わせで判断します。</div>
 </section>
 <section class="actions">
 <button class="actionBtn" onclick="focusRegion('GLOBAL')">全体</button>
@@ -172,10 +172,10 @@ html,body{overflow:auto}
 <div class="bookHeader"><b>流動性モニター</b><span id="bookClock">--:--:--</span></div>
 <div class="bookStatus"><span>取得元: <strong id="bookSource">MT5待機</strong></span><span id="bookSpread">Spread --</span></div>
 <div class="bookRows">
-<div class="bookRow ask"><span class="bookSide">ASK</span><span class="bookBar"><span class="bookFill" id="askFill1" style="width:12%"></span></span><span class="bookPrice" id="askPrice1">接続待ち</span></div>
-<div class="bookRow ask"><span class="bookSide">ASK2</span><span class="bookBar"><span class="bookFill" id="askFill2" style="width:8%"></span></span><span class="bookPrice" id="askPrice2">上値板</span></div>
-<div class="bookRow bid"><span class="bookSide">BID</span><span class="bookBar"><span class="bookFill" id="bidFill1" style="width:12%"></span></span><span class="bookPrice" id="bidPrice1">接続待ち</span></div>
-<div class="bookRow bid"><span class="bookSide">BID2</span><span class="bookBar"><span class="bookFill" id="bidFill2" style="width:8%"></span></span><span class="bookPrice" id="bidPrice2">下値板</span></div>
+<div class="bookRow ask"><span class="bookSide">買う価格</span><span class="bookBar"><span class="bookFill" id="askFill1" style="width:12%"></span></span><span class="bookPrice" id="askPrice1">待機中</span></div>
+<div class="bookRow ask"><span class="bookSide">上の売り板</span><span class="bookBar"><span class="bookFill" id="askFill2" style="width:8%"></span></span><span class="bookPrice" id="askPrice2">上値板</span></div>
+<div class="bookRow bid"><span class="bookSide">売る価格</span><span class="bookBar"><span class="bookFill" id="bidFill1" style="width:12%"></span></span><span class="bookPrice" id="bidPrice1">待機中</span></div>
+<div class="bookRow bid"><span class="bookSide">下の買い板</span><span class="bookBar"><span class="bookFill" id="bidFill2" style="width:8%"></span></span><span class="bookPrice" id="bidPrice2">下値板</span></div>
 </div>
 <div class="bookNote">
 MT5ブリッジ起動後、ブローカーのXAUUSD気配値を自動表示。XAUUSDはOTC/CFDのため、表示される板は利用中ブローカーのBID/ASKです。
@@ -240,13 +240,19 @@ const impact=matched.some(l=>l.type==="high")?"HIGH":matched.some(l=>l.type==="m
 return{layer:primary,matched,region,impact};
 }
 function impactText(item){
-if(item.layer.id==="fed")return"FRB・米指標は米金利とドルを動かし、XAUUSDの主方向を作ります。タカ派なら金に逆風、ハト派なら追い風。";
-if(item.layer.id==="dollar")return"DXYや米金利の上昇は金の重し、低下は金買い材料になりやすいです。";
-if(item.layer.id==="middleEast")return"中東リスクは安全資産需要と原油高を通じてXAUUSDを押し上げやすい材料です。";
-if(item.layer.id==="energy")return"原油・エネルギー材料はインフレ期待とリスク心理に波及し、金と米金利を同時に動かします。";
-if(item.layer.id==="waterway")return"海上リスクです。紅海、ホルムズ、スエズなどの緊張は原油・物流・インフレ期待に波及し、XAUUSDの買い材料になりやすいです。";
-if(item.layer.id==="risk")return"地政学リスクはリスクオフ時に金買い、ドル買いが同時に起きるため方向確認が必要です。";
-return"金関連ニュースです。ドル、金利、リスクオフとの同時確認で優位性を見ます。";
+if(item.layer.id==="fed")return"見る判断: 米金利とDXYが上なら金は売られやすいです。米金利低下、利下げ期待、弱い米指標なら金は買われやすいです。";
+if(item.layer.id==="dollar")return"見る判断: DXY上昇はXAUUSDに下押し、DXY低下はXAUUSDに追い風です。米10年金利も同時に確認してください。";
+if(item.layer.id==="middleEast")return"見る判断: 中東リスク拡大は安全資産買いで金にプラスです。ただしドルも買われるため、DXYが強すぎる時は上値が重くなります。";
+if(item.layer.id==="energy")return"見る判断: 原油高はインフレ警戒で金にプラスになりやすいです。ただし米金利が急上昇すると金には逆風です。";
+if(item.layer.id==="waterway")return"見る判断: ホルムズ、紅海、スエズなどの海上リスクは原油高とリスクオフにつながり、金買い材料になりやすいです。";
+if(item.layer.id==="risk")return"見る判断: 戦争・テロ・制裁はリスクオフで金買い材料です。初動は金買い、その後はDXYと米金利で継続性を確認します。";
+return"見る判断: 金関連ニュースです。DXY、米10年金利、原油、地政学リスクが同じ方向ならXAUUSDの動きが強くなります。";
+}
+function impactLabel(item){
+if(item.layer.id==="fed"||item.layer.id==="dollar")return"米金利/DXY次第";
+if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"金買い材料";
+if(item.layer.id==="energy")return"インフレ材料";
+return item.impact==="HIGH"?"急変注意":item.impact==="MACRO"?"マクロ材料":"監視";
 }
 async function fetchRSS(feed){
 const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feed.url)+"&_="+Date.now();
@@ -329,11 +335,11 @@ function selectItem(item){showItem(item,true)}
 function showItem(item,moveMap){
 if(!item)return;
 document.getElementById("intelTag").textContent=item.layer.label;
-document.getElementById("intelTitle").textContent=item.impact==="HIGH"?"重要材料":item.impact==="MACRO"?"マクロ材料":"監視材料";
-document.getElementById("intelBody").textContent=item.title;
+document.getElementById("intelTitle").textContent=`${item.layer.label} / ${impactLabel(item)}`;
+document.getElementById("intelBody").textContent=`ニュース: ${item.title}`;
 document.getElementById("intelSource").textContent=item.source;
 document.getElementById("intelRegion").textContent=item.region;
-document.getElementById("intelImpact").textContent=item.impact;
+document.getElementById("intelImpact").textContent=impactLabel(item);
 document.getElementById("intelTime").textContent=`${item.date} ${item.time}`;
 document.getElementById("intelScenario").textContent=impactText(item);
 const r=regionMap[item.region]||regionMap.US;
