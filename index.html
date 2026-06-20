@@ -58,16 +58,18 @@ body{letter-spacing:.1px}
 .hudPill strong{color:var(--text)}
 .mapBtn{background:rgba(5,8,7,.86);border:1px solid rgba(215,180,106,.7);color:#f2e1b4;padding:7px 10px;border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;backdrop-filter:blur(8px)}
 .mapBtn:hover{background:rgba(215,180,106,.16);border-color:var(--gold)}
-.marketSession{min-width:132px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.78);border-radius:4px;padding:7px 9px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.72}
+.marketSessionsHud{position:absolute;z-index:520;right:12px;top:12px;display:flex;gap:6px;align-items:stretch;max-width:46%;pointer-events:none}
+.marketSession{min-width:116px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.86);border-radius:4px;padding:6px 8px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.76}
 .marketSession.active{border-color:var(--gold);background:rgba(215,180,106,.16);box-shadow:0 0 20px rgba(215,180,106,.35),inset 0 0 0 1px rgba(255,255,255,.06);opacity:1}
 .marketSession.active .sessionDot{background:var(--green);box-shadow:0 0 12px var(--green)}
-.sessionName{display:flex;align-items:center;gap:6px;color:#fff;font-size:11px;font-weight:900;margin-bottom:3px}
+.sessionName{display:flex;align-items:center;gap:6px;color:#fff;font-size:10px;font-weight:900;margin-bottom:2px;white-space:nowrap}
 .sessionDot{width:8px;height:8px;border-radius:50%;background:#42504b;box-shadow:none}
-.sessionTime{color:var(--muted);font-size:10px;font-weight:900}
-.sessionState{margin-top:3px;color:var(--muted);font-size:10px;font-weight:900}
+.sessionTime{color:var(--muted);font-size:9px;font-weight:900;white-space:nowrap}
+.sessionState{margin-top:2px;color:var(--muted);font-size:9px;font-weight:900;white-space:nowrap}
 .marketSession.active .sessionState{color:var(--green)}
 .marketSession.closed{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.08);opacity:.85}
 .marketSession.closed .sessionState{color:var(--red)}
+.marketSession.usSession{transform:translateY(-10px)}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
 .legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
 .mapLayerBtn{background:rgba(5,8,7,.86);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:10px;color:var(--muted);font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
@@ -93,6 +95,10 @@ body{letter-spacing:.1px}
 .bottom .panel:last-child{border-right:0}
 .tvWidgetBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
 .tvWidgetBox .tradingview-widget-container,.tvWidgetBox .tradingview-widget-container__widget{width:100%;height:100%}
+.techGrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,minmax(96px,1fr));gap:6px;overflow:hidden}
+.techCell{position:relative;min-height:0;border:1px solid #18241f;background:#050706;overflow:hidden}
+.techLabel{position:absolute;z-index:2;top:4px;left:5px;background:rgba(5,7,6,.9);border:1px solid rgba(215,180,106,.45);color:var(--gold);font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px}
+.techCell .tradingview-widget-container,.techCell .tradingview-widget-container__widget{width:100%;height:100%}
 .calendarBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
 .calendarBox iframe{width:100%;height:100%;border:0;background:#050706}
 .headlineList{flex:1;min-height:0;overflow:auto}
@@ -133,6 +139,10 @@ html,body{overflow:auto}
 .ticker{order:3;flex-basis:100%;min-width:0}
 .main{grid-template-columns:1fr;grid-template-rows:auto 420px auto;min-height:auto}
 .left,.right{border:0;border-bottom:1px solid var(--line)}
+.mapHud{left:8px;top:8px;right:8px;flex-wrap:wrap}
+.marketSessionsHud{right:8px;top:52px;max-width:calc(100% - 16px);flex-wrap:wrap;justify-content:flex-end}
+.marketSession{min-width:104px;padding:5px 7px}
+.sessionName{font-size:9px}.sessionTime,.sessionState{font-size:8px}
 .bottom{grid-template-columns:1fr}
 .calendarBox,.headlineList,.liquidityBox{min-height:240px}
 }
@@ -167,6 +177,7 @@ html,body{overflow:auto}
 <button class="mapBtn" onclick="focusRegion('GLOBAL')">全体</button>
 <button class="mapBtn" onclick="focusRegion('MIDDLE EAST')">中東</button>
 </div>
+<div class="marketSessionsHud" id="marketSessionsHud"></div>
 <div class="mapLegend" id="mapLegend"></div>
 </section>
 <aside class="right panel">
@@ -192,7 +203,14 @@ html,body{overflow:auto}
 </section>
 <section class="panel">
 <div class="sectionTitle"><span class="liveDot"></span>XAUUSDテクニカル</div>
-<div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"15m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":true,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techGrid">
+<div class="techCell"><div class="techLabel">1分</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techCell"><div class="techLabel">5分</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"5m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techCell"><div class="techLabel">15分</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"15m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techCell"><div class="techLabel">1時間</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1h","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techCell"><div class="techLabel">4時間</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"4h","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techCell"><div class="techLabel">日足</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1D","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+</div>
 </section>
 <section class="panel">
 <div class="sectionTitle"><span class="liveDot"></span>XAUUSD比較チャート</div>
@@ -252,11 +270,11 @@ const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
 ]);
-let map,markers=[],sessionMarkers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+let map,markers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
 const marketSessions=[
-{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60},
-{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,start:15*60,end:21*60},
-{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",lat:40.7,lng:-74.0,start:21*60,end:6*60}
+{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",start:7*60,end:15*60},
+{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",start:15*60,end:21*60},
+{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",start:21*60,end:6*60}
 ];
 
 function initMap(){
@@ -265,12 +283,7 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{max
 renderSessionMarkers();
 }
 function renderSessionMarkers(){
-sessionMarkers.forEach(m=>map.removeLayer(m));sessionMarkers=[];
-marketSessions.forEach(s=>{
-const html=`<div class="marketSession" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`;
-const marker=L.marker([s.lat,s.lng],{icon:L.divIcon({className:"",html,iconSize:[150,58],iconAnchor:[75,29]})}).addTo(map);
-sessionMarkers.push(marker);
-});
+document.getElementById("marketSessionsHud").innerHTML=marketSessions.map(s=>`<div class="marketSession ${s.id==="sessionUS"?"usSession":""}" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`).join("");
 }
 function buildLayers(){
 document.getElementById("mapLegend").innerHTML=layerDefs.map(l=>`<button class="mapLayerBtn active" data-layer="${l.id}" onclick="toggleLayer('${l.id}',this)"><span style="color:${l.color}">●</span><span>${l.label}</span><b>ON</b></button>`).join("");
@@ -452,6 +465,17 @@ function renderHeadlines(){
 const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
 const empty=headlines.length?"選択中レイヤーに一致するライブニュースはありません。":"XAUUSD関連ニュースを取得中です。API制限時は次の更新で再取得します。";
 document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact ${biasClass(h)}">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">${empty}</div>`;
+}
+function renderMiniSummary(visible){
+const buy=visible.filter(h=>xauBias(h)==="買い").length;
+const sell=visible.filter(h=>xauBias(h)==="売り注意").length;
+const wait=visible.filter(h=>xauBias(h)==="待ち").length;
+const high=visible.filter(h=>h.impact==="HIGH").length;
+const rows=layerDefs.map(l=>{
+const count=visible.filter(h=>h.layer.id===l.id).length;
+return`<div class="miniItem"><div class="summaryGrid"><span class="miniLabel">${l.label}</span><span class="summaryCount">${count}</span></div><div class="summaryMeta">地図レイヤー ${activeLayers.has(l.id)?"ON":"OFF"}</div></div>`;
+}).join("");
+document.getElementById("miniFeed").innerHTML=`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias buy">買い ${buy}</span> <span class="miniBias sell">売り注意 ${sell}</span> <span class="miniBias wait">待ち ${wait}</span><span class="miniTitle">危険材料 ${high}件 / 表示中ニュース ${visible.length}件</span></div>${rows}`;
 }
 function renderRisk(){
 const recent=headlines.filter(h=>h.isRecent);
