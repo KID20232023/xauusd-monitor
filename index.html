@@ -39,14 +39,17 @@ body{letter-spacing:.1px}
 .riskUnit{color:var(--muted);font-size:11px;font-weight:900;margin-bottom:4px}
 .riskText{font-size:11px;color:#eef6f2;line-height:1.25;margin-top:5px;font-weight:800}
 .riskUpdated{margin-top:5px;color:var(--green);font-size:10px;font-weight:900}
-.feedMini{overflow:auto;border-top:1px solid #17231f;padding-top:8px}
-.miniItem{padding:7px;border:1px solid #203029;background:#080d0c;border-radius:4px;margin-bottom:6px;font-size:11px;line-height:1.25;cursor:pointer}
+.feedMini{overflow:auto;border-top:1px solid #17231f;padding-top:8px;display:flex;flex-direction:column;min-height:0}
+.miniItem{padding:7px;border:1px solid #203029;background:#080d0c;border-radius:4px;margin-bottom:6px;font-size:11px;line-height:1.25}
 .miniItem:hover{border-color:var(--gold);background:rgba(215,180,106,.08)}
 .miniWhen{display:block;color:var(--green);font-size:11px;font-weight:900;margin-bottom:3px}
 .miniBias{display:inline-block;color:#06100c;background:var(--blue);font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-bottom:4px}
 .miniBias.sell{background:var(--red);color:#fff}.miniBias.wait{background:var(--gold);color:#06100c}
 .miniLabel{display:block;color:var(--gold);font-size:11px;font-weight:900;margin-bottom:3px}
 .miniTitle{display:block;color:#eef6f2;font-size:11px;line-height:1.25;max-height:28px;overflow:hidden}
+.summaryGrid{display:grid;grid-template-columns:1fr 42px;gap:5px;align-items:center}
+.summaryCount{font-size:16px;color:var(--gold);font-weight:900;text-align:right}
+.summaryMeta{color:var(--muted);font-size:10px;font-weight:900;margin-top:4px}
 .mapWrap{position:relative;min-width:0;min-height:0;background:#020504}
 #map{position:absolute;inset:0;background:#020504}
 .mapHud{position:absolute;z-index:500;left:12px;top:12px;display:flex;gap:8px;align-items:center}
@@ -63,6 +66,8 @@ body{letter-spacing:.1px}
 .sessionTime{color:var(--muted);font-size:10px;font-weight:900}
 .sessionState{margin-top:3px;color:var(--muted);font-size:10px;font-weight:900}
 .marketSession.active .sessionState{color:var(--green)}
+.marketSession.closed{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.08);opacity:.85}
+.marketSession.closed .sessionState{color:var(--red)}
 .sessionAsia{left:66%;top:43%}.sessionLondon{left:48%;top:31%}.sessionUS{left:22%;top:35%}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
 .legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
@@ -84,7 +89,7 @@ body{letter-spacing:.1px}
 .detailCell span{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
 .detailCell b{font-size:12px;color:var(--green)}
 .scenario{border-top:1px solid #17231f;margin-top:12px;padding-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
-.bottom{display:grid;grid-template-columns:20% 20% 24% 18% 18%;border-top:1px solid var(--line);min-height:360px}
+.bottom{display:grid;grid-template-columns:25% 25% 25% 25%;border-top:1px solid var(--line);min-height:360px}
 .bottom .panel{border-width:0 1px 0 0;padding:8px;min-height:0;display:flex;flex-direction:column}
 .bottom .panel:last-child{border-right:0}
 .tvWidgetBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
@@ -148,7 +153,10 @@ html,body{overflow:auto}
 <div class="riskText" id="riskText">GDELTライブニュースだけで急変しやすさを判定します。</div>
 <div class="riskUpdated" id="riskUpdated">更新待ち</div>
 </section>
-<section class="feedMini" id="miniFeed"></section>
+<section class="feedMini">
+<div class="sectionTitle">XAUUSDライブ速報</div>
+<div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
+</section>
 </aside>
 <section class="mapWrap">
 <div id="map"></div>
@@ -194,10 +202,6 @@ html,body{overflow:auto}
 <section class="panel">
 <div class="sectionTitle">XAUUSD比較チャート</div>
 <div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>{"symbols":[["XAUUSD","OANDA:XAUUSD|1D"],["DXY","TVC:DXY|1D"],["米10年金利","TVC:US10Y|1D"],["WTI","TVC:USOIL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"ja","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":true,"hideDateRanges":false,"hideMarketStatus":false,"hideSymbolLogo":true,"scalePosition":"right","scaleMode":"Normal","fontFamily":"Arial, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","maLineColor":"#d7b46a","maLineWidth":1,"maLength":20,"lineWidth":2,"lineType":0,"dateRanges":["1d|15","5d|15","1m|60","3m|1D","6m|1D","12m|1D"]}</script></div></div>
-</section>
-<section class="panel">
-<div class="sectionTitle">XAUUSDライブ速報</div>
-<div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
 </section>
 <section class="panel">
 <div class="sectionTitle">XAUUSD板情報 / 流動性</div>
@@ -262,6 +266,15 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{max
 function buildLayers(){
 document.getElementById("mapLegend").innerHTML=layerDefs.map(l=>`<button class="mapLayerBtn active" data-layer="${l.id}" onclick="toggleLayer('${l.id}',this)"><span style="color:${l.color}">●</span><span>${l.label}</span><b>ON</b></button>`).join("");
 }
+function updateLayerButtons(){
+document.querySelectorAll(".mapLayerBtn").forEach(btn=>{
+const id=btn.dataset.layer;
+const count=headlines.filter(h=>h.layer.id===id).length;
+const badge=btn.querySelector("b");
+if(!badge)return;
+badge.textContent=activeLayers.has(id)?`ON ${count}`:"OFF";
+});
+}
 function toggleLayer(id,btn){
 if(activeLayers.has(id)){activeLayers.delete(id);btn.classList.remove("active");btn.querySelector("b").textContent="OFF"}
 else{activeLayers.add(id);btn.classList.add("active");btn.querySelector("b").textContent="ON"}
@@ -277,6 +290,21 @@ if(t.includes("iran"))region="IRAN";else if(t.includes("israel")||t.includes("ga
 if(t.includes("hormuz"))region="HORMUZ";else if(t.includes("suez"))region="SUEZ";else if(t.includes("panama"))region="PANAMA";else if(t.includes("red sea"))region="RED SEA";
 const impact=matched.some(l=>l.type==="high")?"HIGH":matched.some(l=>l.type==="macro")?"MACRO":"WATCH";
 return{layer:primary,matched,region,impact};
+}
+function impactText(item){
+if(item.layer.id==="fed")return"見る判断: 米金利とDXYが上なら金は売られやすいです。米金利低下、利下げ期待、弱い米指標なら金は買われやすいです。";
+if(item.layer.id==="dollar")return"見る判断: DXY上昇はXAUUSDに下押し、DXY低下はXAUUSDに追い風です。米10年金利も同時に確認してください。";
+if(item.layer.id==="middleEast")return"見る判断: 中東リスク拡大は安全資産買いで金にプラスです。ただしドルも買われるため、DXYが強すぎる時は上値が重くなります。";
+if(item.layer.id==="energy")return"見る判断: 原油高はインフレ警戒で金にプラスになりやすいです。ただし米金利が急上昇すると金には逆風です。";
+if(item.layer.id==="waterway")return"見る判断: ホルムズ、紅海、スエズなどの海上リスクは原油高とリスクオフにつながり、金買い材料になりやすいです。";
+if(item.layer.id==="risk")return"見る判断: 戦争・テロ・制裁はリスクオフで金買い材料です。初動は金買い、その後はDXYと米金利で継続性を確認します。";
+return"見る判断: 金関連ニュースです。DXY、米10年金利、原油、地政学リスクが同じ方向ならXAUUSDの動きが強くなります。";
+}
+function impactLabel(item){
+if(item.layer.id==="fed"||item.layer.id==="dollar")return"米金利/DXY次第";
+if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"金買い材料";
+if(item.layer.id==="energy")return"インフレ材料";
+return item.impact==="HIGH"?"急変注意":item.impact==="MACRO"?"マクロ材料":"監視";
 }
 function xauBias(item){
 const t=(item.title||"").toLowerCase();
@@ -392,9 +420,16 @@ if(t.includes("ecb")||t.includes("boj")||t.includes("boe")||t.includes("pboc")||
 if(t.includes("iran")||t.includes("israel")||t.includes("gaza")||t.includes("houthi")||t.includes("red sea")||t.includes("hormuz")||t.includes("ukraine")||t.includes("oil")||t.includes("opec")||t.includes("sanction")||t.includes("tariff")||t.includes("原油")||t.includes("中東")||t.includes("地政学"))return true;
 return false;
 }
-function renderAll(){renderMarkers();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=headlines.length?`${headlines.length} LIVE`:"取得待ち"}
+function renderAll(){updateLayerButtons();renderMarkers();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=headlines.length?`${headlines.length} LIVE`:"取得待ち"}
 function renderMarkers(){
 markers.forEach(m=>map.removeLayer(m));markers=[];
+layerDefs.filter(l=>activeLayers.has(l.id)).forEach((l,i)=>{
+const r=regionMap[l.regions[0]]||regionMap.GLOBAL;
+const marker=L.marker([r.lat,r.lng],{icon:L.divIcon({className:"",html:`<div class="marker ${l.type}"></div>`,iconSize:[24,24]})}).addTo(map);
+const count=headlines.filter(h=>h.layer.id===l.id).length;
+marker.bindPopup(`<div class="popup"><b>${l.label}</b><br><small>レイヤーON / ニュース ${count}件</small><br>このレイヤーをOFFにすると地図上から消えます。</div>`);
+markers.push(marker);
+});
 headlines.filter(h=>activeLayers.has(h.layer.id)).slice(0,30).forEach((h,i)=>{
 const r=regionMap[h.region]||regionMap.US;
 const jitter=(i%5-2)*.45;
@@ -408,7 +443,17 @@ function renderHeadlines(){
 const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
 const empty=headlines.length?"選択中レイヤーに一致するライブニュースはありません。":"XAUUSD関連ニュースを取得中です。API制限時は次の更新で再取得します。";
 document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact ${biasClass(h)}">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">${empty}</div>`;
-document.getElementById("miniFeed").innerHTML=visible.slice(0,12).map(h=>`<div class="miniItem" onclick="selectItemById('${cssSafe(h.id)}')"><span class="miniWhen">${formatFullTime(h.timestamp)} / ${ageText(h.timestamp)}</span><span class="miniBias ${biasClass(h)}">${xauBias(h)}</span><span class="miniLabel">${h.layer.label} / ${h.source}</span><span class="miniTitle">${escapeHtml(h.title)}</span></div>`).join("")||`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias wait">取得中</span><span class="miniLabel">XAUUSDライブニュース</span><span class="miniTitle">取得できたニュースだけ表示します。固定ニュースは出しません。</span></div>`;
+}
+function renderMiniSummary(visible){
+const buy=visible.filter(h=>xauBias(h)==="買い").length;
+const sell=visible.filter(h=>xauBias(h)==="売り注意").length;
+const wait=visible.filter(h=>xauBias(h)==="待ち").length;
+const high=visible.filter(h=>h.impact==="HIGH").length;
+const rows=layerDefs.map(l=>{
+const count=visible.filter(h=>h.layer.id===l.id).length;
+return`<div class="miniItem"><div class="summaryGrid"><span class="miniLabel">${l.label}</span><span class="summaryCount">${count}</span></div><div class="summaryMeta">地図レイヤー ${activeLayers.has(l.id)?"ON":"OFF"}</div></div>`;
+}).join("");
+document.getElementById("miniFeed").innerHTML=`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias buy">買い ${buy}</span> <span class="miniBias sell">売り注意 ${sell}</span> <span class="miniBias wait">待ち ${wait}</span><span class="miniTitle">危険材料 ${high}件 / 表示中ニュース ${visible.length}件</span></div>${rows}`;
 }
 function renderRisk(){
 const recent=headlines.filter(h=>h.isRecent);
@@ -466,21 +511,27 @@ const hour=Number(parts.find(p=>p.type==="hour")?.value||0);
 const minute=Number(parts.find(p=>p.type==="minute")?.value||0);
 return hour*60+minute;
 }
+function isJstWeekend(){
+const dayText=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Tokyo",weekday:"short"}).format(new Date());
+return dayText==="Sat"||dayText==="Sun";
+}
 function isSessionOpen(now,start,end){
 return start<end?now>=start&&now<end:now>=start||now<end;
 }
-function setSessionState(id,stateId,isOpen){
+function setSessionState(id,stateId,isOpen,isClosed){
 const box=document.getElementById(id);
 const state=document.getElementById(stateId);
 if(!box||!state)return;
-box.classList.toggle("active",isOpen);
-state.textContent=isOpen?"SESSION ON":"OFF";
+box.classList.toggle("closed",isClosed);
+box.classList.toggle("active",!isClosed&&isOpen);
+state.textContent=isClosed?"WEEKEND CLOSE":isOpen?"SESSION ON":"OFF";
 }
 function updateMarketSessions(){
 const now=getJstMinutes();
-setSessionState("sessionAsia","sessionAsiaState",isSessionOpen(now,7*60,15*60));
-setSessionState("sessionLondon","sessionLondonState",isSessionOpen(now,15*60,21*60));
-setSessionState("sessionUS","sessionUSState",isSessionOpen(now,21*60,6*60));
+const closed=isJstWeekend();
+setSessionState("sessionAsia","sessionAsiaState",isSessionOpen(now,7*60,15*60),closed);
+setSessionState("sessionLondon","sessionLondonState",isSessionOpen(now,15*60,21*60),closed);
+setSessionState("sessionUS","sessionUSState",isSessionOpen(now,21*60,6*60),closed);
 }
 function setBookDisconnected(){
 document.getElementById("bookSource").textContent="MT5待機";
