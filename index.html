@@ -58,8 +58,7 @@ body{letter-spacing:.1px}
 .hudPill strong{color:var(--text)}
 .mapBtn{background:rgba(5,8,7,.86);border:1px solid rgba(215,180,106,.7);color:#f2e1b4;padding:7px 10px;border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;backdrop-filter:blur(8px)}
 .mapBtn:hover{background:rgba(215,180,106,.16);border-color:var(--gold)}
-.marketSessionsHud{position:absolute;z-index:520;right:12px;top:12px;display:flex;gap:6px;align-items:stretch;max-width:46%;pointer-events:none}
-.marketSession{min-width:116px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.86);border-radius:4px;padding:6px 8px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.76}
+.marketSession{min-width:118px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.82);border-radius:4px;padding:6px 8px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.78;pointer-events:none}
 .marketSession.active{border-color:var(--gold);background:rgba(215,180,106,.16);box-shadow:0 0 20px rgba(215,180,106,.35),inset 0 0 0 1px rgba(255,255,255,.06);opacity:1}
 .marketSession.active .sessionDot{background:var(--green);box-shadow:0 0 12px var(--green)}
 .sessionName{display:flex;align-items:center;gap:6px;color:#fff;font-size:10px;font-weight:900;margin-bottom:2px;white-space:nowrap}
@@ -69,7 +68,8 @@ body{letter-spacing:.1px}
 .marketSession.active .sessionState{color:var(--green)}
 .marketSession.closed{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.08);opacity:.85}
 .marketSession.closed .sessionState{color:var(--red)}
-.marketSession.usSession{transform:translateY(-10px)}
+.marketSession.usSession{transform:translateY(-12px)}
+.sessionCountryGlow{filter:drop-shadow(0 0 12px rgba(47,140,255,.9))}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
 .legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
 .mapLayerBtn{background:rgba(5,8,7,.86);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:10px;color:var(--muted);font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
@@ -95,10 +95,11 @@ body{letter-spacing:.1px}
 .bottom .panel:last-child{border-right:0}
 .tvWidgetBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
 .tvWidgetBox .tradingview-widget-container,.tvWidgetBox .tradingview-widget-container__widget{width:100%;height:100%}
-.techGrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,minmax(96px,1fr));gap:6px;overflow:hidden}
-.techCell{position:relative;min-height:0;border:1px solid #18241f;background:#050706;overflow:hidden}
-.techLabel{position:absolute;z-index:2;top:4px;left:5px;background:rgba(5,7,6,.9);border:1px solid rgba(215,180,106,.45);color:var(--gold);font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px}
-.techCell .tradingview-widget-container,.techCell .tradingview-widget-container__widget{width:100%;height:100%}
+.techControls{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
+.techTfBtn{height:28px;background:#08100e;border:1px solid #263b35;color:var(--muted);border-radius:4px;font-size:10px;font-weight:900;cursor:pointer}
+.techTfBtn.active{background:rgba(47,140,255,.2);border-color:var(--blue);color:#fff;box-shadow:0 0 12px rgba(47,140,255,.25)}
+.techWidget{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
+.techWidget .tradingview-widget-container,.techWidget .tradingview-widget-container__widget{width:100%;height:100%}
 .calendarBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
 .calendarBox iframe{width:100%;height:100%;border:0;background:#050706}
 .headlineList{flex:1;min-height:0;overflow:auto}
@@ -140,7 +141,6 @@ html,body{overflow:auto}
 .main{grid-template-columns:1fr;grid-template-rows:auto 420px auto;min-height:auto}
 .left,.right{border:0;border-bottom:1px solid var(--line)}
 .mapHud{left:8px;top:8px;right:8px;flex-wrap:wrap}
-.marketSessionsHud{right:8px;top:52px;max-width:calc(100% - 16px);flex-wrap:wrap;justify-content:flex-end}
 .marketSession{min-width:104px;padding:5px 7px}
 .sessionName{font-size:9px}.sessionTime,.sessionState{font-size:8px}
 .bottom{grid-template-columns:1fr}
@@ -177,7 +177,6 @@ html,body{overflow:auto}
 <button class="mapBtn" onclick="focusRegion('GLOBAL')">全体</button>
 <button class="mapBtn" onclick="focusRegion('MIDDLE EAST')">中東</button>
 </div>
-<div class="marketSessionsHud" id="marketSessionsHud"></div>
 <div class="mapLegend" id="mapLegend"></div>
 </section>
 <aside class="right panel">
@@ -203,14 +202,15 @@ html,body{overflow:auto}
 </section>
 <section class="panel">
 <div class="sectionTitle"><span class="liveDot"></span>XAUUSDテクニカル</div>
-<div class="techGrid">
-<div class="techCell"><div class="techLabel">1分</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
-<div class="techCell"><div class="techLabel">5分</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"5m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
-<div class="techCell"><div class="techLabel">15分</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"15m","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
-<div class="techCell"><div class="techLabel">1時間</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1h","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
-<div class="techCell"><div class="techLabel">4時間</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"4h","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
-<div class="techCell"><div class="techLabel">日足</div><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1D","width":"100%","height":"100%","isTransparent":true,"symbol":"OANDA:XAUUSD","showIntervalTabs":false,"displayMode":"single","locale":"ja","colorTheme":"dark"}</script></div></div>
+<div class="techControls">
+<button class="techTfBtn" data-interval="1m" onclick="selectTechnicalTf('1m',this)">1分</button>
+<button class="techTfBtn" data-interval="5m" onclick="selectTechnicalTf('5m',this)">5分</button>
+<button class="techTfBtn active" data-interval="15m" onclick="selectTechnicalTf('15m',this)">15分</button>
+<button class="techTfBtn" data-interval="1h" onclick="selectTechnicalTf('1h',this)">1時間</button>
+<button class="techTfBtn" data-interval="4h" onclick="selectTechnicalTf('4h',this)">4時間</button>
+<button class="techTfBtn" data-interval="1D" onclick="selectTechnicalTf('1D',this)">日足</button>
 </div>
+<div class="techWidget" id="technicalWidget"></div>
 </section>
 <section class="panel">
 <div class="sectionTitle"><span class="liveDot"></span>XAUUSD比較チャート</div>
@@ -270,11 +270,11 @@ const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
 ]);
-let map,markers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+let map,markers=[],sessionMarkers=[],sessionGlows=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
 const marketSessions=[
-{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",start:7*60,end:15*60},
-{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",start:15*60,end:21*60},
-{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",start:21*60,end:6*60}
+{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,glowLat:36.5,glowLng:138.5,radius:1650000,start:7*60,end:15*60},
+{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,glowLat:52.5,glowLng:-1.5,radius:1050000,start:15*60,end:21*60},
+{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",lat:44.5,lng:-98,glowLat:39.5,glowLng:-98,radius:1850000,start:21*60,end:6*60}
 ];
 
 function initMap(){
@@ -283,7 +283,25 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{max
 renderSessionMarkers();
 }
 function renderSessionMarkers(){
-document.getElementById("marketSessionsHud").innerHTML=marketSessions.map(s=>`<div class="marketSession ${s.id==="sessionUS"?"usSession":""}" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`).join("");
+sessionMarkers.forEach(m=>map.removeLayer(m));sessionMarkers=[];
+sessionGlows.forEach(g=>map.removeLayer(g));sessionGlows=[];
+marketSessions.forEach(s=>{
+const glow=L.circle([s.glowLat,s.glowLng],{
+radius:s.radius,
+className:"sessionCountryGlow",
+color:"#33413d",
+weight:2,
+fillColor:"#0c1714",
+fillOpacity:.12,
+opacity:.55,
+interactive:false
+}).addTo(map);
+sessionGlows.push({id:s.id,layer:glow});
+const cls=s.id==="sessionUS"?"usSession":"";
+const html=`<div class="marketSession ${cls}" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`;
+const marker=L.marker([s.lat,s.lng],{icon:L.divIcon({className:"",html,iconSize:[132,56],iconAnchor:[66,28]})}).addTo(map);
+sessionMarkers.push(marker);
+});
 }
 function buildLayers(){
 document.getElementById("mapLegend").innerHTML=layerDefs.map(l=>`<button class="mapLayerBtn active" data-layer="${l.id}" onclick="toggleLayer('${l.id}',this)"><span style="color:${l.color}">●</span><span>${l.label}</span><b>ON</b></button>`).join("");
@@ -547,6 +565,16 @@ if(!box||!state)return;
 box.classList.toggle("closed",isClosed);
 box.classList.toggle("active",!isClosed&&isOpen);
 state.textContent=isClosed?"WEEKEND CLOSE":isOpen?"SESSION ON":"OFF";
+const glow=sessionGlows.find(g=>g.id===id)?.layer;
+if(glow){
+if(isClosed){
+glow.setStyle({color:"#ff4d4d",fillColor:"#ff4d4d",fillOpacity:.13,opacity:.6,weight:2});
+}else if(isOpen){
+glow.setStyle({color:"#2f8cff",fillColor:"#2f8cff",fillOpacity:.26,opacity:1,weight:3});
+}else{
+glow.setStyle({color:"#33413d",fillColor:"#0c1714",fillOpacity:.1,opacity:.45,weight:1});
+}
+}
 }
 function updateMarketSessions(){
 const now=getJstMinutes();
@@ -587,6 +615,31 @@ setBookRow("bid",1,bids[0]||{price:data.bid,size:data.bidSize},maxSize);
 setBookRow("bid",2,bids[1],maxSize);
 }catch(e){setBookDisconnected()}
 }
+function selectTechnicalTf(interval,btn){
+document.querySelectorAll(".techTfBtn").forEach(b=>b.classList.toggle("active",b===btn));
+renderTechnicalWidget(interval);
+}
+function renderTechnicalWidget(interval){
+const box=document.getElementById("technicalWidget");
+if(!box)return;
+box.innerHTML='<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+const container=box.querySelector(".tradingview-widget-container");
+const script=document.createElement("script");
+script.src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+script.async=true;
+script.text=JSON.stringify({
+interval,
+width:"100%",
+height:"100%",
+isTransparent:true,
+symbol:"OANDA:XAUUSD",
+showIntervalTabs:false,
+displayMode:"single",
+locale:"ja",
+colorTheme:"dark"
+});
+container.appendChild(script);
+}
 function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function cssSafe(s){return String(s||"").replace(/[^a-zA-Z0-9_-]/g,"_").slice(0,80)}
 function fetchWithTimeout(url,ms){
@@ -594,7 +647,7 @@ const controller=new AbortController();
 const timer=setTimeout(()=>controller.abort(),ms);
 return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearTimeout(timer));
 }
-initMap();buildLayers();updateClock();loadNews();
+initMap();buildLayers();renderTechnicalWidget("15m");updateClock();loadNews();
 setInterval(updateClock,1000);
 setInterval(loadNews,60000);
 setInterval(updateOrderBook,1000);
