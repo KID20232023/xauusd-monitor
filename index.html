@@ -68,8 +68,7 @@ body{letter-spacing:.1px}
 .marketSession.active .sessionState{color:var(--green)}
 .marketSession.closed{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.08);opacity:.85}
 .marketSession.closed .sessionState{color:var(--red)}
-.marketSession.usSession{transform:translateY(-12px)}
-.sessionCountryGlow{filter:drop-shadow(0 0 12px rgba(47,140,255,.9))}
+.marketSession.usSession{transform:translateY(-16px)}
 .mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
 .legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
 .mapLayerBtn{background:rgba(5,8,7,.86);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:10px;color:var(--muted);font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
@@ -270,20 +269,11 @@ const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
 ]);
-let map,markers=[],sessionMarkers=[],sessionGlows=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+let map,markers=[],sessionMarkers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
 const marketSessions=[
-{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60,shape:[
-[[45.6,141.7],[44.3,145.7],[42.0,143.8],[40.4,141.6],[38.8,141.2],[37.5,140.8],[36.2,140.6],[35.2,139.8],[34.2,136.9],[34.8,135.2],[35.7,136.8],[37.2,138.1],[39.2,139.8],[41.6,140.6]],
-[[34.9,130.8],[34.5,133.6],[33.5,134.8],[32.5,131.8],[33.4,130.2]],
-[[31.0,130.2],[32.2,131.4],[31.2,132.0],[30.2,130.8]]
-]},
-{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,start:15*60,end:21*60,shape:[
-[[58.6,-5.8],[57.5,-3.0],[55.6,-1.2],[54.4,-1.0],[53.5,-0.2],[52.0,1.4],[50.8,0.7],[50.0,-4.0],[51.8,-5.4],[53.4,-4.8],[55.0,-5.6],[56.8,-6.2]],
-[[55.4,-8.2],[54.0,-6.0],[52.2,-6.2],[51.4,-9.5],[53.4,-10.2]]
-]},
-{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",lat:44.5,lng:-98,start:21*60,end:6*60,shape:[
-[[48.8,-124.8],[49.0,-95.0],[48.5,-82.8],[45.3,-67.0],[41.3,-70.0],[39.0,-75.5],[35.0,-76.5],[30.6,-81.0],[25.4,-80.4],[29.0,-95.0],[25.9,-97.4],[31.8,-106.5],[32.7,-114.7],[34.8,-120.7],[40.6,-124.3]]
-]}
+{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60},
+{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,start:15*60,end:21*60},
+{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",lat:44.5,lng:-98,start:21*60,end:6*60}
 ];
 
 function initMap(){
@@ -293,18 +283,7 @@ renderSessionMarkers();
 }
 function renderSessionMarkers(){
 sessionMarkers.forEach(m=>map.removeLayer(m));sessionMarkers=[];
-sessionGlows.forEach(g=>map.removeLayer(g));sessionGlows=[];
 marketSessions.forEach(s=>{
-const glow=L.polygon(s.shape,{
-className:"sessionCountryGlow",
-color:"#33413d",
-weight:2,
-fillColor:"#0c1714",
-fillOpacity:.12,
-opacity:.55,
-interactive:false
-}).addTo(map);
-sessionGlows.push({id:s.id,layer:glow});
 const cls=s.id==="sessionUS"?"usSession":"";
 const html=`<div class="marketSession ${cls}" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`;
 const marker=L.marker([s.lat,s.lng],{icon:L.divIcon({className:"",html,iconSize:[132,56],iconAnchor:[66,28]})}).addTo(map);
@@ -573,16 +552,6 @@ if(!box||!state)return;
 box.classList.toggle("closed",isClosed);
 box.classList.toggle("active",!isClosed&&isOpen);
 state.textContent=isClosed?"WEEKEND CLOSE":isOpen?"SESSION ON":"OFF";
-const glow=sessionGlows.find(g=>g.id===id)?.layer;
-if(glow){
-if(isClosed){
-glow.setStyle({color:"#ff4d4d",fillColor:"#ff4d4d",fillOpacity:.13,opacity:.6,weight:2});
-}else if(isOpen){
-glow.setStyle({color:"#2f8cff",fillColor:"#2f8cff",fillOpacity:.26,opacity:1,weight:3});
-}else{
-glow.setStyle({color:"#33413d",fillColor:"#0c1714",fillOpacity:.1,opacity:.45,weight:1});
-}
-}
 }
 function updateMarketSessions(){
 const now=getJstMinutes();
