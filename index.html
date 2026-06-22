@@ -102,12 +102,12 @@ body{letter-spacing:.1px}
 .headlineList{flex:1;min-height:0;overflow:auto}
 .headline{border-bottom:1px solid #14201c;padding:8px 0;cursor:pointer}
 .headline:hover{background:rgba(215,180,106,.06)}
-.headlineTop{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.headlineSrc{font-size:11px;font-weight:900;color:var(--gold)}
-.headlineTime{font-size:10px;color:var(--green);font-weight:900}
-.headlineImpact{font-size:10px;color:#06100c;background:var(--blue);font-weight:900;padding:2px 5px;border-radius:3px}
+.headlineTop{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:6px;margin-bottom:6px}
+.headlineSrc{font-size:10px;font-weight:900;color:var(--gold);line-height:1.15}
+.headlineTime{font-size:10px;color:var(--green);font-weight:900;text-align:right;line-height:1.2}
+.headlineImpact{font-size:10px;color:#06100c;background:var(--blue);font-weight:900;padding:2px 6px;border-radius:3px;white-space:nowrap}
 .headlineImpact.sell{background:var(--red);color:#fff}.headlineImpact.wait{background:var(--gold);color:#06100c}
-.headlineText{font-size:12px;line-height:1.35;color:var(--text)}
+.headlineText{font-size:12px;line-height:1.45;color:var(--text);word-break:break-word}
 .liquidityBox{flex:1;min-height:0;border:1px solid #18241f;background:#070b0a;border-radius:4px;overflow:auto;padding:10px}
 .bookHeader{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #14201c;padding-bottom:8px;margin-bottom:8px}
 .bookHeader b{color:var(--gold);font-size:12px}
@@ -128,11 +128,11 @@ body{letter-spacing:.1px}
 .oandaTop b{color:var(--gold);font-size:11px}
 .oandaTop span{color:var(--green);font-size:10px;font-weight:900}
 .oandaGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.oandaCell{border:1px solid #172620;background:#050807;border-radius:4px;padding:6px}
+.oandaCell{border:1px solid #172620;background:#050807;border-radius:4px;padding:7px;min-height:68px;text-decoration:none}
+.oandaCell:hover{border-color:rgba(215,180,106,.65);background:#08120f}
 .oandaCell span{display:block;color:var(--muted);font-size:9px;font-weight:900;margin-bottom:3px}
 .oandaCell b{display:block;color:var(--text);font-size:11px;line-height:1.25}
-.oandaCell a{display:block;margin-top:5px;color:#9ad7ff;text-decoration:none;font-size:10px;font-weight:900}
-.oandaCell a:hover{color:#fff}
+.oandaCell em{display:block;margin-top:5px;color:var(--muted);font-style:normal;font-size:9px;line-height:1.25}
 .sourceLive{color:var(--green)!important}.sourceDelay{color:var(--gold)!important}.sourceWeek{color:var(--muted)!important}
 .bookNote{margin-top:10px;border-top:1px solid #14201c;padding-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
 .marker{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:rgba(5,8,7,.86);box-shadow:0 0 12px currentColor}
@@ -199,7 +199,7 @@ html,body{overflow:auto}
 </section>
 <aside class="right panel">
 <section class="feedMini">
-<div class="sectionTitle"><span class="liveDot"></span>XAUUSDライブ速報</div>
+<div class="sectionTitle"><span class="liveDot"></span>XAUUSD LIVE速報</div>
 <div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
 </section>
 </aside>
@@ -247,12 +247,12 @@ html,body{overflow:auto}
 <div class="oandaBox">
 <div class="oandaTop"><b>外部フロー監視</b><span id="oandaClock">確認中</span></div>
 <div class="oandaGrid">
-<div class="oandaCell"><span class="sourceDelay">OANDA</span><b>注文・ポジション分布</b><a href="https://www.oanda.jp/lab-education/oanda_lab/oanda_rab/open_position/" target="_blank" rel="noopener">開く</a></div>
-<div class="oandaCell"><span class="sourceLive">CME GC</span><b>金先物・出来高・OI</b><a href="https://www.cmegroup.com/markets/metals/precious/gold.html" target="_blank" rel="noopener">開く</a></div>
-<div class="oandaCell"><span class="sourceWeek">CFTC COT</span><b>投機筋/商業筋の建玉</b><a href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm" target="_blank" rel="noopener">開く</a></div>
-<div class="oandaCell"><span class="sourceDelay">WGC</span><b>ETF・中銀・需要データ</b><a href="https://www.gold.org/goldhub/data" target="_blank" rel="noopener">開く</a></div>
-<div class="oandaCell"><span class="sourceLive">TradingView</span><b>XAUUSDチャート/テクニカル</b><a href="https://www.tradingview.com/symbols/XAUUSD/" target="_blank" rel="noopener">開く</a></div>
-<div class="oandaCell"><span class="sourceLive">MT5 LOCAL</span><b>ASK/BID 1秒更新</b><a href="http://127.0.0.1:8787/book" target="_blank" rel="noopener">確認</a></div>
+<a class="oandaCell" href="https://www.oanda.jp/lab-education/oanda_lab/oanda_rab/open_position/" target="_blank" rel="noopener"><span class="sourceDelay">OANDA</span><b>注文・ポジション分布</b><em>更新: 5〜30分目安</em></a>
+<a class="oandaCell" href="https://www.cmegroup.com/markets/metals/precious/gold.html" target="_blank" rel="noopener"><span class="sourceLive">CME GC</span><b>金先物 出来高/OI</b><em>COMEX金先物の厚み</em></a>
+<a class="oandaCell" href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm" target="_blank" rel="noopener"><span class="sourceWeek">CFTC COT</span><b>大口建玉</b><em>週次: 投機筋/商業筋</em></a>
+<a class="oandaCell" href="https://www.gold.org/goldhub/data" target="_blank" rel="noopener"><span class="sourceDelay">WGC</span><b>ETF・中銀需要</b><em>金需要の基礎データ</em></a>
+<a class="oandaCell" href="https://www.tradingview.com/symbols/XAUUSD/" target="_blank" rel="noopener"><span class="sourceLive">TradingView</span><b>XAUUSD市場</b><em>価格/テクニカル確認</em></a>
+<a class="oandaCell" href="http://127.0.0.1:8787/book" target="_blank" rel="noopener"><span class="sourceLive">MT5 LOCAL</span><b>ASK/BID</b><em>1秒更新 ローカル取得</em></a>
 </div>
 </div>
 <div class="bookNote" id="bookNote">
