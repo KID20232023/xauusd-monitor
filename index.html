@@ -116,14 +116,13 @@ body{letter-spacing:.1px}
 .bookHeader span{color:var(--muted);font-size:10px}
 .bookStatus{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;color:var(--muted);font-size:11px}
 .bookStatus strong{color:var(--green)}
-.bookRows{display:grid;gap:5px}
-.bookTableHead,.bookRow{display:grid;grid-template-columns:52px 1fr 76px 46px;gap:7px;align-items:center}
-.bookTableHead{color:var(--muted);font-size:10px;font-weight:900;padding:0 7px 3px}
-.bookRow{border:1px solid #16231f;background:#0b1110;border-radius:4px;padding:6px 7px;font-size:11px;min-height:30px}
+.bookRows{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.bookSideGroup{display:grid;gap:5px;min-width:0}
+.bookGroupTitle{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px;font-weight:900;padding:0 2px}
+.bookGroupTitle.askTitle b{color:var(--red)}.bookGroupTitle.bidTitle b{color:var(--blue)}
+.bookRow{display:grid;grid-template-columns:38px 1fr 54px;gap:8px;align-items:center;border:1px solid #16231f;background:#0b1110;border-radius:4px;padding:7px 8px;font-size:11px;min-height:30px}
 .bookRow.ask{border-color:rgba(255,77,77,.35)}.bookRow.bid{border-color:rgba(47,140,255,.45)}
 .bookSide{font-weight:900;white-space:nowrap}.ask .bookSide{color:var(--red)}.bid .bookSide{color:var(--blue)}
-.bookBar{height:8px;background:#13221d;border-radius:99px;overflow:hidden}
-.bookFill{height:100%;border-radius:99px}.ask .bookFill{background:var(--red)}.bid .bookFill{background:var(--blue)}
 .bookPrice{text-align:right;color:var(--text);font-weight:900;font-variant-numeric:tabular-nums}
 .bookQty{text-align:right;color:var(--muted);font-weight:900;font-variant-numeric:tabular-nums}
 .bookNote{margin-top:10px;border-top:1px solid #14201c;padding-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
@@ -224,17 +223,18 @@ html,body{overflow:auto}
 <div class="bookHeader"><b>流動性モニター</b><span id="bookClock">--:--:--</span></div>
 <div class="bookStatus"><span>取得元: <strong id="bookSource">MT5待機</strong></span><span id="bookSpread">Spread --</span></div>
 <div class="bookRows">
-<div class="bookTableHead"><span>側</span><span>厚み</span><span>価格</span><span>数量</span></div>
-<div class="bookRow ask"><span class="bookSide">売1</span><span class="bookBar"><span class="bookFill" id="askFill1" style="width:12%"></span></span><span class="bookPrice" id="askPrice1">待機</span><span class="bookQty" id="askQty1">--</span></div>
-<div class="bookRow ask"><span class="bookSide">売2</span><span class="bookBar"><span class="bookFill" id="askFill2" style="width:8%"></span></span><span class="bookPrice" id="askPrice2">--</span><span class="bookQty" id="askQty2">--</span></div>
-<div class="bookRow ask"><span class="bookSide">売3</span><span class="bookBar"><span class="bookFill" id="askFill3" style="width:8%"></span></span><span class="bookPrice" id="askPrice3">--</span><span class="bookQty" id="askQty3">--</span></div>
-<div class="bookRow ask"><span class="bookSide">売4</span><span class="bookBar"><span class="bookFill" id="askFill4" style="width:8%"></span></span><span class="bookPrice" id="askPrice4">--</span><span class="bookQty" id="askQty4">--</span></div>
-<div class="bookRow ask"><span class="bookSide">売5</span><span class="bookBar"><span class="bookFill" id="askFill5" style="width:8%"></span></span><span class="bookPrice" id="askPrice5">--</span><span class="bookQty" id="askQty5">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買1</span><span class="bookBar"><span class="bookFill" id="bidFill1" style="width:12%"></span></span><span class="bookPrice" id="bidPrice1">待機</span><span class="bookQty" id="bidQty1">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買2</span><span class="bookBar"><span class="bookFill" id="bidFill2" style="width:8%"></span></span><span class="bookPrice" id="bidPrice2">--</span><span class="bookQty" id="bidQty2">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買3</span><span class="bookBar"><span class="bookFill" id="bidFill3" style="width:8%"></span></span><span class="bookPrice" id="bidPrice3">--</span><span class="bookQty" id="bidQty3">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買4</span><span class="bookBar"><span class="bookFill" id="bidFill4" style="width:8%"></span></span><span class="bookPrice" id="bidPrice4">--</span><span class="bookQty" id="bidQty4">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買5</span><span class="bookBar"><span class="bookFill" id="bidFill5" style="width:8%"></span></span><span class="bookPrice" id="bidPrice5">--</span><span class="bookQty" id="bidQty5">--</span></div>
+<div class="bookSideGroup">
+<div class="bookGroupTitle askTitle"><b>売り板</b><span>価格 / 数量</span></div>
+<div class="bookRow ask"><span class="bookSide">売1</span><span class="bookPrice" id="askPrice1">待機</span><span class="bookQty" id="askQty1">--</span></div>
+<div class="bookRow ask"><span class="bookSide">売2</span><span class="bookPrice" id="askPrice2">--</span><span class="bookQty" id="askQty2">--</span></div>
+<div class="bookRow ask"><span class="bookSide">売3</span><span class="bookPrice" id="askPrice3">--</span><span class="bookQty" id="askQty3">--</span></div>
+</div>
+<div class="bookSideGroup">
+<div class="bookGroupTitle bidTitle"><b>買い板</b><span>価格 / 数量</span></div>
+<div class="bookRow bid"><span class="bookSide">買1</span><span class="bookPrice" id="bidPrice1">待機</span><span class="bookQty" id="bidQty1">--</span></div>
+<div class="bookRow bid"><span class="bookSide">買2</span><span class="bookPrice" id="bidPrice2">--</span><span class="bookQty" id="bidQty2">--</span></div>
+<div class="bookRow bid"><span class="bookSide">買3</span><span class="bookPrice" id="bidPrice3">--</span><span class="bookQty" id="bidQty3">--</span></div>
+</div>
 </div>
 <div class="bookNote">
 MT5ブリッジ起動後、ブローカーのXAUUSD気配値を自動表示。XAUUSDはOTC/CFDのため、表示される板は利用中ブローカーのBID/ASKです。
@@ -571,34 +571,30 @@ marketSessions.forEach(s=>setSessionState(s.id,s.stateId,isSessionOpen(now,s.sta
 function setBookDisconnected(){
 document.getElementById("bookSource").textContent="MT5待機";
 document.getElementById("bookSpread").textContent="Spread --";
-for(let i=1;i<=5;i++){setBookRow("ask",i,null,1);setBookRow("bid",i,null,1)}
+for(let i=1;i<=3;i++){setBookRow("ask",i,null);setBookRow("bid",i,null)}
 }
-function setBookRow(side,index,level,maxSize){
+function setBookRow(side,index,level){
 const price=document.getElementById(`${side}Price${index}`);
 const qty=document.getElementById(`${side}Qty${index}`);
-const fill=document.getElementById(`${side}Fill${index}`);
-if(!price||!fill)return;
-if(!level){price.textContent=index===1?"待機":"--";if(qty)qty.textContent="--";fill.style.width=index===1?"12%":"8%";return}
+if(!price)return;
+if(!level){price.textContent=index===1?"待機":"--";if(qty)qty.textContent="--";return}
 const size=Number(level.size||level.volume||0);
 price.textContent=Number(level.price).toFixed(3);
 if(qty)qty.textContent=size.toFixed(1);
-const pct=maxSize>0?Math.max(8,Math.min(100,(size/maxSize)*100)):10;
-fill.style.width=`${pct}%`;
 }
 async function updateOrderBook(){
 try{
 const res=await fetchWithTimeout("http://127.0.0.1:8787/book",800);
 if(!res.ok)throw new Error("book bridge unavailable");
 const data=await res.json();
-const asks=(data.asks||[]).slice(0,5);
-const bids=(data.bids||[]).slice(0,5);
-const maxSize=Math.max(1,...asks.map(x=>Number(x.size||x.volume||0)),...bids.map(x=>Number(x.size||x.volume||0)));
+const asks=(data.asks||[]).slice(0,3);
+const bids=(data.bids||[]).slice(0,3);
 document.getElementById("bookSource").textContent=data.source||data.symbol||"LOCAL BRIDGE";
 const bestAsk=Number(asks[0]?.price||data.ask||0),bestBid=Number(bids[0]?.price||data.bid||0);
 document.getElementById("bookSpread").textContent=bestAsk&&bestBid?`Spread ${(bestAsk-bestBid).toFixed(3)}`:"Spread --";
-for(let i=1;i<=5;i++){
-setBookRow("ask",i,asks[i-1]||(i===1&&data.ask?{price:data.ask,size:data.askSize}:null),maxSize);
-setBookRow("bid",i,bids[i-1]||(i===1&&data.bid?{price:data.bid,size:data.bidSize}:null),maxSize);
+for(let i=1;i<=3;i++){
+setBookRow("ask",i,asks[i-1]||(i===1&&data.ask?{price:data.ask,size:data.askSize}:null));
+setBookRow("bid",i,bids[i-1]||(i===1&&data.bid?{price:data.bid,size:data.bidSize}:null));
 }
 }catch(e){setBookDisconnected()}
 }
