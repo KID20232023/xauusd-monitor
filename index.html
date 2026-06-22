@@ -75,10 +75,8 @@ body{letter-spacing:.1px}
 .mapLayerBtn.active{border-color:rgba(215,180,106,.9);color:#fff;background:rgba(215,180,106,.13)}
 .mapLayerBtn b{font-size:9px;color:#06100c;background:var(--green);border-radius:3px;padding:1px 4px}
 .mapLayerBtn:not(.active) b{color:var(--muted);background:#101816}
-.right{border-width:0 0 0 1px;display:grid;grid-template-rows:142px minmax(0,1fr);gap:0;min-height:0}
-.quoteBox{padding:8px;border-bottom:1px solid var(--line)}
-.tvQuote{height:126px;overflow:hidden}
-.intel{padding:10px;overflow:auto}
+.right{border-width:0 0 0 1px;padding:8px;display:flex;flex-direction:column;min-height:0}
+.intel{padding:10px;overflow:auto;border:1px solid #17231f;background:#07100d;border-radius:4px;min-height:0}
 .intelTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
 .intelTitle h2{font-size:13px;color:#f2e1b4;letter-spacing:.8px}
 .tag{font-size:10px;border:1px solid #30443e;color:var(--muted);padding:4px 6px;border-radius:3px}
@@ -125,6 +123,17 @@ body{letter-spacing:.1px}
 .bookSide{font-weight:900;white-space:nowrap}.ask .bookSide{color:var(--red)}.bid .bookSide{color:var(--blue)}
 .bookPrice{text-align:right;color:var(--text);font-weight:900;font-variant-numeric:tabular-nums}
 .bookQty{text-align:right;color:var(--muted);font-weight:900;font-variant-numeric:tabular-nums}
+.oandaBox{margin-top:9px;border:1px solid #1d2d28;background:#08100e;border-radius:4px;padding:8px}
+.oandaTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.oandaTop b{color:var(--gold);font-size:11px}
+.oandaTop span{color:var(--green);font-size:10px;font-weight:900}
+.oandaGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.oandaCell{border:1px solid #172620;background:#050807;border-radius:4px;padding:6px}
+.oandaCell span{display:block;color:var(--muted);font-size:9px;font-weight:900;margin-bottom:3px}
+.oandaCell b{display:block;color:var(--text);font-size:11px;line-height:1.25}
+.oandaCell a{display:block;margin-top:5px;color:#9ad7ff;text-decoration:none;font-size:10px;font-weight:900}
+.oandaCell a:hover{color:#fff}
+.sourceLive{color:var(--green)!important}.sourceDelay{color:var(--gold)!important}.sourceWeek{color:var(--muted)!important}
 .bookNote{margin-top:10px;border-top:1px solid #14201c;padding-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
 .marker{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:rgba(5,8,7,.86);box-shadow:0 0 12px currentColor}
 .marker.high{color:var(--red);animation:markerDanger 1s infinite}.marker.watch{color:var(--gold)}.marker.macro{color:var(--blue)}.marker.energy{color:var(--amber)}
@@ -164,9 +173,17 @@ html,body{overflow:auto}
 <div class="riskText" id="riskText">GDELTライブニュースだけで急変しやすさを判定します。</div>
 <div class="riskUpdated" id="riskUpdated">更新待ち</div>
 </section>
-<section class="feedMini">
-<div class="sectionTitle"><span class="liveDot"></span>XAUUSDライブ速報</div>
-<div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
+<section class="intel" id="intel">
+<div class="intelTitle"><h2>今の結論</h2><span class="tag" id="intelTag">自動更新</span></div>
+<div class="alertTitle" id="intelTitle">待ち</div>
+<div class="alertBody" id="intelBody">XAUUSD関連ニュースから、買い・売り・待ちだけを表示します。</div>
+<div class="detailGrid">
+<div class="detailCell"><span>方向</span><b id="intelImpact">待ち</b></div>
+<div class="detailCell"><span>見るもの</span><b id="intelRegion">DXY/米金利</b></div>
+<div class="detailCell"><span>時刻</span><b id="intelTime">--</b></div>
+<div class="detailCell"><span>情報元</span><b id="intelSource">--</b></div>
+</div>
+<div class="scenario" id="intelScenario">固定情報は使わず、更新されるニュースだけで判断します。</div>
 </section>
 </aside>
 <section class="mapWrap">
@@ -181,18 +198,9 @@ html,body{overflow:auto}
 <div class="mapLegend" id="mapLegend"></div>
 </section>
 <aside class="right panel">
-<section class="quoteBox"><div class="tvQuote"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol":"OANDA:XAUUSD","width":"100%","isTransparent":true,"colorTheme":"dark","locale":"ja"}</script></div></div></section>
-<section class="intel" id="intel">
-<div class="intelTitle"><h2>今の結論</h2><span class="tag" id="intelTag">自動更新</span></div>
-<div class="alertTitle" id="intelTitle">待ち</div>
-<div class="alertBody" id="intelBody">XAUUSD関連ニュースから、買い・売り・待ちだけを表示します。</div>
-<div class="detailGrid">
-<div class="detailCell"><span>方向</span><b id="intelImpact">待ち</b></div>
-<div class="detailCell"><span>見るもの</span><b id="intelRegion">DXY/米金利</b></div>
-<div class="detailCell"><span>時刻</span><b id="intelTime">--</b></div>
-<div class="detailCell"><span>情報元</span><b id="intelSource">--</b></div>
-</div>
-<div class="scenario" id="intelScenario">固定情報は使わず、更新されるニュースだけで判断します。</div>
+<section class="feedMini">
+<div class="sectionTitle"><span class="liveDot"></span>XAUUSDライブ速報</div>
+<div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
 </section>
 </aside>
 </main>
@@ -236,8 +244,19 @@ html,body{overflow:auto}
 <div class="bookRow bid"><span class="bookSide">買3</span><span class="bookPrice" id="bidPrice3">--</span><span class="bookQty" id="bidQty3">--</span></div>
 </div>
 </div>
-<div class="bookNote">
-MT5ブリッジ起動後、ブローカーのXAUUSD気配値を自動表示。XAUUSDはOTC/CFDのため、表示される板は利用中ブローカーのBID/ASKです。
+<div class="oandaBox">
+<div class="oandaTop"><b>外部フロー監視</b><span id="oandaClock">確認中</span></div>
+<div class="oandaGrid">
+<div class="oandaCell"><span class="sourceDelay">OANDA</span><b>注文・ポジション分布</b><a href="https://www.oanda.jp/lab-education/oanda_lab/oanda_rab/open_position/" target="_blank" rel="noopener">開く</a></div>
+<div class="oandaCell"><span class="sourceLive">CME GC</span><b>金先物・出来高・OI</b><a href="https://www.cmegroup.com/markets/metals/precious/gold.html" target="_blank" rel="noopener">開く</a></div>
+<div class="oandaCell"><span class="sourceWeek">CFTC COT</span><b>投機筋/商業筋の建玉</b><a href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm" target="_blank" rel="noopener">開く</a></div>
+<div class="oandaCell"><span class="sourceDelay">WGC</span><b>ETF・中銀・需要データ</b><a href="https://www.gold.org/goldhub/data" target="_blank" rel="noopener">開く</a></div>
+<div class="oandaCell"><span class="sourceLive">TradingView</span><b>XAUUSDチャート/テクニカル</b><a href="https://www.tradingview.com/symbols/XAUUSD/" target="_blank" rel="noopener">開く</a></div>
+<div class="oandaCell"><span class="sourceLive">MT5 LOCAL</span><b>ASK/BID 1秒更新</b><a href="http://127.0.0.1:8787/book" target="_blank" rel="noopener">確認</a></div>
+</div>
+</div>
+<div class="bookNote" id="bookNote">
+MT5はASK/BIDを1秒更新。外部フローはCME/OANDA/CFTC/WGC/TradingViewをまとめて参照します。各外部データの更新頻度は提供元に依存します。
 </div>
 </div>
 </section>
@@ -568,16 +587,29 @@ const now=getJstMinutes();
 const closed=isJstWeekend();
 marketSessions.forEach(s=>setSessionState(s.id,s.stateId,isSessionOpen(now,s.start,s.end),closed));
 }
+function updateOandaMonitor(){
+const el=document.getElementById("oandaClock");
+if(!el)return;
+el.textContent="外部参照 " + new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+}
 function setBookDisconnected(){
 document.getElementById("bookSource").textContent="MT5待機";
 document.getElementById("bookSpread").textContent="Spread --";
+document.getElementById("bookNote").textContent="MT5ブリッジ待機中です。外部フローはCME/OANDA/CFTC/WGC/TradingViewのボタンから確認できます。";
 for(let i=1;i<=3;i++){setBookRow("ask",i,null);setBookRow("bid",i,null)}
 }
 function setBookRow(side,index,level){
 const price=document.getElementById(`${side}Price${index}`);
 const qty=document.getElementById(`${side}Qty${index}`);
+const row=price?.closest(".bookRow");
 if(!price)return;
-if(!level){price.textContent=index===1?"待機":"--";if(qty)qty.textContent="--";return}
+if(!level){
+if(row)row.style.display=index===1?"grid":"none";
+price.textContent=index===1?"待機":"--";
+if(qty)qty.textContent="--";
+return;
+}
+if(row)row.style.display="grid";
 const size=Number(level.size||level.volume||0);
 price.textContent=Number(level.price).toFixed(3);
 if(qty)qty.textContent=size.toFixed(1);
@@ -596,6 +628,11 @@ for(let i=1;i<=3;i++){
 setBookRow("ask",i,asks[i-1]||(i===1&&data.ask?{price:data.ask,size:data.askSize}:null));
 setBookRow("bid",i,bids[i-1]||(i===1&&data.bid?{price:data.bid,size:data.bidSize}:null));
 }
+const askDepth=asks.length||(data.ask?1:0);
+const bidDepth=bids.length||(data.bid?1:0);
+document.getElementById("bookNote").textContent=(askDepth>1||bidDepth>1)
+?`MT5ブリッジから売り板${askDepth}段・買い板${bidDepth}段を表示中です。`
+:"MT5は最良ASK/BIDの1段のみ取得中。CME/OANDA/CFTC/WGC/TradingViewも外部フローとして併用してください。";
 }catch(e){setBookDisconnected()}
 }
 function selectTechnicalTf(interval,btn){
@@ -630,10 +667,11 @@ const controller=new AbortController();
 const timer=setTimeout(()=>controller.abort(),ms);
 return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearTimeout(timer));
 }
-initMap();buildLayers();renderTechnicalWidget("15m");updateClock();loadNews();
+initMap();buildLayers();renderTechnicalWidget("15m");updateOandaMonitor();updateClock();loadNews();
 setInterval(updateClock,1000);
 setInterval(loadNews,60000);
 setInterval(updateOrderBook,1000);
+setInterval(updateOandaMonitor,60000);
 updateOrderBook();
 </script>
 </body>
