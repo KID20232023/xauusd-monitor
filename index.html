@@ -298,7 +298,9 @@ const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
 ]);
-let map,markers=[],sessionMarkers=[],headlines=[],activeLayers=new Set(layerDefs.map(l=>l.id));
+const NEWS_REFRESH_MS=12000;
+const GOOGLE_NEWS_REFRESH_MS=45000;
+let map,markers=[],sessionMarkers=[],headlines=[],cachedGoogleNews=[],activeLayers=new Set(layerDefs.map(l=>l.id)),newsLoading=false,lastGoogleNewsAt=0;
 const marketSessions=[
 {id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60},
 {id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,start:15*60,end:21*60},
@@ -457,15 +459,33 @@ return{id:article.link||title,source,title,link:article.link||"",time:d.toLocale
 }
 }
 async function loadNews(){
+if(newsLoading)return;
+newsLoading=true;
+const shouldRefreshGoogle=!lastGoogleNewsAt||Date.now()-lastGoogleNewsAt>=GOOGLE_NEWS_REFRESH_MS;
+const status=document.getElementById("statusText");
+if(status)status.textContent=headlines.length?`${headlines.length} LIVE / 更新中`:"速報取得中";
+try{
 let all=[];
-const jobs=[fetchGDELT(),...googleNewsFeeds.map(feed=>fetchGoogleNews(feed))];
+const jobs=[fetchGDELT(),...(shouldRefreshGoogle?googleNewsFeeds.map(feed=>fetchGoogleNews(feed)):[])];
 const results=await Promise.allSettled(jobs);
+let googleFresh=[];
 results.forEach((result,index)=>{
-if(result.status==="fulfilled")all=all.concat(result.value);
+if(result.status==="fulfilled"){
+if(index===0)all=all.concat(result.value);
+else googleFresh=googleFresh.concat(result.value);
+}
 else console.log(index===0?"GDELT":"Google News",result.reason);
 });
+if(shouldRefreshGoogle&&googleFresh.length){
+cachedGoogleNews=googleFresh;
+lastGoogleNewsAt=Date.now();
+}
+all=all.concat(cachedGoogleNews);
 headlines=all.filter(isXauRelevant).filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>b.timestamp-a.timestamp).slice(0,160);
 renderAll();
+}finally{
+newsLoading=false;
+}
 }
 function isXauRelevant(item){
 const t=((item.title||"")+" "+(item.source||"")).toLowerCase();
@@ -669,7 +689,7 @@ return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearT
 }
 initMap();buildLayers();renderTechnicalWidget("15m");updateOandaMonitor();updateClock();loadNews();
 setInterval(updateClock,1000);
-setInterval(loadNews,60000);
+setInterval(loadNews,NEWS_REFRESH_MS);
 setInterval(updateOrderBook,1000);
 setInterval(updateOandaMonitor,60000);
 updateOrderBook();
