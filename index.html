@@ -284,22 +284,20 @@ const globalGoldTerms=[
 'Iran','Israel','Gaza','Houthi','"Red Sea"','Hormuz','Ukraine','Russia','Taiwan','sanctions','tariffs',
 'oil','crude','Brent','WTI','OPEC'
 ];
-const gdeltQuery='('+globalGoldTerms.join(' OR ')+')';
+const gdeltQuery='XAUUSD OR "gold price" OR "spot gold" OR bullion OR DXY OR Fed OR FOMC OR "treasury yields" OR Iran OR Israel';
 const googleNewsQueries=[
-'(XAUUSD OR "spot gold" OR bullion OR "gold price" OR "gold futures" OR "COMEX gold" OR "gold ETF" OR "central bank gold") when:2d',
-'(("gold price" OR bullion OR XAUUSD) AND ("US dollar" OR DXY OR "dollar index" OR treasury OR yields OR "real yields")) when:2d',
-'(("gold price" OR bullion OR XAUUSD) AND (Fed OR FOMC OR Powell OR CPI OR PCE OR inflation OR payrolls OR NFP OR "jobless claims" OR "retail sales")) when:2d',
-'(("gold price" OR bullion OR XAUUSD) AND (ECB OR BOJ OR BOE OR PBOC OR China OR yuan OR yen OR euro OR "central bank")) when:2d',
-'((gold OR bullion OR XAUUSD OR oil) AND (Iran OR Israel OR Gaza OR Houthi OR "Red Sea" OR Hormuz OR Ukraine OR Russia OR Taiwan OR sanctions OR tariffs OR nuclear OR missile)) when:2d',
-'((oil OR crude OR Brent OR WTI OR OPEC OR gas) AND (inflation OR gold OR dollar OR yields OR "Red Sea" OR Hormuz)) when:2d',
+'XAUUSD OR "gold price" OR "spot gold" OR bullion when:1d',
+'"gold price" DXY OR "US dollar" OR "treasury yields" when:1d',
+'"gold price" Fed OR FOMC OR CPI OR inflation OR NFP when:1d',
+'gold Iran OR Israel OR Gaza OR "Red Sea" OR oil when:1d',
 '(金価格 OR 金相場 OR XAUUSD OR ゴールド OR ドル指数 OR 米金利 OR FRB OR CPI OR インフレ OR 原油 OR 中東 OR 地政学) when:2d'
 ];
 const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
 ]);
-const NEWS_REFRESH_MS=12000;
-const GOOGLE_NEWS_REFRESH_MS=45000;
+const NEWS_REFRESH_MS=15000;
+const GOOGLE_NEWS_REFRESH_MS=60000;
 let map,markers=[],sessionMarkers=[],headlines=[],cachedGoogleNews=[],activeLayers=new Set(layerDefs.map(l=>l.id)),newsLoading=false,lastGoogleNewsAt=0;
 const marketSessions=[
 {id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60},
@@ -416,9 +414,9 @@ if(b==="待ち")return"wait";
 return"buy";
 }
 async function fetchGDELT(){
-const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(gdeltQuery)+"&mode=ArtList&format=json&maxrecords=75&sort=HybridRel&timespan=48h";
-const res=await fetchWithTimeout(url,5000);
-if(!res.ok)throw new Error("GDELT fetch failed");
+const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(gdeltQuery)+"&mode=ArtList&format=json&maxrecords=30&sort=HybridRel&timespan=12h";
+const res=await fetchWithTimeout(url,1800);
+if(!res.ok)return[];
 const data=await res.json();
 return(data.articles||[]).map(article=>{
 const raw=article.seendate||article.datetime||"";
@@ -430,12 +428,24 @@ return{id:article.url||title,source:article.domain||"GDELT",title,link:article.u
 }
 async function fetchGoogleNews(feedUrl){
 try{
-const url="https://api.allorigins.win/raw?url="+encodeURIComponent(feedUrl);
+const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feedUrl)+"&_="+Date.now();
 const res=await fetchWithTimeout(url,7000);
-if(!res.ok)throw new Error("allorigins failed");
+if(!res.ok)throw new Error("rss2json failed");
+const data=await res.json();
+return(data.items||[]).slice(0,40).map(article=>{
+const title=article.title||"No title";
+const d=article.pubDate?new Date(article.pubDate):new Date();
+const source=article.author||"Google News";
+const c=classify(title+" "+source);
+return{id:article.link||title,source,title,link:article.link||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
+});
+}catch(e){
+const url="https://api.allorigins.win/raw?url="+encodeURIComponent(feedUrl)+"&_="+Date.now();
+const res=await fetchWithTimeout(url,3500);
+if(!res.ok)throw new Error("Google News RSS backup failed");
 const xml=await res.text();
 const doc=new DOMParser().parseFromString(xml,"text/xml");
-return Array.from(doc.querySelectorAll("item")).slice(0,80).map(item=>{
+return Array.from(doc.querySelectorAll("item")).slice(0,40).map(item=>{
 const title=item.querySelector("title")?.textContent||"No title";
 const link=item.querySelector("link")?.textContent||"";
 const pub=item.querySelector("pubDate")?.textContent||"";
@@ -443,18 +453,6 @@ const source=item.querySelector("source")?.textContent||"Google News";
 const d=pub?new Date(pub):new Date();
 const c=classify(title+" "+source);
 return{id:link||title,source,title,link,time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
-});
-}catch(e){
-const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feedUrl);
-const res=await fetchWithTimeout(url,7000);
-if(!res.ok)throw new Error("Google News RSS backup failed");
-const data=await res.json();
-return(data.items||[]).slice(0,80).map(article=>{
-const title=article.title||"No title";
-const d=article.pubDate?new Date(article.pubDate):new Date();
-const source=article.author||"Google News";
-const c=classify(title+" "+source);
-return{id:article.link||title,source,title,link:article.link||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
 });
 }
 }
@@ -476,8 +474,8 @@ else googleFresh=googleFresh.concat(result.value);
 }
 else console.log(index===0?"GDELT":"Google News",result.reason);
 });
-if(shouldRefreshGoogle&&googleFresh.length){
-cachedGoogleNews=googleFresh;
+if(shouldRefreshGoogle){
+if(googleFresh.length)cachedGoogleNews=googleFresh;
 lastGoogleNewsAt=Date.now();
 }
 all=all.concat(cachedGoogleNews);
