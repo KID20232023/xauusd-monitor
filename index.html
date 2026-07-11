@@ -1,696 +1,1043 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>XAUUSD World Monitor</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-:root{--bg:#050706;--panel:#0b100e;--panel2:#111816;--line:#1e2b27;--text:#d7dfdc;--muted:#7c8d87;--soft:#43534e;--gold:#d7b46a;--green:#38ff9a;--red:#ff4d4d;--blue:#2f8cff;--amber:#ffb84d}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-html,body{width:100%;min-height:100%;overflow-x:hidden;overflow-y:auto;background:var(--bg);color:var(--text)}
-body{letter-spacing:.1px}
-.app{min-height:100vh;display:grid;grid-template-rows:58px minmax(380px,calc(100vh - 418px)) 360px;background:#050706}
-.topbar{display:flex;align-items:center;justify-content:space-between;min-height:58px;border-bottom:1px solid var(--line);background:#090d0c;padding:6px 10px;gap:10px}
-.brand{display:flex;align-items:center;gap:10px;min-width:230px}
-.pulse{width:9px;height:9px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
-.brand h1{font-size:13px;letter-spacing:1.6px;color:#f2e1b4}
-.brand small{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-top:2px}
-.ticker{flex:1;min-width:320px;height:46px;overflow:hidden}
-.topMeta{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);white-space:nowrap}
-.clock{color:var(--green);font-size:16px;font-weight:900}
-.main{display:grid;grid-template-columns:285px minmax(360px,1fr) 340px;min-height:0}
-.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);overflow:hidden}
-.left{border-width:0 1px 0 0;padding:8px;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;min-height:0}
-.sectionTitle{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.6px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
-.liveDot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:liveBlink 1s infinite}
-.layerList{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.layerBtn{height:26px;border:1px solid #22332e;background:#0d1412;color:var(--muted);display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:5px;padding:0 6px;border-radius:4px;cursor:pointer;font-size:10px;text-align:left;opacity:.58}
-.layerBtn:hover{border-color:rgba(215,180,106,.65);background:rgba(215,180,106,.08);opacity:.9}
-.layerBtn.active{border-color:rgba(215,180,106,.95);background:linear-gradient(90deg,rgba(215,180,106,.24),rgba(56,255,154,.08));color:#fff;box-shadow:0 0 16px rgba(215,180,106,.18),inset 0 0 0 1px rgba(255,255,255,.04);opacity:1}
-.layerDot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 10px currentColor}
-.layerBtn b{font-size:9px;color:var(--soft);border:1px solid #263a34;border-radius:3px;padding:1px 3px;background:#090e0d}
-.layerBtn.active b{color:#06100c;background:var(--green);border-color:var(--green);box-shadow:0 0 10px rgba(56,255,154,.35)}
-.riskBox{border:1px solid rgba(215,180,106,.65);background:#090e0d;padding:8px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
-.riskTop{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
-.riskTop span{font-size:11px;color:#fff;font-weight:900}
-.riskBadge{color:#06100c;background:var(--green);font-size:10px;font-weight:900;border-radius:3px;padding:2px 6px;white-space:nowrap}
-.riskMain{display:flex;align-items:flex-end;gap:7px}
-.riskScore{font-size:42px;line-height:.9;font-weight:900;color:var(--gold)}
-.riskUnit{color:var(--muted);font-size:11px;font-weight:900;margin-bottom:4px}
-.riskText{font-size:11px;color:#eef6f2;line-height:1.25;margin-top:5px;font-weight:800}
-.riskUpdated{margin-top:5px;color:var(--green);font-size:10px;font-weight:900}
-.feedMini{overflow:auto;border-top:1px solid #17231f;padding-top:8px;display:flex;flex-direction:column;min-height:0}
-.miniItem{padding:7px;border:1px solid #203029;background:#080d0c;border-radius:4px;margin-bottom:6px;font-size:11px;line-height:1.25}
-.miniItem:hover{border-color:var(--gold);background:rgba(215,180,106,.08)}
-.miniWhen{display:block;color:var(--green);font-size:11px;font-weight:900;margin-bottom:3px}
-.miniBias{display:inline-block;color:#06100c;background:var(--blue);font-size:10px;font-weight:900;padding:2px 5px;border-radius:3px;margin-bottom:4px}
-.miniBias.sell{background:var(--red);color:#fff}.miniBias.wait{background:var(--gold);color:#06100c}
-.miniLabel{display:block;color:var(--gold);font-size:11px;font-weight:900;margin-bottom:3px}
-.miniTitle{display:block;color:#eef6f2;font-size:11px;line-height:1.25;max-height:28px;overflow:hidden}
-.summaryGrid{display:grid;grid-template-columns:1fr 42px;gap:5px;align-items:center}
-.summaryCount{font-size:16px;color:var(--gold);font-weight:900;text-align:right}
-.summaryMeta{color:var(--muted);font-size:10px;font-weight:900;margin-top:4px}
-.mapWrap{position:relative;min-width:0;min-height:0;background:#020504}
-#map{position:absolute;inset:0;background:#020504}
-.mapHud{position:absolute;z-index:500;left:12px;top:12px;display:flex;gap:8px;align-items:center}
-.hudPill{background:rgba(5,8,7,.82);border:1px solid rgba(70,90,84,.7);padding:7px 9px;border-radius:4px;font-size:11px;color:var(--muted);backdrop-filter:blur(8px)}
-.hudPill strong{color:var(--text)}
-.mapBtn{background:rgba(5,8,7,.86);border:1px solid rgba(215,180,106,.7);color:#f2e1b4;padding:7px 10px;border-radius:4px;font-size:11px;font-weight:900;cursor:pointer;backdrop-filter:blur(8px)}
-.mapBtn:hover{background:rgba(215,180,106,.16);border-color:var(--gold)}
-.marketSession{min-width:118px;border:1px solid rgba(95,115,108,.75);background:rgba(5,8,7,.82);border-radius:4px;padding:6px 8px;box-shadow:0 0 14px rgba(0,0,0,.35);backdrop-filter:blur(8px);opacity:.78;pointer-events:none}
-.marketSession.active{border-color:var(--gold);background:rgba(215,180,106,.16);box-shadow:0 0 20px rgba(215,180,106,.35),inset 0 0 0 1px rgba(255,255,255,.06);opacity:1}
-.marketSession.active .sessionDot{background:var(--green);box-shadow:0 0 12px var(--green)}
-.sessionName{display:flex;align-items:center;gap:6px;color:#fff;font-size:10px;font-weight:900;margin-bottom:2px;white-space:nowrap}
-.sessionDot{width:8px;height:8px;border-radius:50%;background:#42504b;box-shadow:none}
-.sessionTime{color:var(--muted);font-size:9px;font-weight:900;white-space:nowrap}
-.sessionState{margin-top:2px;color:var(--muted);font-size:9px;font-weight:900;white-space:nowrap}
-.marketSession.active .sessionState{color:var(--green)}
-.marketSession.closed{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.08);opacity:.85}
-.marketSession.closed .sessionState{color:var(--red)}
-.marketSession.usSession{transform:translateY(-34px)}
-.mapLegend{position:absolute;z-index:500;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:70%}
-.legendItem{background:rgba(5,8,7,.84);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:11px;color:var(--muted)}
-.mapLayerBtn{background:rgba(5,8,7,.86);border:1px solid rgba(70,90,84,.7);border-radius:4px;padding:6px 8px;font-size:10px;color:var(--muted);font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
-.mapLayerBtn.active{border-color:rgba(215,180,106,.9);color:#fff;background:rgba(215,180,106,.13)}
-.mapLayerBtn b{font-size:9px;color:#06100c;background:var(--green);border-radius:3px;padding:1px 4px}
-.mapLayerBtn:not(.active) b{color:var(--muted);background:#101816}
-.right{border-width:0 0 0 1px;padding:8px;display:flex;flex-direction:column;min-height:0}
-.intel{padding:10px;overflow:auto;border:1px solid #17231f;background:#07100d;border-radius:4px;min-height:0}
-.intelTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-.intelTitle h2{font-size:13px;color:#f2e1b4;letter-spacing:.8px}
-.tag{font-size:10px;border:1px solid #30443e;color:var(--muted);padding:4px 6px;border-radius:3px}
-.alertTitle{font-size:26px;font-weight:900;color:var(--gold);margin-bottom:8px;line-height:1.1}
-.alertBody{font-size:14px;line-height:1.55;color:var(--text);font-weight:800}
-.detailGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
-.detailCell{background:#090e0d;border:1px solid #1d2a26;border-radius:4px;padding:8px}
-.detailCell span{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
-.detailCell b{font-size:12px;color:var(--green)}
-.scenario{border-top:1px solid #17231f;margin-top:12px;padding-top:10px;color:var(--muted);font-size:12px;line-height:1.5}
-.bottom{display:grid;grid-template-columns:22% 22% 22% 34%;border-top:1px solid var(--line);min-height:360px}
-.bottom .panel{border-width:0 1px 0 0;padding:8px;min-height:0;display:flex;flex-direction:column}
-.bottom .panel:last-child{border-right:0}
-.tvWidgetBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
-.tvWidgetBox .tradingview-widget-container,.tvWidgetBox .tradingview-widget-container__widget{width:100%;height:100%}
-.techControls{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
-.techTfBtn{height:28px;background:#08100e;border:1px solid #263b35;color:var(--muted);border-radius:4px;font-size:10px;font-weight:900;cursor:pointer}
-.techTfBtn.active{background:rgba(47,140,255,.2);border-color:var(--blue);color:#fff;box-shadow:0 0 12px rgba(47,140,255,.25)}
-.techWidget{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
-.techWidget .tradingview-widget-container,.techWidget .tradingview-widget-container__widget{width:100%;height:100%}
-.calendarBox{flex:1;min-height:0;overflow:hidden;border:1px solid #18241f;background:#050706}
-.calendarBox iframe{width:100%;height:100%;border:0;background:#050706}
-.headlineList{flex:1;min-height:0;overflow:auto}
-.headline{border-bottom:1px solid #14201c;padding:8px 0;cursor:pointer}
-.headline:hover{background:rgba(215,180,106,.06)}
-.headlineTop{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:6px;margin-bottom:6px}
-.headlineSrc{font-size:10px;font-weight:900;color:var(--gold);line-height:1.15}
-.headlineTime{font-size:10px;color:var(--green);font-weight:900;text-align:right;line-height:1.2}
-.headlineImpact{font-size:10px;color:#06100c;background:var(--blue);font-weight:900;padding:2px 6px;border-radius:3px;white-space:nowrap}
-.headlineImpact.sell{background:var(--red);color:#fff}.headlineImpact.wait{background:var(--gold);color:#06100c}
-.headlineText{font-size:12px;line-height:1.45;color:var(--text);word-break:break-word}
-.liquidityBox{flex:1;min-height:0;border:1px solid #18241f;background:#070b0a;border-radius:4px;overflow:auto;padding:10px}
-.bookHeader{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #14201c;padding-bottom:8px;margin-bottom:8px}
-.bookHeader b{color:var(--gold);font-size:12px}
-.bookHeader span{color:var(--muted);font-size:10px}
-.bookStatus{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;color:var(--muted);font-size:11px}
-.bookStatus strong{color:var(--green)}
-.bookRows{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.bookSideGroup{display:grid;gap:5px;min-width:0}
-.bookGroupTitle{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px;font-weight:900;padding:0 2px}
-.bookGroupTitle.askTitle b{color:var(--red)}.bookGroupTitle.bidTitle b{color:var(--blue)}
-.bookRow{display:grid;grid-template-columns:38px 1fr 54px;gap:8px;align-items:center;border:1px solid #16231f;background:#0b1110;border-radius:4px;padding:7px 8px;font-size:11px;min-height:30px}
-.bookRow.ask{border-color:rgba(255,77,77,.35)}.bookRow.bid{border-color:rgba(47,140,255,.45)}
-.bookSide{font-weight:900;white-space:nowrap}.ask .bookSide{color:var(--red)}.bid .bookSide{color:var(--blue)}
-.bookPrice{text-align:right;color:var(--text);font-weight:900;font-variant-numeric:tabular-nums}
-.bookQty{text-align:right;color:var(--muted);font-weight:900;font-variant-numeric:tabular-nums}
-.oandaBox{margin-top:9px;border:1px solid #1d2d28;background:#08100e;border-radius:4px;padding:8px}
-.oandaTop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
-.oandaTop b{color:var(--gold);font-size:11px}
-.oandaTop span{color:var(--green);font-size:10px;font-weight:900}
-.oandaGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.oandaCell{border:1px solid #172620;background:#050807;border-radius:4px;padding:7px;min-height:68px;text-decoration:none}
-.oandaCell:hover{border-color:rgba(215,180,106,.65);background:#08120f}
-.oandaCell span{display:block;color:var(--muted);font-size:9px;font-weight:900;margin-bottom:3px}
-.oandaCell b{display:block;color:var(--text);font-size:11px;line-height:1.25}
-.oandaCell em{display:block;margin-top:5px;color:var(--muted);font-style:normal;font-size:9px;line-height:1.25}
-.sourceLive{color:var(--green)!important}.sourceDelay{color:var(--gold)!important}.sourceWeek{color:var(--muted)!important}
-.bookNote{margin-top:10px;border-top:1px solid #14201c;padding-top:8px;color:var(--muted);font-size:11px;line-height:1.45}
-.marker{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;background:rgba(5,8,7,.86);box-shadow:0 0 12px currentColor}
-.marker.high{color:var(--red);animation:markerDanger 1s infinite}.marker.watch{color:var(--gold)}.marker.macro{color:var(--blue)}.marker.energy{color:var(--amber)}
-.leaflet-control-attribution,.leaflet-control-zoom{display:none!important}
-.popup{background:#07100d;border:1px solid #334840;border-radius:4px;color:var(--text);padding:9px;min-width:220px}
-.popup b{color:var(--gold)}
-.popup small{color:var(--muted)}
-@keyframes markerDanger{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.22);opacity:.55}}
-@keyframes liveBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.78)}}
-@media(max-width:980px){
-html,body{overflow:auto}
-.app{height:auto;min-height:100vh;grid-template-rows:auto auto auto}
-.topbar{flex-wrap:wrap;height:auto;padding:8px}
-.ticker{order:3;flex-basis:100%;min-width:0}
-.main{grid-template-columns:1fr;grid-template-rows:auto 420px auto;min-height:auto}
-.left,.right{border:0;border-bottom:1px solid var(--line)}
-.mapHud{left:8px;top:8px;right:8px;flex-wrap:wrap}
-.marketSession{min-width:104px;padding:5px 7px}
-.sessionName{font-size:9px}.sessionTime,.sessionState{font-size:8px}
-.bottom{grid-template-columns:1fr}
-.calendarBox,.headlineList,.liquidityBox{min-height:240px}
-}
-</style>
-</head>
-<body>
-<div class="app">
-<header class="topbar">
-<div class="brand"><span class="pulse"></span><div><h1>金相場リアルタイム監視</h1><small>価格・ニュース・板情報のみ</small></div></div>
-<div class="ticker"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"OANDA:XAUUSD","title":"XAUUSD"},{"proName":"TVC:DXY","title":"DXY"},{"proName":"TVC:US10Y","title":"US10Y"},{"proName":"TVC:US02Y","title":"US02Y"},{"proName":"TVC:USOIL","title":"WTI"},{"proName":"FX:USDJPY","title":"USDJPY"},{"proName":"FX:EURUSD","title":"EURUSD"}],"showSymbolLogo":false,"isTransparent":true,"displayMode":"regular","colorTheme":"dark","locale":"ja"}</script></div></div>
-<div class="topMeta"><span id="statusText">リアルタイム監視</span><span class="clock" id="clock">00:00:00</span></div>
-</header>
-<main class="main">
-<aside class="left">
-<section class="riskBox">
-<div class="riskTop"><span>急変リスク</span><b class="riskBadge" id="riskBadge">通常</b></div>
-<div class="riskMain"><div class="riskScore" id="riskScore">--</div><div class="riskUnit">/100</div></div>
-<div class="riskText" id="riskText">GDELTライブニュースだけで急変しやすさを判定します。</div>
-<div class="riskUpdated" id="riskUpdated">更新待ち</div>
-</section>
-<section class="intel" id="intel">
-<div class="intelTitle"><h2>今の結論</h2><span class="tag" id="intelTag">自動更新</span></div>
-<div class="alertTitle" id="intelTitle">待ち</div>
-<div class="alertBody" id="intelBody">XAUUSD関連ニュースから、買い・売り・待ちだけを表示します。</div>
-<div class="detailGrid">
-<div class="detailCell"><span>方向</span><b id="intelImpact">待ち</b></div>
-<div class="detailCell"><span>見るもの</span><b id="intelRegion">DXY/米金利</b></div>
-<div class="detailCell"><span>時刻</span><b id="intelTime">--</b></div>
-<div class="detailCell"><span>情報元</span><b id="intelSource">--</b></div>
-</div>
-<div class="scenario" id="intelScenario">固定情報は使わず、更新されるニュースだけで判断します。</div>
-</section>
-</aside>
-<section class="mapWrap">
-<div id="map"></div>
-<div class="mapHud">
-<div class="hudPill"><strong id="mapMode">GLOBAL</strong> 表示</div>
-<div class="hudPill">範囲 <strong>LIVE</strong></div>
-<div class="hudPill">対象 <strong>XAUUSD</strong></div>
-<button class="mapBtn" onclick="focusRegion('GLOBAL')">全体</button>
-<button class="mapBtn" onclick="focusRegion('MIDDLE EAST')">中東</button>
-</div>
-<div class="mapLegend" id="mapLegend"></div>
-</section>
-<aside class="right panel">
-<section class="feedMini">
-<div class="sectionTitle"><span class="liveDot"></span>XAUUSD LIVE速報</div>
-<div class="headlineList" id="headlineList"><div class="headlineText">ニュース取得中...</div></div>
-</section>
-</aside>
-</main>
-<footer class="bottom">
-<section class="panel">
-<div class="sectionTitle"><span class="liveDot"></span>リアルタイム経済指標</div>
-<div class="calendarBox"><iframe title="TradingView Economic Calendar" loading="eager" src="https://www.tradingview-widget.com/embed-widget/events/?locale=ja#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%2C%22importanceFilter%22%3A%220%2C1%22%2C%22currencyFilter%22%3A%22USD%2CEUR%2CJPY%2CGBP%2CCNY%2CCAD%2CAUD%22%7D"></iframe></div>
-</section>
-<section class="panel">
-<div class="sectionTitle"><span class="liveDot"></span>XAUUSDテクニカル</div>
-<div class="techControls">
-<button class="techTfBtn" data-interval="1m" onclick="selectTechnicalTf('1m',this)">1分</button>
-<button class="techTfBtn" data-interval="5m" onclick="selectTechnicalTf('5m',this)">5分</button>
-<button class="techTfBtn active" data-interval="15m" onclick="selectTechnicalTf('15m',this)">15分</button>
-<button class="techTfBtn" data-interval="1h" onclick="selectTechnicalTf('1h',this)">1時間</button>
-<button class="techTfBtn" data-interval="4h" onclick="selectTechnicalTf('4h',this)">4時間</button>
-<button class="techTfBtn" data-interval="1D" onclick="selectTechnicalTf('1D',this)">日足</button>
-</div>
-<div class="techWidget" id="technicalWidget"></div>
-</section>
-<section class="panel">
-<div class="sectionTitle"><span class="liveDot"></span>XAUUSD比較チャート</div>
-<div class="tvWidgetBox"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>{"symbols":[["XAUUSD","OANDA:XAUUSD|1D"],["DXY","TVC:DXY|1D"],["米10年金利","TVC:US10Y|1D"],["WTI","TVC:USOIL|1D"]],"chartOnly":false,"width":"100%","height":"100%","locale":"ja","colorTheme":"dark","autosize":true,"showVolume":false,"showMA":true,"hideDateRanges":false,"hideMarketStatus":false,"hideSymbolLogo":true,"scalePosition":"right","scaleMode":"Normal","fontFamily":"Arial, sans-serif","fontSize":"10","noTimeScale":false,"valuesTracking":"1","changeMode":"price-and-percent","chartType":"area","maLineColor":"#d7b46a","maLineWidth":1,"maLength":20,"lineWidth":2,"lineType":0,"dateRanges":["1d|15","5d|15","1m|60","3m|1D","6m|1D","12m|1D"]}</script></div></div>
-</section>
-<section class="panel">
-<div class="sectionTitle"><span class="liveDot"></span>XAUUSD板情報 / 流動性</div>
-<div class="liquidityBox">
-<div class="bookHeader"><b>流動性モニター</b><span id="bookClock">--:--:--</span></div>
-<div class="bookStatus"><span>取得元: <strong id="bookSource">MT5待機</strong></span><span id="bookSpread">Spread --</span></div>
-<div class="bookRows">
-<div class="bookSideGroup">
-<div class="bookGroupTitle askTitle"><b>売り板</b><span>価格 / 数量</span></div>
-<div class="bookRow ask"><span class="bookSide">売1</span><span class="bookPrice" id="askPrice1">待機</span><span class="bookQty" id="askQty1">--</span></div>
-<div class="bookRow ask"><span class="bookSide">売2</span><span class="bookPrice" id="askPrice2">--</span><span class="bookQty" id="askQty2">--</span></div>
-<div class="bookRow ask"><span class="bookSide">売3</span><span class="bookPrice" id="askPrice3">--</span><span class="bookQty" id="askQty3">--</span></div>
-</div>
-<div class="bookSideGroup">
-<div class="bookGroupTitle bidTitle"><b>買い板</b><span>価格 / 数量</span></div>
-<div class="bookRow bid"><span class="bookSide">買1</span><span class="bookPrice" id="bidPrice1">待機</span><span class="bookQty" id="bidQty1">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買2</span><span class="bookPrice" id="bidPrice2">--</span><span class="bookQty" id="bidQty2">--</span></div>
-<div class="bookRow bid"><span class="bookSide">買3</span><span class="bookPrice" id="bidPrice3">--</span><span class="bookQty" id="bidQty3">--</span></div>
-</div>
-</div>
-<div class="oandaBox">
-<div class="oandaTop"><b>外部フロー監視</b><span id="oandaClock">確認中</span></div>
-<div class="oandaGrid">
-<a class="oandaCell" href="https://www.oanda.jp/lab-education/oanda_lab/oanda_rab/open_position/" target="_blank" rel="noopener"><span class="sourceDelay">OANDA</span><b>注文・ポジション分布</b><em>更新: 5〜30分目安</em></a>
-<a class="oandaCell" href="https://www.cmegroup.com/markets/metals/precious/gold.html" target="_blank" rel="noopener"><span class="sourceLive">CME GC</span><b>金先物 出来高/OI</b><em>COMEX金先物の厚み</em></a>
-<a class="oandaCell" href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm" target="_blank" rel="noopener"><span class="sourceWeek">CFTC COT</span><b>大口建玉</b><em>週次: 投機筋/商業筋</em></a>
-<a class="oandaCell" href="https://www.gold.org/goldhub/data" target="_blank" rel="noopener"><span class="sourceDelay">WGC</span><b>ETF・中銀需要</b><em>金需要の基礎データ</em></a>
-<a class="oandaCell" href="https://www.tradingview.com/symbols/XAUUSD/" target="_blank" rel="noopener"><span class="sourceLive">TradingView</span><b>XAUUSD市場</b><em>価格/テクニカル確認</em></a>
-<a class="oandaCell" href="http://127.0.0.1:8787/book" target="_blank" rel="noopener"><span class="sourceLive">MT5 LOCAL</span><b>ASK/BID</b><em>1秒更新 ローカル取得</em></a>
-</div>
-</div>
-<div class="bookNote" id="bookNote">
-MT5はASK/BIDを1秒更新。外部フローはCME/OANDA/CFTC/WGC/TradingViewをまとめて参照します。各外部データの更新頻度は提供元に依存します。
-</div>
-</div>
-</section>
-</footer>
-</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-const layerDefs=[
-{id:"fed",label:"FRB・米指標",color:"var(--blue)",type:"macro",keywords:["fed","fomc","powell","cpi","ppi","pce","inflation","payroll","payrolls","nfp","jobs","claims","gdp","retail sales","ism","pmi","unemployment","jobless","beige book","rate cut","rate hike"],regions:["FED","US"]},
-{id:"dollar",label:"ドル・米金利",color:"var(--green)",type:"macro",keywords:["dollar","us dollar","dxy","dollar index","yield","yields","treasury","treasuries","10-year","10 year","2-year","2 year","real yield","real yields","rate","rates","bond","bonds","central bank","ecb","boj","boe","pboc"],regions:["US"]},
-{id:"middleEast",label:"中東リスク",color:"var(--red)",type:"high",keywords:["iran","israel","gaza","middle east","red sea","houthi","houthis","missile","attack","ceasefire","lebanon","hezbollah"],regions:["IRAN","ISRAEL","MIDDLE EAST"]},
-{id:"energy",label:"原油・エネルギー",color:"var(--amber)",type:"energy",keywords:["oil","crude","energy","opec","gas","brent","wti","inventory","inventories","saudi","uae","qatar","pipeline"],regions:["ENERGY"]},
-{id:"risk",label:"地政学リスク",color:"var(--red)",type:"high",keywords:["ukraine","russia","china","taiwan","war","conflict","sanction","sanctions","military","tariff","tariffs","trade war","nuclear","missile","drone","attack","election"],regions:["UKRAINE","RUSSIA","CHINA","TAIWAN"]},
-{id:"waterway",label:"海上リスク",color:"var(--amber)",type:"energy",keywords:["red sea","hormuz","suez","panama","shipping","waterway","strait","canal","tanker","vessel"],regions:["RED SEA","HORMUZ","SUEZ","PANAMA","TAIWAN"]},
-{id:"gold",label:"金関連ニュース",color:"var(--gold)",type:"watch",keywords:["gold","xauusd","bullion","spot gold","gold price","gold prices","gold futures","comex gold","precious metals","safe haven","safe-haven","gold etf","gold demand","gold import","gold reserve","central bank gold"],regions:["US","GLOBAL"]}
-];
-const regionMap={
-GLOBAL:{lat:20,lng:10,zoom:2},US:{lat:39,lng:-98,zoom:4},FED:{lat:38.9,lng:-77,zoom:6},"MIDDLE EAST":{lat:31,lng:38,zoom:5},IRAN:{lat:32,lng:53,zoom:5},ISRAEL:{lat:31.5,lng:35,zoom:6},ENERGY:{lat:26,lng:50,zoom:5},UKRAINE:{lat:49,lng:32,zoom:6},RUSSIA:{lat:55,lng:90,zoom:3},CHINA:{lat:35,lng:103,zoom:4},TAIWAN:{lat:23.7,lng:121,zoom:6},"RED SEA":{lat:18,lng:39,zoom:5},HORMUZ:{lat:26.5,lng:56.2,zoom:6},SUEZ:{lat:30.6,lng:32.3,zoom:6},PANAMA:{lat:9,lng:-79.6,zoom:6}
-};
-const globalGoldTerms=[
-'"gold price"','"spot gold"','XAUUSD','bullion','"gold futures"','"COMEX gold"','"precious metals"','"safe haven"','"gold ETF"','"gold demand"','"central bank gold"',
-'"US dollar"','DXY','"dollar index"','treasury','treasuries','yields','"real yields"','"10-year yield"',
-'Fed','FOMC','Powell','CPI','PCE','inflation','payrolls','NFP','"jobless claims"','"retail sales"',
-'ECB','BOJ','BOE','PBOC','China','yuan','yen','euro',
-'Iran','Israel','Gaza','Houthi','"Red Sea"','Hormuz','Ukraine','Russia','Taiwan','sanctions','tariffs',
-'oil','crude','Brent','WTI','OPEC'
-];
-const gdeltQuery='XAUUSD OR "gold price" OR "spot gold" OR bullion OR DXY OR Fed OR FOMC OR "treasury yields" OR Iran OR Israel';
-const googleNewsQueries=[
-'XAUUSD OR "gold price" OR "spot gold" OR bullion when:1d',
-'"gold price" DXY OR "US dollar" OR "treasury yields" when:1d',
-'"gold price" Fed OR FOMC OR CPI OR inflation OR NFP when:1d',
-'gold Iran OR Israel OR Gaza OR "Red Sea" OR oil when:1d',
-'(金価格 OR 金相場 OR XAUUSD OR ゴールド OR ドル指数 OR 米金利 OR FRB OR CPI OR インフレ OR 原油 OR 中東 OR 地政学) when:2d'
-];
-const googleNewsFeeds=googleNewsQueries.flatMap(q=>[
-'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en',
-'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ja&gl=JP&ceid=JP:ja'
-]);
-const NEWS_REFRESH_MS=15000;
-const GOOGLE_NEWS_REFRESH_MS=60000;
-let map,markers=[],sessionMarkers=[],headlines=[],cachedGoogleNews=[],activeLayers=new Set(layerDefs.map(l=>l.id)),newsLoading=false,lastGoogleNewsAt=0;
-const marketSessions=[
-{id:"sessionAsia",stateId:"sessionAsiaState",name:"Asia session",time:"07:00-15:00 JST",lat:35.7,lng:139.7,start:7*60,end:15*60},
-{id:"sessionLondon",stateId:"sessionLondonState",name:"London session",time:"15:00-21:00 JST",lat:51.5,lng:-0.1,start:15*60,end:21*60},
-{id:"sessionUS",stateId:"sessionUSState",name:"US session",time:"21:00-06:00 JST",lat:44.5,lng:-98,start:21*60,end:6*60}
-];
+# -*- coding: utf-8 -*-
+"""
+XAUUSD MT5 Book Bridge (リアルタイム強化版)
+------------------------------------------------
+役割:
+  - MT5 から XAUUSD / XAUUSDm / GOLD などの bid/ask を取得
+  - 裏で常時ポーリングして「最新値」を保持
+  - 以下のエンドポイントを http://127.0.0.1:8787 で提供
+      GET  /            … ダッシュボード(index.html)を配信（同一オリジンなのでCORS/混在コンテンツ問題なし）
+      GET  /book        … 最新スナップショット(JSON) ※従来互換
+      GET  /stream      … SSEでティックを常時プッシュ（本命のリアルタイム経路）
+      GET  /health      … 稼働状態(JSON)
 
-function initMap(){
-map=L.map("map",{zoomControl:false,attributionControl:false,worldCopyJump:true}).setView([20,10],2);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:7,minZoom:2}).addTo(map);
-renderSessionMarkers();
+特長:
+  - MT5 が使えない/落ちても、サーバー自体は落ちない（自動再接続。無ければデモ値を配信）
+  - シンボル名を自動検出（XAUUSD / XAUUSDm / GOLD / XAUUSD. など）
+  - スレッド化HTTPサーバーで複数クライアント同時OK
+
+使い方:
+  python xauusd_mt5_book_bridge.py
+  → ブラウザで http://127.0.0.1:8787/ を開く
+"""
+
+import json
+import time
+import threading
+import http.server
+import socketserver
+import os
+import sys
+import random
+import base64
+import re
+import platform
+import subprocess
+import webbrowser
+import urllib.request
+import urllib.parse
+import xml.etree.ElementTree as ET
+import csv
+from collections import deque
+from email.utils import parsedate_to_datetime
+from datetime import datetime, timezone
+
+# ---- 設定 -------------------------------------------------
+HOST = "127.0.0.1"
+PORT = 8787
+POLL_INTERVAL_SEC = 0.10          # MT5を叩く間隔（0.10=毎秒10回）
+SSE_MIN_PUSH_INTERVAL_SEC = 0.05  # SSEへ流す最小間隔
+SSE_HEARTBEAT_SEC = 5.0           # 変化が無くても生存確認を送る間隔
+SYMBOL_CANDIDATES = ["XAUUSD", "XAUUSDm", "GOLD", "XAUUSD.", "GOLDm", "XAUUSD-ECN"]
+INDEX_HTML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
+AUTO_OPEN_BROWSER = True      # 起動時にブラウザを自動で開く
+AUTO_INSTALL_MT5 = True       # MetaTrable5 が無ければ自動導入を試みる
+# ↓ ダッシュボード本体(index.html)をこのファイルに内蔵（ビルド時に自動挿入）。
+#    同じフォルダに index.html があればそちらを優先（編集したい人向け）。
+INDEX_HTML_B64 = "PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImphIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xIj4KPHRpdGxlPlhBVVVTRCDkuJbnlYzmg4Xli6Lnm6PoppY8L3RpdGxlPgo8bGluayByZWw9Imljb24iIGhyZWY9ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMzIgMzInJTNFJTNDY2lyY2xlIGN4PScxNicgY3k9JzE2JyByPScxMycgZmlsbD0nJTIzRTZCNDVBJy8lM0UlM0NjaXJjbGUgY3g9JzE2JyBjeT0nMTYnIHI9JzEzJyBmaWxsPSdub25lJyBzdHJva2U9JyUyMzhmNzIzMycgc3Ryb2tlLXdpZHRoPScyJy8lM0UlM0Mvc3ZnJTNFIj4KPHN0eWxlPgogIDpyb290ewogICAgLS1iZzojMEUwRjEzOy0tcGFuOiMxNjE4MUY7LS1wYW4yOiMxQjFFMjc7LS1sbjojMjYyQTMzOy0taW5rOiNFOEU2RTA7LS1tdXQ6Izg2OEM5OTsKICAgIC0tZ29sZDojRTZCNDVBOy0tZ2Q6IzhmNzIzMzstLXVwOiM0OUUwQTA7LS1kbjojRkY2QjZCOy0tc2VhOiMwYjBlMTQ7LS1sYW5kOiMxRDIxMkM7CiAgICAtLW1vbm86dWktbW9ub3NwYWNlLCJTRiBNb25vIiwiSmV0QnJhaW5zIE1vbm8iLE1lbmxvLENvbnNvbGFzLCJEZWphVnUgU2FucyBNb25vIixtb25vc3BhY2U7CiAgICAtLXNhbnM6c3lzdGVtLXVpLC1hcHBsZS1zeXN0ZW0sIlNlZ29lIFVJIiwiSGlyYWdpbm8gS2FrdSBHb3RoaWMgUHJvTiIsIk5vdG8gU2FucyBKUCIsTWVpcnlvLHNhbnMtc2VyaWY7CiAgfQogICp7Ym94LXNpemluZzpib3JkZXItYm94fQogIGh0bWwsYm9keXttYXJnaW46MDtoZWlnaHQ6MTAwJX0KICBib2R5e2JhY2tncm91bmQ6dmFyKC0tYmcpO2NvbG9yOnZhcigtLWluayk7Zm9udC1mYW1pbHk6dmFyKC0tc2Fucyk7LXdlYmtpdC1mb250LXNtb290aGluZzphbnRpYWxpYXNlZDtvdmVyZmxvdzpoaWRkZW59CiAgLmFwcHtoZWlnaHQ6MTAwdmg7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjtwYWRkaW5nOjEwcHg7Z2FwOjhweH0KICAvKiDjg5jjg4Pjg4Djg7wgKi8KICAuaGRye2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjE0cHg7ZmxleC13cmFwOndyYXB9CiAgLmV5ZXtmb250LXNpemU6MTFweDtsZXR0ZXItc3BhY2luZzouMmVtO3RleHQtdHJhbnNmb3JtOnVwcGVyY2FzZTtjb2xvcjp2YXIoLS1tdXQpO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjdweDt3aGl0ZS1zcGFjZTpub3dyYXB9CiAgLmRvdHt3aWR0aDo4cHg7aGVpZ2h0OjhweDtib3JkZXItcmFkaXVzOjUwJTtiYWNrZ3JvdW5kOnZhcigtLXVwKTthbmltYXRpb246cGwgMS42cyBlYXNlLW91dCBpbmZpbml0ZX0KICAuZG90Lndhcm57YmFja2dyb3VuZDp2YXIoLS1kbik7YW5pbWF0aW9uOm5vbmV9LmRvdC5kZW1ve2JhY2tncm91bmQ6dmFyKC0tZ29sZCk7YW5pbWF0aW9uOm5vbmV9CiAgQGtleWZyYW1lcyBwbHswJXtib3gtc2hhZG93OjAgMCAwIDAgcmdiYSg3MywyMjQsMTYwLC40NSl9NzAle2JveC1zaGFkb3c6MCAwIDAgN3B4IHJnYmEoNzMsMjI0LDE2MCwwKX0xMDAle2JveC1zaGFkb3c6MCAwIDAgMCByZ2JhKDczLDIyNCwxNjAsMCl9fQogIC50dGx7Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC13ZWlnaHQ6NjAwO2ZvbnQtc2l6ZTpjbGFtcCgxNXB4LDIuMnZ3LDIwcHgpO2xldHRlci1zcGFjaW5nOi4wM2VtfQogIC50dGwgc21hbGx7Y29sb3I6dmFyKC0tbXV0KTtmb250LXdlaWdodDo1MDA7Zm9udC1zaXplOi42MmVtfQogIC5weHttYXJnaW4tbGVmdDphdXRvO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpiYXNlbGluZTtnYXA6OHB4O2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtdmFyaWFudC1udW1lcmljOnRhYnVsYXItbnVtc30KICAucHggLm57Zm9udC1zaXplOjIycHg7Zm9udC13ZWlnaHQ6NjAwO3RyYW5zaXRpb246Y29sb3IgLjE4c30ucHggLm4udXB7Y29sb3I6dmFyKC0tdXApfS5weCAubi5kbntjb2xvcjp2YXIoLS1kbil9CiAgLnB4IC5sYmx7Zm9udC1zaXplOjEwcHg7bGV0dGVyLXNwYWNpbmc6LjE0ZW07dGV4dC10cmFuc2Zvcm06dXBwZXJjYXNlO2NvbG9yOnZhcigtLW11dCl9CiAgLmNsb2Nre2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZToxMnB4O2NvbG9yOnZhcigtLW11dCk7Zm9udC12YXJpYW50LW51bWVyaWM6dGFidWxhci1udW1zO3doaXRlLXNwYWNlOm5vd3JhcH0KICAuc3RhdHVze2ZvbnQtc2l6ZToxMS41cHg7Y29sb3I6dmFyKC0tbXV0KTtmb250LWZhbWlseTp2YXIoLS1tb25vKTtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtib3JkZXItcmFkaXVzOjk5OXB4O3BhZGRpbmc6NHB4IDEwcHg7d2hpdGUtc3BhY2U6bm93cmFwfQogIC5mc2J0bntiYWNrZ3JvdW5kOm5vbmU7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sbik7Y29sb3I6dmFyKC0tbXV0KTtmb250LWZhbWlseTp2YXIoLS1zYW5zKTtmb250LXNpemU6MTEuNXB4O2JvcmRlci1yYWRpdXM6OHB4O3BhZGRpbmc6NXB4IDEwcHg7Y3Vyc29yOnBvaW50ZXI7d2hpdGUtc3BhY2U6bm93cmFwfQogIC5mc2J0bjpob3Zlcntjb2xvcjp2YXIoLS1pbmspO2JvcmRlci1jb2xvcjp2YXIoLS1nb2xkLWRpbSl9CiAgLmZzYnRuLm9ue2NvbG9yOnZhcigtLWJnKTtiYWNrZ3JvdW5kOnZhcigtLWdvbGQpO2JvcmRlci1jb2xvcjp2YXIoLS1nb2xkKTtmb250LXdlaWdodDo2MDB9CiAgI3RvYXN0e3Bvc2l0aW9uOmZpeGVkO3RvcDoxNHB4O2xlZnQ6NTAlO3RyYW5zZm9ybTp0cmFuc2xhdGVYKC01MCUpIHRyYW5zbGF0ZVkoLTE0MCUpO3otaW5kZXg6NTA7CiAgICBiYWNrZ3JvdW5kOiMxYTEyMDY7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1nb2xkKTtjb2xvcjp2YXIoLS1pbmspO2ZvbnQtc2l6ZToxM3B4O2JvcmRlci1yYWRpdXM6MTBweDsKICAgIHBhZGRpbmc6MTBweCAxNnB4O21heC13aWR0aDo4MHZ3O2JveC1zaGFkb3c6MCA4cHggMzBweCByZ2JhKDAsMCwwLC41KTt0cmFuc2l0aW9uOnRyYW5zZm9ybSAuMzVzIGVhc2U7Zm9udC1mYW1pbHk6dmFyKC0tc2Fucyl9CiAgI3RvYXN0LnNob3d7dHJhbnNmb3JtOnRyYW5zbGF0ZVgoLTUwJSkgdHJhbnNsYXRlWSgwKX0KICAjdG9hc3QgYntjb2xvcjp2YXIoLS1nb2xkKTtmb250LWZhbWlseTp2YXIoLS1tb25vKTtmb250LXNpemU6MTFweDtsZXR0ZXItc3BhY2luZzouMWVtO2Rpc3BsYXk6YmxvY2s7bWFyZ2luLWJvdHRvbTozcHh9CiAgLmNhbGxpc3R7ZmxleDoxO21pbi1oZWlnaHQ6MDtvdmVyZmxvdzphdXRvfQogIC5jYWxyb3d7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczphdXRvIGF1dG8gMWZyIGF1dG87Z2FwOjhweDthbGlnbi1pdGVtczpjZW50ZXI7cGFkZGluZzo2cHggMDtib3JkZXItYm90dG9tOjFweCBzb2xpZCByZ2JhKDM4LDQyLDUxLC41KTtmb250LXNpemU6MTJweH0KICAuY2Fscm93Omxhc3QtY2hpbGR7Ym9yZGVyLWJvdHRvbTpub25lfQogIC5jYWxyb3cuc29vbntiYWNrZ3JvdW5kOnJnYmEoMjMwLDE4MCw5MCwuMDYpfQogIC5jYWxyb3cgLnRte2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZToxMC41cHg7Y29sb3I6dmFyKC0tZ29sZCk7d2hpdGUtc3BhY2U6bm93cmFwfQogIC5jYWxyb3cgLmNje2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZTo5LjVweDtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtib3JkZXItcmFkaXVzOjRweDtwYWRkaW5nOjFweCA1cHg7Y29sb3I6dmFyKC0tbXV0KX0KICAuY2Fscm93IC5ubXttaW4td2lkdGg6MDtvdmVyZmxvdzpoaWRkZW47dGV4dC1vdmVyZmxvdzplbGxpcHNpczt3aGl0ZS1zcGFjZTpub3dyYXA7Y29sb3I6dmFyKC0taW5rKX0KICAuY2Fscm93IC5ubSBzbWFsbHtjb2xvcjp2YXIoLS1tdXQpO2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZToxMHB4fQogIC5jYWxyb3cgLmlte2ZvbnQtc2l6ZTo5LjVweDtmb250LWZhbWlseTp2YXIoLS1tb25vKTtib3JkZXItcmFkaXVzOjRweDtwYWRkaW5nOjFweCA2cHg7YmFja2dyb3VuZDp2YXIoLS1kbik7Y29sb3I6IzNhMGYwZn0KICAjbG9nbW9kYWx7cG9zaXRpb246Zml4ZWQ7aW5zZXQ6MDtiYWNrZ3JvdW5kOnJnYmEoMCwwLDAsLjYpO3otaW5kZXg6NjA7ZGlzcGxheTpub25lO2FsaWduLWl0ZW1zOmNlbnRlcjtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO3BhZGRpbmc6MjBweH0KICAjbG9nbW9kYWwuc2hvd3tkaXNwbGF5OmZsZXh9CiAgLmxtLWlue2JhY2tncm91bmQ6dmFyKC0tcGFuKTtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtib3JkZXItcmFkaXVzOjE0cHg7cGFkZGluZzoxNnB4O3dpZHRoOm1pbig5MDBweCw5NHZ3KX0KICAubG0taGR7ZGlzcGxheTpmbGV4O2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTBweDttYXJnaW4tYm90dG9tOjEwcHg7Zm9udC1zaXplOjEycHg7bGV0dGVyLXNwYWNpbmc6LjFlbTt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7Y29sb3I6dmFyKC0tbXV0KX0KICAubG0taGQgYntjb2xvcjp2YXIoLS1nb2xkKTtmb250LWZhbWlseTp2YXIoLS1tb25vKTtmb250LXNpemU6MTNweDtsZXR0ZXItc3BhY2luZzowO3RleHQtdHJhbnNmb3JtOm5vbmV9CiAgI2xtLWN2e3dpZHRoOjEwMCU7aGVpZ2h0OjM0MHB4O2Rpc3BsYXk6YmxvY2t9CiAgI2xtLWRheXN7d2lkdGg6NTJweDtiYWNrZ3JvdW5kOnZhcigtLWJnKTtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtjb2xvcjp2YXIoLS1pbmspO2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZToxMnB4O2JvcmRlci1yYWRpdXM6N3B4O3BhZGRpbmc6NXB4IDdweH0KICAubG0tZnR7Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC1zaXplOjEycHg7Y29sb3I6dmFyKC0tbXV0KTttYXJnaW4tdG9wOjhweH0KICAvKiDjg4bjgqPjg4Pjgqvjg7wgKi8KICAudGlja2Vye2JvcmRlcjoxcHggc29saWQgdmFyKC0tbG4pO2JvcmRlci1yYWRpdXM6OXB4O2JhY2tncm91bmQ6dmFyKC0tcGFuKTtvdmVyZmxvdzpoaWRkZW47cG9zaXRpb246cmVsYXRpdmU7aGVpZ2h0OjMwcHg7ZmxleDpub25lfQogIC50aWNrZXIgLmxibHtwb3NpdGlvbjphYnNvbHV0ZTtsZWZ0OjA7dG9wOjA7Ym90dG9tOjA7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtwYWRkaW5nOjAgMTFweDtiYWNrZ3JvdW5kOnZhcigtLWdvbGQpO2NvbG9yOnZhcigtLWJnKTtmb250LXNpemU6MTAuNXB4O2ZvbnQtd2VpZ2h0OjYwMDtsZXR0ZXItc3BhY2luZzouMWVtO3otaW5kZXg6Mn0KICAudGttb3Zle3Bvc2l0aW9uOmFic29sdXRlO2xlZnQ6MDt0b3A6MDtib3R0b206MDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO3doaXRlLXNwYWNlOm5vd3JhcDt3aWxsLWNoYW5nZTp0cmFuc2Zvcm07YW5pbWF0aW9uOnRrIDYwcyBsaW5lYXIgaW5maW5pdGV9CiAgLnRrbW92ZTpob3ZlcnthbmltYXRpb24tcGxheS1zdGF0ZTpwYXVzZWR9CiAgQGtleWZyYW1lcyB0a3tmcm9te3RyYW5zZm9ybTp0cmFuc2xhdGVYKDEwMCUpfXRve3RyYW5zZm9ybTp0cmFuc2xhdGVYKC0xMDAlKX19CiAgLnRrbW92ZSBhe2NvbG9yOnZhcigtLWluayk7dGV4dC1kZWNvcmF0aW9uOm5vbmU7Zm9udC1zaXplOjEycHg7Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7bWFyZ2luOjAgMjRweH0KICAudGttb3ZlIGE6aG92ZXJ7Y29sb3I6dmFyKC0tZ29sZCl9LnRrbW92ZSAuc3tjb2xvcjp2YXIoLS1nZCl9CiAgLyog44Oh44Kk44Oz44Kw44Oq44OD44OJ77yIMeeUu+mdouOBq+WFqOmDqO+8iSAqLwogIC5ncmlke2ZsZXg6MTttaW4taGVpZ2h0OjA7ZGlzcGxheTpncmlkO2dhcDo4cHg7CiAgICAgICAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjEuNWZyIDEuMmZyIDFmcjtncmlkLXRlbXBsYXRlLXJvd3M6MS41ZnIgMWZyOwogICAgICAgIGdyaWQtdGVtcGxhdGUtYXJlYXM6Im1hcCBtYXAgc2lkZSIgImZlZWQgdmlkZW8gZXZlbnRzIn0KICAuY2VsbHtiYWNrZ3JvdW5kOnZhcigtLXBhbik7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sbik7Ym9yZGVyLXJhZGl1czoxMnB4O3BhZGRpbmc6MTBweDttaW4taGVpZ2h0OjA7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjtvdmVyZmxvdzpoaWRkZW59CiAgLm1hcGNlbGx7Z3JpZC1hcmVhOm1hcDtwb3NpdGlvbjpyZWxhdGl2ZX0KICAudmlkZW9jZWxse2dyaWQtYXJlYTp2aWRlbztwb3NpdGlvbjpyZWxhdGl2ZX0KICAuc2lkZWNlbGx7Z3JpZC1hcmVhOnNpZGU7b3ZlcmZsb3c6YXV0bztnYXA6OHB4fQogIC5mZWVkY2VsbHtncmlkLWFyZWE6ZmVlZH0KICAuZXZlbnRjZWxse2dyaWQtYXJlYTpldmVudHM7b3ZlcmZsb3c6YXV0b30KICAvKiDjg6njgqTjg5bmmKDlg48gKi8KICAudmJveHtmbGV4OjE7bWluLWhlaWdodDowO3Bvc2l0aW9uOnJlbGF0aXZlO2JhY2tncm91bmQ6IzAwMDtib3JkZXItcmFkaXVzOjhweDtvdmVyZmxvdzpoaWRkZW59CiAgLnZib3ggaWZyYW1le3Bvc2l0aW9uOmFic29sdXRlO2luc2V0OjA7d2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtib3JkZXI6MH0KICAudmN0bHtkaXNwbGF5OmZsZXg7Z2FwOjZweDtmbGV4LXdyYXA6d3JhcDthbGlnbi1pdGVtczpjZW50ZXI7bWFyZ2luLXRvcDo3cHg7ZmxleDpub25lfQogIC52Y3RsIGlucHV0e2ZsZXg6MTttaW4td2lkdGg6MTIwcHg7YmFja2dyb3VuZDp2YXIoLS1iZyk7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sbik7Y29sb3I6dmFyKC0taW5rKTtmb250LWZhbWlseTp2YXIoLS1tb25vKTtmb250LXNpemU6MTEuNXB4O2JvcmRlci1yYWRpdXM6N3B4O3BhZGRpbmc6NnB4IDhweH0KICAudmN0bCBpbnB1dDpmb2N1c3tvdXRsaW5lOm5vbmU7Ym9yZGVyLWNvbG9yOnZhcigtLWdvbGQtZGltKX0KICAuYWxyb3d7ZGlzcGxheTpmbGV4O2dhcDo2cHg7YWxpZ24taXRlbXM6Y2VudGVyfQogIC5hbHJvdyBpbnB1dHt3aWR0aDo3MHB4O2ZsZXg6MTtiYWNrZ3JvdW5kOnZhcigtLWJnKTtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtjb2xvcjp2YXIoLS1pbmspO2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZToxMnB4O2JvcmRlci1yYWRpdXM6N3B4O3BhZGRpbmc6NnB4IDhweH0KICAuYWxyb3cgaW5wdXQ6Zm9jdXN7b3V0bGluZTpub25lO2JvcmRlci1jb2xvcjp2YXIoLS1nb2xkLWRpbSl9CiAgLnZidG57YmFja2dyb3VuZDpub25lO2JvcmRlcjoxcHggc29saWQgdmFyKC0tbG4pO2NvbG9yOnZhcigtLW11dCk7Zm9udC1mYW1pbHk6dmFyKC0tc2Fucyk7Zm9udC1zaXplOjExcHg7Ym9yZGVyLXJhZGl1czo3cHg7cGFkZGluZzo1cHggOXB4O2N1cnNvcjpwb2ludGVyO3doaXRlLXNwYWNlOm5vd3JhcH0KICAudmJ0bjpob3Zlcntjb2xvcjp2YXIoLS1pbmspO2JvcmRlci1jb2xvcjp2YXIoLS1nb2xkLWRpbSl9CiAgLnZidG4ub257Y29sb3I6dmFyKC0tYmcpO2JhY2tncm91bmQ6dmFyKC0tZ29sZCk7Ym9yZGVyLWNvbG9yOnZhcigtLWdvbGQpO2ZvbnQtd2VpZ2h0OjYwMH0KICAubWFwY2VsbDo6YmVmb3Jle2NvbnRlbnQ6IiI7cG9zaXRpb246YWJzb2x1dGU7dG9wOjA7bGVmdDowO3JpZ2h0OjA7aGVpZ2h0OjJweDtiYWNrZ3JvdW5kOnZhcigtLWdvbGQpO29wYWNpdHk6LjU7Ym9yZGVyLXJhZGl1czoxMnB4IDEycHggMCAwfQogIC5jaHtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2dhcDo4cHg7bWFyZ2luLWJvdHRvbTo2cHg7ZmxleDpub25lfQogIC5jaCAudHtmb250LXNpemU6MTBweDtsZXR0ZXItc3BhY2luZzouMTZlbTt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7Y29sb3I6dmFyKC0tbXV0KX0KICAuY2ggLm17Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC1zaXplOjEwLjVweDtjb2xvcjp2YXIoLS1nZCl9CiAgLmNoIC5hY3R7Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC1zaXplOjEwLjVweDtjb2xvcjp2YXIoLS1nb2xkKX0KICAvKiDlnLDlm7MgKi8KICAubWFwYm94e2ZsZXg6MTttaW4taGVpZ2h0OjA7cG9zaXRpb246cmVsYXRpdmV9CiAgI21hcHt3aWR0aDoxMDAlO2hlaWdodDoxMDAlO2Rpc3BsYXk6YmxvY2s7Ym9yZGVyLXJhZGl1czo4cHg7YmFja2dyb3VuZDp2YXIoLS1zZWEpfQogIC5tYXByb3d7ZGlzcGxheTpmbGV4O2dhcDoxMnB4O2ZsZXgtd3JhcDp3cmFwO2FsaWduLWl0ZW1zOmNlbnRlcjttYXJnaW4tdG9wOjZweDtmbGV4Om5vbmV9CiAgLmxlZ3tkaXNwbGF5OmZsZXg7Z2FwOjEycHg7ZmxleC13cmFwOndyYXA7Zm9udC1zaXplOjEwLjVweDtjb2xvcjp2YXIoLS1tdXQpO2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pfQogIC5sZWcgLmR7ZGlzcGxheTppbmxpbmUtYmxvY2s7d2lkdGg6OHB4O2hlaWdodDo4cHg7Ym9yZGVyLXJhZGl1czo1MCU7bWFyZ2luLXJpZ2h0OjVweDt2ZXJ0aWNhbC1hbGlnbjoxcHh9CiAgLmNoaXBze2Rpc3BsYXk6ZmxleDtnYXA6NnB4O2ZsZXgtd3JhcDp3cmFwO21hcmdpbi1sZWZ0OmF1dG99CiAgLmNoaXB7Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC1zaXplOjEwLjVweDtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtib3JkZXItcmFkaXVzOjk5OXB4O3BhZGRpbmc6MnB4IDlweDtjb2xvcjp2YXIoLS1tdXQpfQogIC5jaGlwLm9ue2NvbG9yOnZhcigtLWJnKTtiYWNrZ3JvdW5kOnZhcigtLWdvbGQpO2JvcmRlci1jb2xvcjp2YXIoLS1nb2xkKTtmb250LXdlaWdodDo2MDB9CiAgLnRpcHtwb3NpdGlvbjphYnNvbHV0ZTtwb2ludGVyLWV2ZW50czpub25lO2JhY2tncm91bmQ6IzBiMGQxMjtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWxuKTtib3JkZXItcmFkaXVzOjhweDtwYWRkaW5nOjZweCA5cHg7Zm9udC1zaXplOjEycHg7Y29sb3I6dmFyKC0taW5rKTtmb250LWZhbWlseTp2YXIoLS1tb25vKTtvcGFjaXR5OjA7dHJhbnNpdGlvbjpvcGFjaXR5IC4xMnM7ei1pbmRleDo1O21heC13aWR0aDoyMjBweH0KICAvKiDjg5XjgqPjg7zjg4kgKi8KICAuZmVlZHtsaXN0LXN0eWxlOm5vbmU7bWFyZ2luOjA7cGFkZGluZzowO2ZsZXg6MTttaW4taGVpZ2h0OjA7b3ZlcmZsb3c6YXV0b30KICAuZml7ZGlzcGxheTpmbGV4O2dhcDoxMHB4O2FsaWduLWl0ZW1zOmJhc2VsaW5lO3BhZGRpbmc6N3B4IDA7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgcmdiYSgzOCw0Miw1MSwuNTUpfQogIC5maTpsYXN0LWNoaWxke2JvcmRlci1ib3R0b206bm9uZX0KICAuZmkgLnRte2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtc2l6ZToxMC41cHg7Y29sb3I6dmFyKC0tbXV0KTt3aGl0ZS1zcGFjZTpub3dyYXA7bWluLXdpZHRoOjQ2cHg7dGV4dC1hbGlnbjpyaWdodDtwYWRkaW5nLXRvcDoxcHh9CiAgLmZpIC5iZHttaW4td2lkdGg6MDtmbGV4OjF9CiAgLmZpIGF7Y29sb3I6dmFyKC0taW5rKTt0ZXh0LWRlY29yYXRpb246bm9uZTtmb250LXNpemU6MTNweDtsaW5lLWhlaWdodDoxLjQ7ZGlzcGxheTotd2Via2l0LWJveDstd2Via2l0LWxpbmUtY2xhbXA6Mjstd2Via2l0LWJveC1vcmllbnQ6dmVydGljYWw7b3ZlcmZsb3c6aGlkZGVufQogIC5maSBhOmhvdmVye2NvbG9yOnZhcigtLWdvbGQpfS5maSAuc3J7Zm9udC1zaXplOjEwLjVweDtjb2xvcjp2YXIoLS1tdXQpO21hcmdpbi10b3A6MnB4fS5maSAuc3IgLm97Y29sb3I6dmFyKC0tZ2QpfQogIC5lbXB0eXtjb2xvcjp2YXIoLS1tdXQpO2ZvbnQtc2l6ZToxMnB4O3BhZGRpbmc6MTBweCAycHh9CiAgLyog44K744Oz44OB44Oh44Oz44OIL+azqOebruW6piAqLwogIC5zZW50IC5iaWd7Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC1zaXplOjE1cHg7Zm9udC13ZWlnaHQ6NjAwfQogIC5zZW50IC5zdWJ7Zm9udC1zaXplOjExcHg7Y29sb3I6dmFyKC0tbXV0KTttYXJnaW4tdG9wOjJweH0KICAuZ2F1Z2V7aGVpZ2h0OjdweDtib3JkZXItcmFkaXVzOjVweDtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCg5MGRlZyx2YXIoLS11cCksI2M5YzlhMCx2YXIoLS1kbikpO3Bvc2l0aW9uOnJlbGF0aXZlO21hcmdpbi10b3A6N3B4fQogIC5nYXVnZSAubWt7cG9zaXRpb246YWJzb2x1dGU7dG9wOi0zcHg7d2lkdGg6M3B4O2hlaWdodDoxM3B4O2JhY2tncm91bmQ6dmFyKC0taW5rKTtib3JkZXItcmFkaXVzOjJweDt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtNTAlKX0KICAjc3Bhcmt7d2lkdGg6MTAwJTtoZWlnaHQ6MzhweDtkaXNwbGF5OmJsb2NrO21hcmdpbi10b3A6NXB4fQogIC50aGVtZXtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1uO2dhcDo2cHh9CiAgLnRyb3d7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgYXV0bztnYXA6OHB4O2FsaWduLWl0ZW1zOmNlbnRlcn0KICAudGJhcntoZWlnaHQ6N3B4O2JvcmRlci1yYWRpdXM6NXB4O2JhY2tncm91bmQ6dmFyKC0tcGFuMik7b3ZlcmZsb3c6aGlkZGVuO3Bvc2l0aW9uOnJlbGF0aXZlfQogIC50YmFyIHNwYW57cG9zaXRpb246YWJzb2x1dGU7bGVmdDowO3RvcDowO2JvdHRvbTowO2JhY2tncm91bmQ6dmFyKC0tZ29sZCk7Ym9yZGVyLXJhZGl1czo1cHh9CiAgLnRrMntmb250LXNpemU6MTJweDtjb2xvcjp2YXIoLS1pbmspfS50Y3tmb250LWZhbWlseTp2YXIoLS1tb25vKTtmb250LXZhcmlhbnQtbnVtZXJpYzp0YWJ1bGFyLW51bXM7Zm9udC1zaXplOjEyLjVweDtjb2xvcjp2YXIoLS1nb2xkKTttaW4td2lkdGg6MjRweDt0ZXh0LWFsaWduOnJpZ2h0fQogIC5ybGlzdHtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1uO2dhcDo1cHh9CiAgLnJpdGVte2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2Vlbjtmb250LXNpemU6MTJweDtmb250LWZhbWlseTp2YXIoLS1tb25vKX0KICAucml0ZW0gLnJue2NvbG9yOnZhcigtLWluayk7b3ZlcmZsb3c6aGlkZGVuO3RleHQtb3ZlcmZsb3c6ZWxsaXBzaXM7d2hpdGUtc3BhY2U6bm93cmFwfS5yaXRlbSAucmN7Y29sb3I6dmFyKC0tZ29sZCl9CiAgLmV2dHtkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOmF1dG8gYXV0byAxZnIgYXV0bztnYXA6OHB4O2FsaWduLWl0ZW1zOmNlbnRlcjtwYWRkaW5nOjZweCAwO2JvcmRlci1ib3R0b206MXB4IHNvbGlkIHJnYmEoMzgsNDIsNTEsLjUpO2ZvbnQtc2l6ZToxMnB4fQogIC5ldnQ6bGFzdC1jaGlsZHtib3JkZXItYm90dG9tOm5vbmV9CiAgLmV2dCAudG17Zm9udC1mYW1pbHk6dmFyKC0tbW9ubyk7Zm9udC1zaXplOjEwLjVweDtjb2xvcjp2YXIoLS1tdXQpO3doaXRlLXNwYWNlOm5vd3JhcH0KICAuZXZ0IC5jY3tmb250LWZhbWlseTp2YXIoLS1tb25vKTtmb250LXNpemU6OS41cHg7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sbik7Ym9yZGVyLXJhZGl1czo0cHg7cGFkZGluZzoxcHggNXB4O2NvbG9yOnZhcigtLW11dCl9CiAgLmV2dCAuaW1we2ZvbnQtc2l6ZTo5LjVweDtmb250LWZhbWlseTp2YXIoLS1tb25vKTtib3JkZXItcmFkaXVzOjRweDtwYWRkaW5nOjFweCA2cHh9CiAgLmV2dCAuaW1wLmh7Y29sb3I6IzNhMGYwZjtiYWNrZ3JvdW5kOnZhcigtLWRuKX0uZXZ0IC5pbXAubXtjb2xvcjojM2EyYTA2O2JhY2tncm91bmQ6dmFyKC0tZ29sZCl9CiAgLmtwaXN7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtY29sdW1uczoxZnIgMWZyO2dhcDoxcHg7YmFja2dyb3VuZDp2YXIoLS1sbik7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1sbik7Ym9yZGVyLXJhZGl1czo5cHg7b3ZlcmZsb3c6aGlkZGVuO21hcmdpbi10b3A6OHB4O2ZsZXg6bm9uZX0KICAua3Bpe2JhY2tncm91bmQ6dmFyKC0tcGFuKTtwYWRkaW5nOjhweCAxMHB4fS5rcGkgLmt7Zm9udC1zaXplOjlweDtsZXR0ZXItc3BhY2luZzouMTJlbTt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7Y29sb3I6dmFyKC0tbXV0KX0KICAua3BpIC52e2ZvbnQtZmFtaWx5OnZhcigtLW1vbm8pO2ZvbnQtdmFyaWFudC1udW1lcmljOnRhYnVsYXItbnVtcztmb250LXNpemU6MTVweDttYXJnaW4tdG9wOjNweH0KICAuc2NhcmR7Ym9yZGVyLWJvdHRvbToxcHggc29saWQgdmFyKC0tbG4pO3BhZGRpbmctYm90dG9tOjhweH0KICAuc2NhcmQ6bGFzdC1jaGlsZHtib3JkZXItYm90dG9tOm5vbmU7cGFkZGluZy1ib3R0b206MH0KICAvKiDni63jgYTnlLvpnaLvvJrnm6Poppbnm6Tjga/luoPjgYTnlLvpnaLlkJHjgZHjgILni63jgYTmmYLjga/nuKbjgrnjgq/jg63jg7zjg6vlj6/jgasgKi8KICBAbWVkaWEobWF4LXdpZHRoOjkwMHB4KXsKICAgIGJvZHl7b3ZlcmZsb3c6YXV0b30KICAgIC5hcHB7aGVpZ2h0OmF1dG99CiAgICAuZ3JpZHtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1ufQogICAgLmNlbGx7b3ZlcmZsb3c6dmlzaWJsZX0KICAgIC5tYXBib3h7aGVpZ2h0OjMwMHB4fQogICAgLnZib3h7aGVpZ2h0OjIxMHB4fQogICAgLmZlZWR7bWF4LWhlaWdodDozNDBweH0KICB9Cjwvc3R5bGU+Cjxib2R5Pgo8ZGl2IGlkPSJ0b2FzdCI+PC9kaXY+CjxkaXYgaWQ9ImxvZ21vZGFsIj48ZGl2IGNsYXNzPSJsbS1pbiI+CiAgPGRpdiBjbGFzcz0ibG0taGQiPjxzcGFuPuS+oeagvOODreOCsCDjgrDjg6njg5UgPGIgaWQ9ImxtLWRheSI+PC9iPjwvc3Bhbj4KICAgIDxzcGFuPjxpbnB1dCBpZD0ibG0tZGF5cyIgdHlwZT0ibnVtYmVyIiBtaW49IjIiIG1heD0iMzAiIHZhbHVlPSI1IiB0aXRsZT0i5q+U6LyD5pel5pWwIj4KICAgIDxidXR0b24gY2xhc3M9InZidG4iIGlkPSJsbS1tb2RlIiB0eXBlPSJidXR0b24iPuikh+aVsOaXpeavlOi8gzwvYnV0dG9uPgogICAgPGJ1dHRvbiBjbGFzcz0idmJ0biIgaWQ9ImxtLXByZXYiIHR5cGU9ImJ1dHRvbiI+5YmN5pelPC9idXR0b24+CiAgICA8YnV0dG9uIGNsYXNzPSJ2YnRuIiBpZD0ibG0tbmV4dCIgdHlwZT0iYnV0dG9uIj7nv4zml6U8L2J1dHRvbj4KICAgIDxidXR0b24gY2xhc3M9InZidG4iIGlkPSJsbS1jbG9zZSIgdHlwZT0iYnV0dG9uIj7plonjgZjjgos8L2J1dHRvbj48L3NwYW4+PC9kaXY+CiAgPGNhbnZhcyBpZD0ibG0tY3YiPjwvY2FudmFzPgogIDxkaXYgY2xhc3M9ImxtLWZ0IiBpZD0ibG0tZnQiPuiqreOBv+i+vOOBv+S4reKApjwvZGl2Pgo8L2Rpdj48L2Rpdj4KPGRpdiBjbGFzcz0iYXBwIj4KICA8ZGl2IGNsYXNzPSJoZHIiPgogICAgPHNwYW4gY2xhc3M9ImV5ZSI+PHNwYW4gaWQ9ImRvdCIgY2xhc3M9ImRvdCI+PC9zcGFuPjxzcGFuIGlkPSJtb2RlIj7mjqXntprkuK08L3NwYW4+PC9zcGFuPgogICAgPHNwYW4gY2xhc3M9InR0bCI+WEFVVVNEIDxzbWFsbD7kuJbnlYzmg4Xli6Lnm6PoppY8L3NtYWxsPjwvc3Bhbj4KICAgIDxzcGFuIGNsYXNzPSJweCI+PHNwYW4gY2xhc3M9ImxibCI+5L6h5qC8PC9zcGFuPjxzcGFuIGNsYXNzPSJuIiBpZD0icHgiPuKAk+KAk+KAk+KAky7igJPigJM8L3NwYW4+PHNwYW4gY2xhc3M9ImxibCIgaWQ9InB4YyI+4oCTPC9zcGFuPjwvc3Bhbj4KICAgIDxzcGFuIGNsYXNzPSJjbG9jayIgaWQ9ImNsb2NrIj4tLTotLTotLSBVVEM8L3NwYW4+CiAgICA8c3BhbiBjbGFzcz0ic3RhdHVzIiBpZD0ic3RhdHVzIj7igJM8L3NwYW4+CiAgICA8YnV0dG9uIGNsYXNzPSJmc2J0biIgaWQ9InR0cyIgdHlwZT0iYnV0dG9uIj7oh6rli5Xoqq3jgb/kuIrjgZI8L2J1dHRvbj4KICAgIDxidXR0b24gY2xhc3M9ImZzYnRuIiBpZD0ibnRmIiB0eXBlPSJidXR0b24iPumAmuefpTwvYnV0dG9uPgogICAgPGJ1dHRvbiBjbGFzcz0iZnNidG4iIGlkPSJsb2didG4iIHR5cGU9ImJ1dHRvbiI+44Ot44KwPC9idXR0b24+CiAgICA8YnV0dG9uIGNsYXNzPSJmc2J0biIgaWQ9ImZzIiB0eXBlPSJidXR0b24iPuKbtiDlhajnlLvpnaI8L2J1dHRvbj4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0idGlja2VyIj48c3BhbiBjbGFzcz0ibGJsIj7pgJ/loLE8L3NwYW4+PGRpdiBjbGFzcz0idGttb3ZlIiBpZD0idGttb3ZlIj7kuJbnlYzjga7jg5jjg4Pjg4njg6njgqTjg7PjgpLoqq3jgb/ovrzjgb/kuK3igKY8L2Rpdj48L2Rpdj4KCiAgPGRpdiBjbGFzcz0iZ3JpZCI+CiAgICA8c2VjdGlvbiBjbGFzcz0iY2VsbCBtYXBjZWxsIj4KICAgICAgPGRpdiBjbGFzcz0iY2giPjxzcGFuIGNsYXNzPSJ0Ij7ph5EoWEFVVVNEKemWoumAo+ODi+ODpeODvOOCueS4lueVjOWIhuW4gyDvvI8g5pi85aSc5aKD55WMIO+8jyDluILloLTjgrvjg4Pjgrfjg6fjg7M8L3NwYW4+PHNwYW4gY2xhc3M9ImFjdCIgaWQ9ImFjdGl2ZSI+4oCTPC9zcGFuPjwvZGl2PgogICAgICA8ZGl2IGNsYXNzPSJtYXBib3giPgogICAgICAgIDxzdmcgaWQ9Im1hcCIgdmlld0JveD0iMCAwIDk2MCA0NzAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0i5LiW55WM5Zyw5Zuz44Gr6YeR6Zai6YCj44OL44Ol44O844K544Gu55m655Sf5Zyw54K544O75pi85aSc5aKD55WM44O75biC5aC044K744OD44K344On44Oz44KS6KGo56S6Ij48L3N2Zz4KICAgICAgICA8ZGl2IGNsYXNzPSJ0aXAiIGlkPSJ0aXAiPjwvZGl2PgogICAgICA8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0ibWFwcm93Ij4KICAgICAgICA8ZGl2IGNsYXNzPSJsZWciPgogICAgICAgICAgPHNwYW4+PHNwYW4gY2xhc3M9ImQiIHN0eWxlPSJiYWNrZ3JvdW5kOnZhcigtLWdvbGQpIj48L3NwYW4+55m655Sf5Zyw54K5KOWkp+OBjeOBlT3ku7bmlbApPC9zcGFuPgogICAgICAgICAgPHNwYW4+PHNwYW4gY2xhc3M9ImQiIHN0eWxlPSJiYWNrZ3JvdW5kOiM0OUUwQTAiPjwvc3Bhbj7luILloLTnqLzlg408L3NwYW4+CiAgICAgICAgICA8c3Bhbj48c3BhbiBjbGFzcz0iZCIgc3R5bGU9ImJhY2tncm91bmQ6IzNhM2Y0YSI+PC9zcGFuPuS8keatojwvc3Bhbj4KICAgICAgICAgIDxzcGFuPjxzcGFuIGNsYXNzPSJkIiBzdHlsZT0iYmFja2dyb3VuZDojMDAwO2JvcmRlcjoxcHggc29saWQgIzMzMyI+PC9zcGFuPuWknOWBtDwvc3Bhbj4KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzPSJjaGlwcyIgaWQ9ImNoaXBzIj48L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L3NlY3Rpb24+CgogICAgPHNlY3Rpb24gY2xhc3M9ImNlbGwgdmlkZW9jZWxsIj4KICAgICAgPGRpdiBjbGFzcz0iY2giPjxzcGFuIGNsYXNzPSJ0Ij7jg6njgqTjg5bmmKDlg4/vvIjopoHkurrnmbroqIDjg7vph5Hono3jg4vjg6Xjg7zjgrnvvIk8L3NwYW4+PHNwYW4gY2xhc3M9Im0iIGlkPSJ2c3JjIj5ZYWhvbyBGaW5hbmNlIDI0Lzc8L3NwYW4+PC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9InZib3giPjxpZnJhbWUgaWQ9InZmcmFtZSIgYWxsb3c9ImF1dG9wbGF5OyBlbmNyeXB0ZWQtbWVkaWE7IHBpY3R1cmUtaW4tcGljdHVyZSIgYWxsb3dmdWxsc2NyZWVuIHRpdGxlPSLjg6njgqTjg5bmmKDlg48iPjwvaWZyYW1lPjwvZGl2PgogICAgICA8ZGl2IGNsYXNzPSJ2Y3RsIj4KICAgICAgICA8YnV0dG9uIGNsYXNzPSJ2YnRuIG9uIiBkYXRhLXZpZD0iS1FwLWVfWFFuREUiIGRhdGEtbmFtZT0iWWFob28gRmluYW5jZSAyNC83IiB0eXBlPSJidXR0b24iPllhaG9vIEZpbmFuY2U8L2J1dHRvbj4KICAgICAgICA8YnV0dG9uIGNsYXNzPSJ2YnRuIiBkYXRhLWxpbms9Imh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL2ZlZGVyYWxyZXNlcnZlL3N0cmVhbXMiIGRhdGEtbmFtZT0iRmVkKEZPTUMpIiB0eXBlPSJidXR0b24iPkZlZOWFrOW8jyDihpc8L2J1dHRvbj4KICAgICAgICA8YnV0dG9uIGNsYXNzPSJ2YnRuIiBkYXRhLWxpbms9Imh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL0BtYXJrZXRzL3N0cmVhbXMiIGRhdGEtbmFtZT0iQmxvb21iZXJnIiB0eXBlPSJidXR0b24iPkJsb29tYmVyZyDihpc8L2J1dHRvbj4KICAgICAgICA8aW5wdXQgaWQ9InZ1cmwiIHR5cGU9InRleHQiIHBsYWNlaG9sZGVyPSJZb3VUdWJl44GuVVJML0lE44KS6LK844Gj44Gm6KGo56S677yI44OR44Km44Ko44Or5Lya6KaL44Gq44Gp77yJIj4KICAgICAgICA8YnV0dG9uIGNsYXNzPSJ2YnRuIiBpZD0idmdvIiB0eXBlPSJidXR0b24iPuihqOekujwvYnV0dG9uPgogICAgICAgIDxidXR0b24gY2xhc3M9InZidG4iIGlkPSJ2ZmVkIiB0eXBlPSJidXR0b24iIHRpdGxlPSLku4rjga7mmKDlg49VUkzjgpJGT01D6Ieq5YuV5YiH5pu/55So44Gr6KiY5oa2Ij7kvJropovnlKjjgavoqJjmhrY8L2J1dHRvbj4KICAgICAgPC9kaXY+CiAgICA8L3NlY3Rpb24+CgogICAgPHNlY3Rpb24gY2xhc3M9ImNlbGwgc2lkZWNlbGwiPgogICAgICA8ZGl2IGNsYXNzPSJzY2FyZCI+CiAgICAgICAgPGRpdiBjbGFzcz0iY2giPjxzcGFuIGNsYXNzPSJ0Ij7luILloLTjgrvjg7Pjg4Hjg6Hjg7Pjg4gg77yPIOazqOebruW6pigyNGgpPC9zcGFuPjxzcGFuIGNsYXNzPSJtIiBpZD0icHVsc2VNZXRhIj7igJM8L3NwYW4+PC9kaXY+CiAgICAgICAgPGRpdiBjbGFzcz0ic2VudCI+PGRpdiBjbGFzcz0iYmlnIiBpZD0ic2VudEJpZyI+4oCTPC9kaXY+PGRpdiBjbGFzcz0ic3ViIiBpZD0ic2VudFN1YiI+R0RFTFTjg4jjg7zjg7PjgYvjgonmjqjlrpo8L2Rpdj48L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzPSJnYXVnZSI+PGRpdiBjbGFzcz0ibWsiIGlkPSJnYXVnZU1rIiBzdHlsZT0ibGVmdDo1MCUiPjwvZGl2PjwvZGl2PgogICAgICAgIDxjYW52YXMgaWQ9InNwYXJrIj48L2NhbnZhcz4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9InNjYXJkIj4KICAgICAgICA8ZGl2IGNsYXNzPSJjaCI+PHNwYW4gY2xhc3M9InQiPuaDheWLouODhuODvOODnuWIhumhnjwvc3Bhbj48c3BhbiBjbGFzcz0ibSIgaWQ9InN1bU1ldGEiPuKAkzwvc3Bhbj48L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzPSJ0aGVtZSIgaWQ9InRoZW1lIj48L2Rpdj4KICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9InNjYXJkIj4KICAgICAgICA8ZGl2IGNsYXNzPSJjaCI+PHNwYW4gY2xhc3M9InQiPuWcsOWfn+WIpeODm+ODg+ODiOOCueODneODg+ODiDwvc3Bhbj48c3BhbiBjbGFzcz0ibSIgaWQ9InJlZ01ldGEiPuKAkzwvc3Bhbj48L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzPSJybGlzdCIgaWQ9InJlZ2lvbiI+PC9kaXY+CiAgICAgIDwvZGl2PgogICAgICA8ZGl2IGNsYXNzPSJzY2FyZCI+CiAgICAgICAgPGRpdiBjbGFzcz0iY2giPjxzcGFuIGNsYXNzPSJ0Ij7kvqHmoLzjgqLjg6njg7zjg4g8L3NwYW4+PHNwYW4gY2xhc3M9Im0iIGlkPSJhbE1zZyI+PC9zcGFuPjwvZGl2PgogICAgICAgIDxkaXYgY2xhc3M9ImFscm93Ij4KICAgICAgICAgIDxpbnB1dCBpZD0iYWxMbyIgdHlwZT0ibnVtYmVyIiBzdGVwPSIwLjAxIiBpbnB1dG1vZGU9ImRlY2ltYWwiIHBsYWNlaG9sZGVyPSLkuIvpmZAiPgogICAgICAgICAgPGlucHV0IGlkPSJhbEhpIiB0eXBlPSJudW1iZXIiIHN0ZXA9IjAuMDEiIGlucHV0bW9kZT0iZGVjaW1hbCIgcGxhY2Vob2xkZXI9IuS4iumZkCI+CiAgICAgICAgICA8YnV0dG9uIGNsYXNzPSJ2YnRuIiBpZD0iYWxTbmQiIHR5cGU9ImJ1dHRvbiI+4pmq6Z+zPC9idXR0b24+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9zZWN0aW9uPgoKICAgIDxzZWN0aW9uIGNsYXNzPSJjZWxsIGZlZWRjZWxsIj4KICAgICAgPGRpdiBjbGFzcz0iY2giPjxzcGFuIGNsYXNzPSJ0Ij7kuJbnlYzjga7jg5jjg4Pjg4njg6njgqTjg7M8L3NwYW4+PHNwYW4gY2xhc3M9Im0iIGlkPSJmZWVkTWV0YSI+6Kqt44G/6L6844G/5Lit4oCmPC9zcGFuPjwvZGl2PgogICAgICA8dWwgY2xhc3M9ImZlZWQiIGlkPSJmZWVkIj48L3VsPgogICAgICA8ZGl2IGNsYXNzPSJlbXB0eSIgaWQ9ImZlZWRFbXB0eSI+44OL44Ol44O844K544Gu5Y+W5b6X44KS5b6F44Gj44Gm44GE44G+44GZ4oCmPC9kaXY+CiAgICA8L3NlY3Rpb24+CgogICAgPHNlY3Rpb24gY2xhc3M9ImNlbGwgZXZlbnRjZWxsIj4KICAgICAgPGRpdiBjbGFzcz0iY2giPjxzcGFuIGNsYXNzPSJ0Ij7ntYzmuIjmjIfmqJnjgqvjg6zjg7Pjg4Djg7zvvIjpq5jjgqTjg7Pjg5Hjgq/jg4jvvIk8L3NwYW4+PHNwYW4gY2xhc3M9Im0iIGlkPSJjYWxNZXRhIj7igJM8L3NwYW4+PC9kaXY+CiAgICAgIDxkaXYgaWQ9ImNhbCIgY2xhc3M9ImNhbGxpc3QiPjwvZGl2PgogICAgICA8ZGl2IGNsYXNzPSJrcGlzIj4KICAgICAgICA8ZGl2IGNsYXNzPSJrcGkiPjxkaXYgY2xhc3M9ImsiPueZuueUn+WcsOeCuTwvZGl2PjxkaXYgY2xhc3M9InYiIGlkPSJrcHRzIj7igJM8L2Rpdj48L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzPSJrcGkiPjxkaXYgY2xhc3M9ImsiPuiomOS6i+aVsCgyNGgpPC9kaXY+PGRpdiBjbGFzcz0idiIgaWQ9ImthcnRzIj7igJM8L2Rpdj48L2Rpdj4KICAgICAgICA8ZGl2IGNsYXNzPSJrcGkiPjxkaXYgY2xhc3M9ImsiPuacgOODm+ODg+ODiOWcsOWfnzwvZGl2PjxkaXYgY2xhc3M9InYiIGlkPSJraG90IiBzdHlsZT0iZm9udC1zaXplOjEzcHgiPuKAkzwvZGl2PjwvZGl2PgogICAgICAgIDxkaXYgY2xhc3M9ImtwaSI+PGRpdiBjbGFzcz0iayI+56i85YON5biC5aC0PC9kaXY+PGRpdiBjbGFzcz0idiIgaWQ9ImtzZXNzIiBzdHlsZT0iZm9udC1zaXplOjEzcHgiPuKAkzwvZGl2PjwvZGl2PgogICAgICA8L2Rpdj4KICAgICAgPHAgY2xhc3M9Im5vdGUiIGlkPSJub3RlIiBzdHlsZT0ibWFyZ2luLXRvcDo4cHgiPjwvcD4KICAgIDwvc2VjdGlvbj4KICA8L2Rpdj4KPC9kaXY+Cgo8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG5qcy5jbG91ZGZsYXJlLmNvbS9hamF4L2xpYnMvZDMvNy44LjUvZDMubWluLmpzIj48L3NjcmlwdD4KPHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuanMuY2xvdWRmbGFyZS5jb20vYWpheC9saWJzL3RvcG9qc29uLzMuMC4yL3RvcG9qc29uLm1pbi5qcyI+PC9zY3JpcHQ+CjxzY3JpcHQ+CigoKSA9PiB7CiAgInVzZSBzdHJpY3QiOwogIGNvbnN0IHNlcnZlZEJ5QnJpZGdlID0gbG9jYXRpb24ucG9ydCA9PT0gIjg3ODciOwogIGNvbnN0IEFQSSA9IHNlcnZlZEJ5QnJpZGdlID8gIiIgOiAiaHR0cDovLzEyNy4wLjAuMTo4Nzg3IjsKICBjb25zdCAkID0gaWQgPT4gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoaWQpOwogIGNvbnN0IG5mMiA9IG5ldyBJbnRsLk51bWJlckZvcm1hdCgiZW4tVVMiLHttaW5pbXVtRnJhY3Rpb25EaWdpdHM6MixtYXhpbXVtRnJhY3Rpb25EaWdpdHM6Mn0pOwogIGNvbnN0IHN0b3JlPXtnZXQoayxkKXt0cnl7Y29uc3Qgdj1sb2NhbFN0b3JhZ2UuZ2V0SXRlbShrKTtyZXR1cm4gdj09bnVsbD9kOkpTT04ucGFyc2Uodik7fWNhdGNoKF8pe3JldHVybiBkO319LHNldChrLHYpe3RyeXtsb2NhbFN0b3JhZ2Uuc2V0SXRlbShrLEpTT04uc3RyaW5naWZ5KHYpKTt9Y2F0Y2goXyl7fX19OwogIGxldCBhY3R4PW51bGw7CiAgZnVuY3Rpb24gYmVlcChmcmVxPTg4MCxkdXI9MC4xNil7dHJ5e2FjdHg9YWN0eHx8bmV3ICh3aW5kb3cuQXVkaW9Db250ZXh0fHx3aW5kb3cud2Via2l0QXVkaW9Db250ZXh0KSgpO2NvbnN0IG89YWN0eC5jcmVhdGVPc2NpbGxhdG9yKCksZz1hY3R4LmNyZWF0ZUdhaW4oKTtvLnR5cGU9InNpbmUiO28uZnJlcXVlbmN5LnZhbHVlPWZyZXE7by5jb25uZWN0KGcpO2cuY29ubmVjdChhY3R4LmRlc3RpbmF0aW9uKTtjb25zdCB0PWFjdHguY3VycmVudFRpbWU7Zy5nYWluLnNldFZhbHVlQXRUaW1lKDAuMDAwMSx0KTtnLmdhaW4uZXhwb25lbnRpYWxSYW1wVG9WYWx1ZUF0VGltZSgwLjI4LHQrMC4wMSk7Zy5nYWluLmV4cG9uZW50aWFsUmFtcFRvVmFsdWVBdFRpbWUoMC4wMDAxLHQrZHVyKTtvLnN0YXJ0KHQpO28uc3RvcCh0K2R1cik7fWNhdGNoKF8pe319CgogIC8vIC0tLS0g5biC5aC044K744OD44K344On44OzIC0tLS0KICBjb25zdCBzZXNzaW9ucz1bCiAgICB7bmFtZToi44K344OJ44OL44O8IixjaXR5OlsxNTEuMiwtMzMuODddLHJhbmdlOlsyMSw2XX0sCiAgICB7bmFtZToi5p2x5LqsIixjaXR5OlsxMzkuNjksMzUuNjhdLHJhbmdlOlsyMyw4XX0sCiAgICB7bmFtZToi44Ot44Oz44OJ44OzIixjaXR5OlstMC4xMyw1MS41MV0scmFuZ2U6WzcsMTZdfSwKICAgIHtuYW1lOiLjg4vjg6Xjg7zjg6jjg7zjgq8iLGNpdHk6Wy03NC4wLDQwLjcxXSxyYW5nZTpbMTMsMjFdfSwKICBdOwogIGNvbnN0IGlzT3Blbj1yPT57Y29uc3QgaD1uZXcgRGF0ZSgpLmdldFVUQ0hvdXJzKCkrbmV3IERhdGUoKS5nZXRVVENNaW51dGVzKCkvNjA7Y29uc3RbcyxlXT1yO3JldHVybiBzPGU/KGg+PXMmJmg8ZSk6KGg+PXN8fGg8ZSk7fTsKICBmdW5jdGlvbiBwYWludFNlc3Npb25zKCl7CiAgICBjb25zdCBhY3RpdmU9c2Vzc2lvbnMuZmlsdGVyKHM9PmlzT3BlbihzLnJhbmdlKSkubWFwKHM9PnMubmFtZSk7CiAgICAkKCJhY3RpdmUiKS50ZXh0Q29udGVudD0i56i85YONOiAiKyhhY3RpdmUuam9pbigiIMK3ICIpfHwi44Gq44GXIik7CiAgICAkKCJrc2VzcyIpLnRleHRDb250ZW50PWFjdGl2ZS5sZW5ndGg/YWN0aXZlLmpvaW4oIiwgIik6IuOBquOBlyI7CiAgICBjb25zdCBjPSQoImNoaXBzIik7Yy50ZXh0Q29udGVudD0iIjsKICAgIHNlc3Npb25zLmZvckVhY2gocz0+e2NvbnN0IGVsPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNwYW4iKTtlbC5jbGFzc05hbWU9ImNoaXAiKyhpc09wZW4ocy5yYW5nZSk/IiBvbiI6IiIpO2VsLnRleHRDb250ZW50PXMubmFtZTtjLmFwcGVuZENoaWxkKGVsKTt9KTsKICB9CiAgZnVuY3Rpb24gdGlja0Nsb2NrKCl7Y29uc3QgZD1uZXcgRGF0ZSgpOyQoImNsb2NrIikudGV4dENvbnRlbnQ9ZC50b0lTT1N0cmluZygpLnNsaWNlKDExLDE5KSsiIFVUQyDCtyAiK2QudG9Mb2NhbGVUaW1lU3RyaW5nKCJqYS1KUCIse2hvdXIxMjpmYWxzZX0pKyIgSlNUIjt9CiAgc2V0SW50ZXJ2YWwodGlja0Nsb2NrLDEwMDApO3RpY2tDbG9jaygpO3NldEludGVydmFsKHBhaW50U2Vzc2lvbnMsNjAwMDApOwoKICAvLyAtLS0tIOWcsOWbsyAtLS0tCiAgY29uc3QgVz05NjAsSD00NzA7bGV0IHByb2o9bnVsbCxnRG90cz1udWxsLGdOaWdodD1udWxsLHBhdGhHZW49bnVsbDtjb25zdCBzdmc9ZDMuc2VsZWN0KCIjbWFwIik7CiAgZnVuY3Rpb24gc3Vic29sYXIoKXsKICAgIGNvbnN0IG5vdz1uZXcgRGF0ZSgpO2NvbnN0IHV0Yz1ub3cuZ2V0VVRDSG91cnMoKStub3cuZ2V0VVRDTWludXRlcygpLzYwOwogICAgY29uc3QgbG9uPS0xNSoodXRjLTEyKTsKICAgIGNvbnN0IHN0YXJ0PURhdGUuVVRDKG5vdy5nZXRVVENGdWxsWWVhcigpLDAsMCk7CiAgICBjb25zdCBkb3k9TWF0aC5mbG9vcigobm93LXN0YXJ0KS84NjQwMDAwMCk7CiAgICBjb25zdCBkZWNsPS0yMy40NCpNYXRoLmNvcygoMipNYXRoLlBJLzM2NSkqKGRveSsxMCkpOwogICAgcmV0dXJuIFtsb24sZGVjbF07CiAgfQogIGZ1bmN0aW9uIGRyYXdOaWdodCgpewogICAgaWYoIWdOaWdodHx8IXBhdGhHZW4pcmV0dXJuOwogICAgY29uc3Qgc3M9c3Vic29sYXIoKTtjb25zdCBhbnRpPVtzc1swXSsxODAsLXNzWzFdXTsKICAgIGNvbnN0IGNpcmNsZT1kMy5nZW9DaXJjbGUoKS5jZW50ZXIoYW50aSkucmFkaXVzKDkwKSgpOwogICAgZ05pZ2h0LnNlbGVjdEFsbCgiKiIpLnJlbW92ZSgpOwogICAgZ05pZ2h0LmFwcGVuZCgicGF0aCIpLmRhdHVtKGNpcmNsZSkuYXR0cigiZCIscGF0aEdlbikuYXR0cigiZmlsbCIsInJnYmEoMCwwLDAsLjQyKSIpLmF0dHIoInN0cm9rZSIsIm5vbmUiKTsKICB9CiAgZnVuY3Rpb24gaW5pdE1hcCh3b3JsZCl7CiAgICBjb25zdCBmZWF0cz10b3BvanNvbi5mZWF0dXJlKHdvcmxkLHdvcmxkLm9iamVjdHMuY291bnRyaWVzKTsKICAgIHByb2o9ZDMuZ2VvTmF0dXJhbEVhcnRoMSgpLmZpdFNpemUoW1csSF0sZmVhdHMpO3BhdGhHZW49ZDMuZ2VvUGF0aChwcm9qKTsKICAgIHN2Zy5hcHBlbmQoImciKS5zZWxlY3RBbGwoInBhdGgiKS5kYXRhKGZlYXRzLmZlYXR1cmVzKS5qb2luKCJwYXRoIikuYXR0cigiZCIscGF0aEdlbikuYXR0cigiZmlsbCIsIiMxRDIxMkMiKS5hdHRyKCJzdHJva2UiLCIjMmIzMDQwIikuYXR0cigic3Ryb2tlLXdpZHRoIiwuNSk7CiAgICBzdmcuYXBwZW5kKCJwYXRoIikuZGF0dW0oZDMuZ2VvR3JhdGljdWxlMTAoKSkuYXR0cigiZCIscGF0aEdlbikuYXR0cigiZmlsbCIsIm5vbmUiKS5hdHRyKCJzdHJva2UiLCIjMWExZTI3IikuYXR0cigic3Ryb2tlLXdpZHRoIiwuNCk7CiAgICBnTmlnaHQ9c3ZnLmFwcGVuZCgiZyIpO2RyYXdOaWdodCgpOwogICAgZ0RvdHM9c3ZnLmFwcGVuZCgiZyIpOwogICAgY29uc3QgZ3M9c3ZnLmFwcGVuZCgiZyIpOwogICAgc2Vzc2lvbnMuZm9yRWFjaChzPT57Y29uc3QgcD1wcm9qKHMuY2l0eSk7aWYoIXApcmV0dXJuO2NvbnN0IG9uPWlzT3BlbihzLnJhbmdlKTsKICAgICAgaWYob24pZ3MuYXBwZW5kKCJjaXJjbGUiKS5hdHRyKCJjeCIscFswXSkuYXR0cigiY3kiLHBbMV0pLmF0dHIoInIiLDkpLmF0dHIoImZpbGwiLCIjNDlFMEEwIikuYXR0cigib3BhY2l0eSIsLjE4KTsKICAgICAgZ3MuYXBwZW5kKCJjaXJjbGUiKS5hdHRyKCJjeCIscFswXSkuYXR0cigiY3kiLHBbMV0pLmF0dHIoInIiLDMuNSkuYXR0cigiZmlsbCIsb24/IiM0OUUwQTAiOiIjM2EzZjRhIik7CiAgICAgIGdzLmFwcGVuZCgidGV4dCIpLmF0dHIoIngiLHBbMF0rNikuYXR0cigieSIscFsxXSszKS5hdHRyKCJmaWxsIixvbj8iI2NmZDZlMCI6IiM2YTcwODAiKS5hdHRyKCJmb250LXNpemUiLCI5cHgiKS5hdHRyKCJmb250LWZhbWlseSIsInZhcigtLW1vbm8pIikudGV4dChzLm5hbWUpO30pOwogIH0KICBjb25zdCB0aXA9JCgidGlwIiksbWFwRWw9JCgibWFwIik7CiAgZnVuY3Rpb24gc2hvd1RpcChodG1sLGUpe2NvbnN0IHI9bWFwRWwuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7dGlwLmlubmVySFRNTD1odG1sO3RpcC5zdHlsZS5vcGFjaXR5PSIxIjt0aXAuc3R5bGUubGVmdD0oZS5jbGllbnRYLXIubGVmdCsxMCkrInB4Ijt0aXAuc3R5bGUudG9wPShlLmNsaWVudFktci50b3ArMTApKyJweCI7fQogIGZ1bmN0aW9uIGhpZGVUaXAoKXt0aXAuc3R5bGUub3BhY2l0eT0iMCI7fQogIGZ1bmN0aW9uIHJlbmRlckdlbyhwb2ludHMpewogICAgaWYoIXByb2p8fCFnRG90cylyZXR1cm47Z0RvdHMuc2VsZWN0QWxsKCIqIikucmVtb3ZlKCk7CiAgICBjb25zdCBteD1NYXRoLm1heCgxLC4uLnBvaW50cy5tYXAocD0+cC5jb3VudCkpOwogICAgcG9pbnRzLmZvckVhY2gocHQ9Pntjb25zdCB4eT1wcm9qKFtwdC5sb24scHQubGF0XSk7aWYoIXh5KXJldHVybjtjb25zdCByPTMrTWF0aC5zcXJ0KHB0LmNvdW50L214KSoxMzsKICAgICAgZ0RvdHMuYXBwZW5kKCJjaXJjbGUiKS5hdHRyKCJjeCIseHlbMF0pLmF0dHIoImN5Iix4eVsxXSkuYXR0cigiciIsciszKS5hdHRyKCJmaWxsIiwiI0U2QjQ1QSIpLmF0dHIoIm9wYWNpdHkiLC4xMCk7CiAgICAgIGdEb3RzLmFwcGVuZCgiY2lyY2xlIikuYXR0cigiY3giLHh5WzBdKS5hdHRyKCJjeSIseHlbMV0pLmF0dHIoInIiLHIpLmF0dHIoImZpbGwiLCIjRTZCNDVBIikuYXR0cigib3BhY2l0eSIsLjU1KS5hdHRyKCJzdHJva2UiLCIjRTZCNDVBIikuYXR0cigic3Ryb2tlLXdpZHRoIiwuNikuc3R5bGUoImN1cnNvciIsInBvaW50ZXIiKQogICAgICAgIC5vbigibW91c2Vtb3ZlIixlPT5zaG93VGlwKChwdC5uYW1lfHwi77yI5Zyw5ZCN5LiN5piO77yJIikrIjxicj7oqJjkuosgIitwdC5jb3VudCsi5Lu2IixlKSkub24oIm1vdXNlbGVhdmUiLGhpZGVUaXApO30pOwogICAgLy8g5Zyw5Z+f5YilCiAgICBjb25zdCBib3g9JCgicmVnaW9uIik7Ym94LnRleHRDb250ZW50PSIiOwogICAgY29uc3QgdG9wPXBvaW50cy5zbGljZSgpLnNvcnQoKGEsYik9PmIuY291bnQtYS5jb3VudCkuc2xpY2UoMCw3KTsKICAgIHRvcC5mb3JFYWNoKHA9Pntjb25zdCByb3c9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiZGl2Iik7cm93LmNsYXNzTmFtZT0icml0ZW0iOwogICAgICByb3cuaW5uZXJIVE1MPSc8c3BhbiBjbGFzcz0icm4iPicrKChwLm5hbWV8fCLvvIjlnLDlkI3kuI3mmI7vvIkiKS5zcGxpdCgiLCIpWzBdKSsnPC9zcGFuPjxzcGFuIGNsYXNzPSJyYyI+JytwLmNvdW50Kyc8L3NwYW4+Jztib3guYXBwZW5kQ2hpbGQocm93KTt9KTsKICAgICQoInJlZ01ldGEiKS50ZXh0Q29udGVudD1wb2ludHMubGVuZ3RoKyLlnLDngrkiOwogICAgJCgia3B0cyIpLnRleHRDb250ZW50PXBvaW50cy5sZW5ndGg7CiAgICBpZih0b3BbMF0pJCgia2hvdCIpLnRleHRDb250ZW50PSh0b3BbMF0ubmFtZXx8IuKAkyIpLnNwbGl0KCIsIilbMF07CiAgfQogIHNldEludGVydmFsKGRyYXdOaWdodCwzMDAwMDApOwogIGQzLmpzb24oImh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vd29ybGQtYXRsYXNAMi9jb3VudHJpZXMtMTEwbS5qc29uIikKICAgIC50aGVuKHc9Pntpbml0TWFwKHcpO3BhaW50U2Vzc2lvbnMoKTtsb2FkR2VvKCk7fSkKICAgIC5jYXRjaCgoKT0+e3N2Zy5hcHBlbmQoInRleHQiKS5hdHRyKCJ4IixXLzIpLmF0dHIoInkiLEgvMikuYXR0cigiZmlsbCIsIiM4NjhDOTkiKS5hdHRyKCJ0ZXh0LWFuY2hvciIsIm1pZGRsZSIpLmF0dHIoImZvbnQtc2l6ZSIsIjEzcHgiKS50ZXh0KCLlnLDlm7Pjg4fjg7zjgr/jgpLlj5blvpfjgafjgY3jgb7jgZvjgpPjgafjgZfjgZ/vvIjjg43jg4Pjg4jmjqXntprmmYLjgavooajnpLrvvIkiKTtwYWludFNlc3Npb25zKCk7fSk7CgogIC8vIC0tLS0g44OG44O844Oe5YiG6aGeIC0tLS0KICBjb25zdCBUSEVNRVM9WwogICAge2tleToi5Lit5aSu6YqA6KGM44O76YeR6J6N5pS/562WIixrdzpbImZlZCIsImZvbWMiLCJlY2IiLCJib2oiLCJjZW50cmFsIGJhbmsiLCJyYXRlIGN1dCIsInJhdGUgaGlrZSIsInBvd2VsbCIsIuWIqeS4i+OBkiIsIuWIqeS4iuOBkiIsIuS4reWkrumKgOihjCIsIumHkeiejeaUv+etliIsIuaXpemKgCIsImZyYiJdfSwKICAgIHtrZXk6IuWcsOaUv+WtpuODu+ODquOCueOCryIsa3c6WyJ3YXIiLCJjb25mbGljdCIsInRlbnNpb24iLCJzYW5jdGlvbiIsImF0dGFjayIsIm1pZGRsZSBlYXN0IiwidWtyYWluZSIsInJ1c3NpYSIsImlzcmFlbCIsIuWcsOaUv+WtpiIsIuaIpuS6iSIsIue0m+S6iSIsIuS4readsSIsIuOCpuOCr+ODqeOCpOODiiIsIuODreOCt+OCoiIsIuOCpOOCueODqeOCqOODqyIsIuacieS6iyJdfSwKICAgIHtrZXk6IuOCpOODs+ODleODrOODu+mHkeWIqSIsa3c6WyJpbmZsYXRpb24iLCJjcGkiLCJwcGkiLCJ5aWVsZCIsInJlYWwgcmF0ZSIsInRyZWFzdXJ5Iiwi44Kk44Oz44OV44OsIiwi54mp5L6hIiwi6YeR5YipIiwi5Yip5Zue44KKIiwi5a6f6LOq6YeR5YipIl19LAogICAge2tleToi6ZyA57Wm44O754++54mpIixrdzpbImRlbWFuZCIsInN1cHBseSIsIm1pbmUiLCJldGYiLCJjZW50cmFsIGJhbmsgYnV5aW5nIiwicmVzZXJ2ZXMiLCLpnIDopoEiLCLkvpvntaYiLCLnj77niakiLCLosrfjgYQiLCLmupblgpkiLCLkuK3pioDosrfjgYQiXX0sCiAgXTsKICBmdW5jdGlvbiBjbGFzc2lmeSh0KXt0PSh0fHwiIikudG9Mb3dlckNhc2UoKTtmb3IoY29uc3QgdGggb2YgVEhFTUVTKXtpZih0aC5rdy5zb21lKGs9PnQuaW5jbHVkZXMoaykpKXJldHVybiB0aC5rZXk7fXJldHVybiAi44Gd44Gu5LuWIjt9CiAgZnVuY3Rpb24gcmVuZGVyVGhlbWUoaXRlbXMpewogICAgY29uc3QgYz17fTtUSEVNRVMuZm9yRWFjaCh0PT5jW3Qua2V5XT0wKTtjWyLjgZ3jga7ku5YiXT0wO2l0ZW1zLmZvckVhY2goaXQ9PmNbY2xhc3NpZnkoaXQudGl0bGUpXSsrKTsKICAgIGNvbnN0IG14PU1hdGgubWF4KDEsLi4uT2JqZWN0LnZhbHVlcyhjKSk7Y29uc3QgYm94PSQoInRoZW1lIik7Ym94LnRleHRDb250ZW50PSIiOwogICAgT2JqZWN0LmVudHJpZXMoYykuZm9yRWFjaCgoW2ssdl0pPT57Y29uc3Qgcm93PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoImRpdiIpO3Jvdy5jbGFzc05hbWU9InRyb3ciOwogICAgICByb3cuaW5uZXJIVE1MPSc8ZGl2PjxkaXYgY2xhc3M9InRrMiI+JytrKyc8L2Rpdj48ZGl2IGNsYXNzPSJ0YmFyIj48c3BhbiBzdHlsZT0id2lkdGg6Jysodi9teCoxMDApLnRvRml4ZWQoMCkrJyUiPjwvc3Bhbj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJ0YyI+Jyt2Kyc8L2Rpdj4nO2JveC5hcHBlbmRDaGlsZChyb3cpO30pOwogICAgJCgic3VtTWV0YSIpLnRleHRDb250ZW50PWl0ZW1zLmxlbmd0aCsi5Lu244KS5YiG6aGeIjskKCJrYXJ0cyIpLnRleHRDb250ZW50PWl0ZW1zLmxlbmd0aDsKICB9CgogIC8vIC0tLS0g5L6h5qC8IC0tLS0KICBsZXQgcHJldk1pZD1udWxsLGVzPW51bGwsZGVtb1Q9bnVsbCxkZW1vUD0yNjUwLGxhc3RNc2c9MDsKICBmdW5jdGlvbiBzZXRTdGF0dXMobW9kZSxjbHMsZGV0YWlsKXskKCJtb2RlIikudGV4dENvbnRlbnQ9bW9kZTskKCJkb3QiKS5jbGFzc05hbWU9ImRvdCAiK2NsczskKCJzdGF0dXMiKS50ZXh0Q29udGVudD1kZXRhaWw7fQogIC8vIC0tLS0gIzMg5L6h5qC844GX44GN44GE5YCk44Gu6Ieq5YuV55uj6KaWIC0tLS0KICBsZXQgYWxlcnQ9e2xvOnN0b3JlLmdldCgiYWxMbyIsbnVsbCksaGk6c3RvcmUuZ2V0KCJhbEhpIixudWxsKSxzbmQ6c3RvcmUuZ2V0KCJhbFNuZCIsZmFsc2UpfTsKICBsZXQgbG9GaXJlZD1mYWxzZSxoaUZpcmVkPWZhbHNlOwogICQoImFsTG8iKS52YWx1ZT1hbGVydC5sbz8/IiI7JCgiYWxIaSIpLnZhbHVlPWFsZXJ0LmhpPz8iIjsKICAkKCJhbFNuZCIpLmNsYXNzTGlzdC50b2dnbGUoIm9uIixhbGVydC5zbmQpOyQoImFsU25kIikudGV4dENvbnRlbnQ9YWxlcnQuc25kPyLimapPTiI6IuKZqumfsyI7CiAgZnVuY3Rpb24gc2F2ZUFsZXJ0KCl7YWxlcnQubG89JCgiYWxMbyIpLnZhbHVlIT09IiI/cGFyc2VGbG9hdCgkKCJhbExvIikudmFsdWUpOm51bGw7YWxlcnQuaGk9JCgiYWxIaSIpLnZhbHVlIT09IiI/cGFyc2VGbG9hdCgkKCJhbEhpIikudmFsdWUpOm51bGw7c3RvcmUuc2V0KCJhbExvIixhbGVydC5sbyk7c3RvcmUuc2V0KCJhbEhpIixhbGVydC5oaSk7fQogICQoImFsTG8iKS5hZGRFdmVudExpc3RlbmVyKCJjaGFuZ2UiLCgpPT57c2F2ZUFsZXJ0KCk7bG9GaXJlZD1mYWxzZTt9KTsKICAkKCJhbEhpIikuYWRkRXZlbnRMaXN0ZW5lcigiY2hhbmdlIiwoKT0+e3NhdmVBbGVydCgpO2hpRmlyZWQ9ZmFsc2U7fSk7CiAgJCgiYWxTbmQiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsKCk9PnthbGVydC5zbmQ9IWFsZXJ0LnNuZDtzdG9yZS5zZXQoImFsU25kIixhbGVydC5zbmQpOyQoImFsU25kIikuY2xhc3NMaXN0LnRvZ2dsZSgib24iLGFsZXJ0LnNuZCk7JCgiYWxTbmQiKS50ZXh0Q29udGVudD1hbGVydC5zbmQ/IuKZqk9OIjoi4pmq6Z+zIjtpZihhbGVydC5zbmQpYmVlcCg2NjAsLjA4KTt9KTsKICBmdW5jdGlvbiBmaXJlUHgoa2luZCxtLGx2KXtjb25zdCBtc2c9KGtpbmQ9PT0iaGkiPyLkuIrpmZDnqoHnoLQgIjoi5LiL6ZmQ5Ymy44KMICIpK25mMi5mb3JtYXQobSkrIu+8iOWfuua6liAiK25mMi5mb3JtYXQobHYpKyLvvIkiOwogICAgJCgiYWxNc2ciKS50ZXh0Q29udGVudD1uZXcgRGF0ZSgpLnRvTG9jYWxlVGltZVN0cmluZygiamEtSlAiLHtob3VyMTI6ZmFsc2V9KTsKICAgIHRvYXN0KG1zZyk7aWYoYWxlcnQuc25kKXtiZWVwKGtpbmQ9PT0iaGkiPzk5MDo0NDAsLjE4KTtzZXRUaW1lb3V0KCgpPT5iZWVwKGtpbmQ9PT0iaGkiPzk5MDo0NDAsLjE4KSwyMjApO30KICAgIGlmKG50Zk9uJiYoIk5vdGlmaWNhdGlvbiJpbiB3aW5kb3cpJiZOb3RpZmljYXRpb24ucGVybWlzc2lvbj09PSJncmFudGVkIil7dHJ5e25ldyBOb3RpZmljYXRpb24oIuS+oeagvOOCouODqeODvOODiCIse2JvZHk6bXNnfSk7fWNhdGNoKF8pe319fQogIGZ1bmN0aW9uIGNoZWNrUHgobSl7CiAgICBpZihhbGVydC5oaSE9bnVsbCl7aWYobT49YWxlcnQuaGkmJiFoaUZpcmVkKXtoaUZpcmVkPXRydWU7ZmlyZVB4KCJoaSIsbSxhbGVydC5oaSk7fWVsc2UgaWYobTxhbGVydC5oaS0wLjA1KWhpRmlyZWQ9ZmFsc2U7fQogICAgaWYoYWxlcnQubG8hPW51bGwpe2lmKG08PWFsZXJ0LmxvJiYhbG9GaXJlZCl7bG9GaXJlZD10cnVlO2ZpcmVQeCgibG8iLG0sYWxlcnQubG8pO31lbHNlIGlmKG0+YWxlcnQubG8rMC4wNSlsb0ZpcmVkPWZhbHNlO30KICB9CgogIGZ1bmN0aW9uIHB4KGJpZCxhc2spe2NvbnN0IG09KGJpZCthc2spLzI7Y29uc3QgZGlyPXByZXZNaWQ9PW51bGw/MDpNYXRoLnNpZ24obS1wcmV2TWlkKTtwcmV2TWlkPW07CiAgICBjb25zdCBuPSQoInB4Iik7bi50ZXh0Q29udGVudD1uZjIuZm9ybWF0KG0pO24uY2xhc3NOYW1lPSJuICIrKGRpcj4wPyJ1cCI6ZGlyPDA/ImRuIjoiIik7CiAgICAkKCJweGMiKS50ZXh0Q29udGVudD0oZGlyPjA/IuKWsiI6ZGlyPDA/IuKWvCI6IsK3Iik7ZG9jdW1lbnQudGl0bGU9KGRpcj4wPyLilrIiOmRpcjwwPyLilrwiOiLCtyIpKyIgIituZjIuZm9ybWF0KG0pKyIgWEFVVVNEIOaDheWLouebo+imliI7Y2hlY2tQeChtKTt9CiAgZnVuY3Rpb24gY29ubmVjdCgpe3RyeXtpZihlcyllcy5jbG9zZSgpO31jYXRjaChfKXt9c2V0U3RhdHVzKCLmjqXntprkuK0iLCJ3YXJuIiwiU1NF5o6l57aa44KS6Kmm6KGM4oCmIik7CiAgICBlcz1uZXcgRXZlbnRTb3VyY2UoQVBJKyIvc3RyZWFtIik7CiAgICBlcy5vbm1lc3NhZ2U9ZT0+e2xldCBzO3RyeXtzPUpTT04ucGFyc2UoZS5kYXRhKTt9Y2F0Y2goXyl7cmV0dXJuO31sYXN0TXNnPURhdGUubm93KCk7c3RvcERlbW8oKTsKICAgICAgaWYocy5zb3VyY2U9PT0iZGVtbyIpc2V0U3RhdHVzKCLjg4fjg6LphY3kv6EiLCJkZW1vIiwiTVQ15pyq5o6l57aaIik7ZWxzZSBzZXRTdGF0dXMoIuebo+imluS4rSIsImxpdmUiLCJNVDXjg6njgqTjg5YvU1NFIik7CiAgICAgIGlmKHMuYmlkIT1udWxsJiZzLmFzayE9bnVsbClweChzLmJpZCxzLmFzayk7fTsKICAgIGVzLm9uZXJyb3I9KCk9PnNldFN0YXR1cygi5YaN5o6l57aa5LitIiwid2FybiIsIuODluODquODg+OCuOW/nOetlOW+heOBoeKApiIpO30KICBmdW5jdGlvbiBzdGFydERlbW8oKXtpZihkZW1vVClyZXR1cm47c2V0U3RhdHVzKCLnlpHkvLzjg4fjg6IiLCJkZW1vIiwi44OW44Oq44OD44K45pyq5b+c562U4oaS5pOs5Ly8Iik7CiAgICBkZW1vVD1zZXRJbnRlcnZhbCgoKT0+e2RlbW9QKz0oTWF0aC5yYW5kb20oKS0wLjUpKjAuMztjb25zdCBzcD0wLjErTWF0aC5yYW5kb20oKSowLjI7cHgoZGVtb1Atc3AvMixkZW1vUCtzcC8yKTt9LDQwMCk7fQogIGZ1bmN0aW9uIHN0b3BEZW1vKCl7aWYoZGVtb1Qpe2NsZWFySW50ZXJ2YWwoZGVtb1QpO2RlbW9UPW51bGw7fX0KICBzZXRJbnRlcnZhbCgoKT0+e2lmKERhdGUubm93KCktbGFzdE1zZz40MDAwKXN0YXJ0RGVtbygpO30sMTUwMCk7CgogIC8vIC0tLS0g44OY44OD44OJ44Op44Kk44Oz77yL44OG44Kj44OD44Kr44O8IC0tLS0KICBmdW5jdGlvbiByZWxUaW1lKGlzbyl7aWYoIWlzbylyZXR1cm4iIjtjb25zdCB0PW5ldyBEYXRlKGlzbykuZ2V0VGltZSgpO2lmKGlzTmFOKHQpKXJldHVybiIiOwogICAgY29uc3Qgcz1NYXRoLm1heCgwLChEYXRlLm5vdygpLXQpLzEwMDApO2lmKHM8NjApcmV0dXJuIE1hdGguZmxvb3IocykrIuenkuWJjSI7aWYoczwzNjAwKXJldHVybiBNYXRoLmZsb29yKHMvNjApKyLliIbliY0iOwogICAgaWYoczw4NjQwMClyZXR1cm4gTWF0aC5mbG9vcihzLzM2MDApKyLmmYLplpPliY0iO3JldHVybiBNYXRoLmZsb29yKHMvODY0MDApKyLml6XliY0iO30KICBmdW5jdGlvbiByZW5kZXJGZWVkKGQpe2NvbnN0IGl0ZW1zPShkJiZkLml0ZW1zKXx8W107Y29uc3QgZmVlZD0kKCJmZWVkIik7ZmVlZC50ZXh0Q29udGVudD0iIjsKICAgIGlmKCFpdGVtcy5sZW5ndGgpeyQoImZlZWRFbXB0eSIpLnN0eWxlLmRpc3BsYXk9ImJsb2NrIjskKCJmZWVkTWV0YSIpLnRleHRDb250ZW50PWQmJmQudXBkYXRlZD8i5pu05pawICIrcmVsVGltZShkLnVwZGF0ZWQpOiLigJMiO3JldHVybjt9CiAgICAkKCJmZWVkRW1wdHkiKS5zdHlsZS5kaXNwbGF5PSJub25lIjsKICAgIGZvcihjb25zdCBpdCBvZiBpdGVtcyl7Y29uc3QgbGk9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgibGkiKTtsaS5jbGFzc05hbWU9ImZpIjsKICAgICAgY29uc3QgdG09ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiZGl2Iik7dG0uY2xhc3NOYW1lPSJ0bSI7dG0udGV4dENvbnRlbnQ9cmVsVGltZShpdC5wdWJsaXNoZWQpfHwi4oCUIjsKICAgICAgY29uc3QgYmQ9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiZGl2Iik7YmQuY2xhc3NOYW1lPSJiZCI7CiAgICAgIGNvbnN0IGE9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiYSIpO2EuaHJlZj1pdC51cmw7YS50YXJnZXQ9Il9ibGFuayI7YS5yZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiOwogICAgICBhLnRleHRDb250ZW50PWl0LnRpdGxlX2phfHxpdC50aXRsZTtpZihpdC50aXRsZV9qYSlhLnRpdGxlPWl0LnRpdGxlOwogICAgICBjb25zdCBzcj1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCJkaXYiKTtzci5jbGFzc05hbWU9InNyIjtzci5pbm5lckhUTUw9JzxzcGFuIGNsYXNzPSJvIj4nKyhpdC5vcmlnaW49PT0iZ2RlbHQiPyJHREVMVCI6Ikdvb2dsZSIpKyc8L3NwYW4+IMK3ICc7CiAgICAgIHNyLmFwcGVuZENoaWxkKGRvY3VtZW50LmNyZWF0ZVRleHROb2RlKGl0LnNvdXJjZXx8IiIpKTsKICAgICAgYmQuYXBwZW5kQ2hpbGQoYSk7YmQuYXBwZW5kQ2hpbGQoc3IpO2xpLmFwcGVuZENoaWxkKHRtKTtsaS5hcHBlbmRDaGlsZChiZCk7ZmVlZC5hcHBlbmRDaGlsZChsaSk7fQogICAgJCgiZmVlZE1ldGEiKS50ZXh0Q29udGVudD0oZC51cGRhdGVkPyLmm7TmlrAgIityZWxUaW1lKGQudXBkYXRlZCk6IiIpKyIgwrcgIitpdGVtcy5sZW5ndGgrIuS7tiI7CiAgICByZW5kZXJUaGVtZShpdGVtcyk7CiAgICBhbm5vdW5jZShpdGVtcyk7CiAgICAvLyDjg4bjgqPjg4Pjgqvjg7wKICAgIGNvbnN0IG12PSQoInRrbW92ZSIpO212LnRleHRDb250ZW50PSIiOwogICAgaXRlbXMuc2xpY2UoMCwxMikuZm9yRWFjaChpdD0+e2NvbnN0IGE9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgiYSIpO2EuaHJlZj1pdC51cmw7YS50YXJnZXQ9Il9ibGFuayI7YS5yZWw9Im5vb3BlbmVyIG5vcmVmZXJyZXIiOwogICAgICBhLmlubmVySFRNTD0oaXQudGl0bGVfamF8fGl0LnRpdGxlKSsnIDxzcGFuIGNsYXNzPSJzIj4nKyhpdC5zb3VyY2V8fCIiKSsnPC9zcGFuPic7bXYuYXBwZW5kQ2hpbGQoYSk7fSk7CiAgfQogIGFzeW5jIGZ1bmN0aW9uIGxvYWROZXdzKCl7dHJ5e2NvbnN0IHI9YXdhaXQgZmV0Y2goQVBJKyIvbmV3cyIse2NhY2hlOiJuby1zdG9yZSJ9KTtpZighci5vayl0aHJvdyAwO3JlbmRlckZlZWQoYXdhaXQgci5qc29uKCkpO30KICAgIGNhdGNoKF8pe2lmKCEkKCJmZWVkIikuY2hpbGRyZW4ubGVuZ3RoKXskKCJmZWVkRW1wdHkiKS5zdHlsZS5kaXNwbGF5PSJibG9jayI7CiAgICAgICQoImZlZWRFbXB0eSIpLnRleHRDb250ZW50PXNlcnZlZEJ5QnJpZGdlPyLjg4vjg6Xjg7zjgrnlj5blvpfjgpLlvoXjgaPjgabjgYTjgb7jgZnigKYiOiLjg63jg7zjgqvjg6vjg5bjg6rjg4PjgrjmnKrlv5znrZTjga7jgZ/jgoHlj5blvpfjgafjgY3jgb7jgZvjgpPjgIIiOyQoImZlZWRNZXRhIikudGV4dENvbnRlbnQ9IuOCquODleODqeOCpOODsyI7fX19CgogIGFzeW5jIGZ1bmN0aW9uIGxvYWRHZW8oKXt0cnl7Y29uc3Qgcj1hd2FpdCBmZXRjaChBUEkrIi9nZW9uZXdzIix7Y2FjaGU6Im5vLXN0b3JlIn0pO2lmKCFyLm9rKXRocm93IDA7Y29uc3QgZD1hd2FpdCByLmpzb24oKTtyZW5kZXJHZW8oZC5wb2ludHN8fFtdKTt9Y2F0Y2goXyl7JCgia3B0cyIpLnRleHRDb250ZW50PSLigJMiO319CgogIC8vIC0tLS0g44K744Oz44OB44Oh44Oz44OI44O75rOo55uu5bqmIC0tLS0KICBjb25zdCBzYz0kKCJzcGFyayIpLHN4PXNjLmdldENvbnRleHQoIjJkIik7CiAgZnVuY3Rpb24gZml0U3BhcmsoKXtjb25zdCByPXNjLmdldEJvdW5kaW5nQ2xpZW50UmVjdCgpLGRwPU1hdGgubWluKHdpbmRvdy5kZXZpY2VQaXhlbFJhdGlvfHwxLDIpO3NjLndpZHRoPU1hdGgubWF4KDEsci53aWR0aCpkcCk7c2MuaGVpZ2h0PU1hdGgubWF4KDEsci5oZWlnaHQqZHApO3N4LnNldFRyYW5zZm9ybShkcCwwLDAsZHAsMCwwKTt9CiAgZnVuY3Rpb24gZHJhd1NwYXJrKHNlcmllcyl7Y29uc3Qgcj1zYy5nZXRCb3VuZGluZ0NsaWVudFJlY3QoKSxXZD1yLndpZHRoLEhkPXIuaGVpZ2h0O3N4LmNsZWFyUmVjdCgwLDAsV2QsSGQpOwogICAgY29uc3QgdmFscz1zZXJpZXMubWFwKHA9PnAudm9sKS5maWx0ZXIodj0+diE9bnVsbCk7aWYodmFscy5sZW5ndGg8MilyZXR1cm47CiAgICBsZXQgbW49TWF0aC5taW4oLi4udmFscyksbXg9TWF0aC5tYXgoLi4udmFscyk7aWYobXgtbW48MWUtNil7bXgrPTE7bW4tPTE7fQogICAgY29uc3QgWD1pPT4yKyhXZC00KSooaS8odmFscy5sZW5ndGgtMSkpLFk9dj0+MisoSGQtNCkqKDEtKHYtbW4pLyhteC1tbikpOwogICAgY29uc3QgZz1zeC5jcmVhdGVMaW5lYXJHcmFkaWVudCgwLDAsMCxIZCk7Zy5hZGRDb2xvclN0b3AoMCwicmdiYSgyMzAsMTgwLDkwLC4yMikiKTtnLmFkZENvbG9yU3RvcCgxLCJyZ2JhKDIzMCwxODAsOTAsMCkiKTsKICAgIHN4LmJlZ2luUGF0aCgpO3N4Lm1vdmVUbyhYKDApLFkodmFsc1swXSkpO2ZvcihsZXQgaT0xO2k8dmFscy5sZW5ndGg7aSsrKXN4LmxpbmVUbyhYKGkpLFkodmFsc1tpXSkpO3N4LmxpbmVUbyhYKHZhbHMubGVuZ3RoLTEpLEhkKTtzeC5saW5lVG8oWCgwKSxIZCk7c3guY2xvc2VQYXRoKCk7c3guZmlsbFN0eWxlPWc7c3guZmlsbCgpOwogICAgc3guYmVnaW5QYXRoKCk7c3gubW92ZVRvKFgoMCksWSh2YWxzWzBdKSk7Zm9yKGxldCBpPTE7aTx2YWxzLmxlbmd0aDtpKyspc3gubGluZVRvKFgoaSksWSh2YWxzW2ldKSk7c3gubGluZVdpZHRoPTEuNjtzeC5zdHJva2VTdHlsZT0iI0U2QjQ1QSI7c3gubGluZUpvaW49InJvdW5kIjtzeC5zdHJva2UoKTt9CiAgZnVuY3Rpb24gcmVuZGVyUHVsc2UocCl7CiAgICBjb25zdCB0b25lPXAuYXZnX3RvbmU7CiAgICBpZih0b25lPT1udWxsKXskKCJzZW50QmlnIikudGV4dENvbnRlbnQ9IuODh+ODvOOCv+W+heOBoSI7fQogICAgZWxzZXsKICAgICAgY29uc3QgcmlzayA9IHRvbmU8PS0xLjU/IuODquOCueOCr+OCquODleWvhOOCiu+8iOmHkeOBq+i/veOBhOmiqO+8iSI6dG9uZT49MS41PyLjg6rjgrnjgq/jgqrjg7Plr4TjgorvvIjph5HjgavpgIbpoqjvvIkiOiLkuK3nq4siOwogICAgICAkKCJzZW50QmlnIikudGV4dENvbnRlbnQ9cmlzazskKCJzZW50U3ViIikudGV4dENvbnRlbnQ9IuW5s+Wdh+ODiOODvOODsyAiK3RvbmUudG9GaXhlZCgyKSsi77yI6LKgPeODjeOCrOODhuOCo+ODlu+8iSI7CiAgICAgIGNvbnN0IHBvcz1NYXRoLm1heCgwLE1hdGgubWluKDEwMCw1MC10b25lKjgpKTskKCJnYXVnZU1rIikuc3R5bGUubGVmdD1wb3MrIiUiOwogICAgfQogICAgaWYocC50aW1lbGluZSYmcC50aW1lbGluZS5sZW5ndGgpe2ZpdFNwYXJrKCk7ZHJhd1NwYXJrKHAudGltZWxpbmUpO30KICAgICQoInB1bHNlTWV0YSIpLnRleHRDb250ZW50PXAudXBkYXRlZD8i5pu05pawICIrcmVsVGltZShwLnVwZGF0ZWQpOiLigJMiOwogICAgLy8gIzIg5rOo55uu5bqm44K544OR44Kk44Kv5qSc55+lCiAgICB0cnl7CiAgICAgIGNvbnN0IHZzPShwLnRpbWVsaW5lfHxbXSkubWFwKHg9Pngudm9sKS5maWx0ZXIodj0+diE9bnVsbCk7CiAgICAgIGlmKHZzLmxlbmd0aD49Nil7CiAgICAgICAgY29uc3QgbGFzdD12c1t2cy5sZW5ndGgtMV07Y29uc3QgYmFzZT12cy5zbGljZSgtMTMsLTEpO2NvbnN0IGF2Zz1iYXNlLnJlZHVjZSgoYSxiKT0+YStiLDApL2Jhc2UubGVuZ3RoOwogICAgICAgIGlmKGF2Zz4wICYmIGxhc3Q+PWF2ZyoxLjggJiYgbGFzdD4wLjAyKXsKICAgICAgICAgIGNvbnN0IGtleT1NYXRoLnJvdW5kKGxhc3QqMTAwMCk7CiAgICAgICAgICBpZihzcGlrZUtleSE9PWtleSl7c3Bpa2VLZXk9a2V5OwogICAgICAgICAgICBjb25zdCBtc2c9IuazqOebruW6puOBjOaApeWil++8iOS4lueVjOOBjOmHkeOBq+azqOebriA9IOebuOWgtOOBjOWLleOBj+OCteOCpOODs++8iSI7CiAgICAgICAgICAgIHRvYXN0KG1zZyk7c3BlYWsobXNnKTsKICAgICAgICAgICAgaWYobnRmT24mJigiTm90aWZpY2F0aW9uImluIHdpbmRvdykmJk5vdGlmaWNhdGlvbi5wZXJtaXNzaW9uPT09ImdyYW50ZWQiKXt0cnl7bmV3IE5vdGlmaWNhdGlvbigi5rOo55uu5bqm44K544OR44Kk44KvIix7Ym9keTptc2d9KTt9Y2F0Y2goXyl7fX0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIH1jYXRjaChfKXt9CiAgfQogIGFzeW5jIGZ1bmN0aW9uIGxvYWRQdWxzZSgpe3RyeXtjb25zdCByPWF3YWl0IGZldGNoKEFQSSsiL3B1bHNlIix7Y2FjaGU6Im5vLXN0b3JlIn0pO2lmKCFyLm9rKXRocm93IDA7cmVuZGVyUHVsc2UoYXdhaXQgci5qc29uKCkpO31jYXRjaChfKXt9fQoKICAkKCJub3RlIikuaW5uZXJIVE1MPXNlcnZlZEJ5QnJpZGdlCiAgICA/ICfkuJbnlYzjga7jg4vjg6Xjg7zjgrnjga8gPGI+R0RFTFQ8L2I+77yI5Zyw55CG5bqn5qiZ44O744OI44O844Oz44O75pmC57O75YiX77yJ44GoIDxiPkdvb2dsZSBOZXdzPC9iPuOAgee1jOa4iOaMh+aomeOBr+WFrOmWi+OCq+ODrOODs+ODgOODvO+8iOWun+ODh+ODvOOCv++8ieOCkuODluODquODg+OCuOOBjOWPjumbhuOAguimi+WHuuOBl+OBr+iHquWLleOBp+aXpeacrOiqnuWMluOAguODmOODg+ODgOODvOOAjOODreOCsOOAjeOBp+S+oeagvOODreOCsOOCkuOCsOODqeODleihqOekuuOAgicKICAgIDogJ+OBk+OBruODmuODvOOCuOOBryA8Y29kZT4nK0FQSSsnPC9jb2RlPiDjga7jg63jg7zjgqvjg6vjg5bjg6rjg4PjgrjjgbjmjqXntprjgZfjgb7jgZnjgILlronlrprpgYvnlKjjga8gPGNvZGU+aHR0cDovLzEyNy4wLjAuMTo4Nzg3LzwvY29kZT4g44KS5o6o5aWo44CCJzsKCiAgLy8gLS0tLSDjg6njgqTjg5bmmKDlg48gLS0tLQogIGNvbnN0IHZmcmFtZT0kKCJ2ZnJhbWUiKTsKICBmdW5jdGlvbiB5dElkKHMpe3M9KHN8fCIiKS50cmltKCk7aWYoIXMpcmV0dXJuIG51bGw7CiAgICBpZigvXltBLVphLXowLTlfLV17MTF9JC8udGVzdChzKSlyZXR1cm4gczsKICAgIGxldCBtPXMubWF0Y2goLyg/OnY9fFwvbGl2ZVwvfHlvdXR1XC5iZVwvfFwvZW1iZWRcLykoW0EtWmEtejAtOV8tXXsxMX0pLyk7cmV0dXJuIG0/bVsxXTpudWxsO30KICBsZXQgY3VycmVudFZpZD1udWxsOwogIGZ1bmN0aW9uIHBsYXlJZChpZCxuYW1lKXtjdXJyZW50VmlkPWlkO3ZmcmFtZS5zcmM9Imh0dHBzOi8vd3d3LnlvdXR1YmUtbm9jb29raWUuY29tL2VtYmVkLyIraWQrIj9hdXRvcGxheT0xJm11dGU9MSZwbGF5c2lubGluZT0xIjtpZihuYW1lKSQoInZzcmMiKS50ZXh0Q29udGVudD1uYW1lO30KICBmdW5jdGlvbiBzd2l0Y2hUb0ZlZCgpe2lmKCFmZWRTcmMpcmV0dXJuIGZhbHNlO2lmKGN1cnJlbnRWaWQhPT1mZWRTcmMpe3BsYXlJZChmZWRTcmMsIkZlZC/kvJropovvvIjoh6rli5XliIfmm7/vvIkiKTt9ZmVkQWN0aXZlPXRydWU7ZmVkVW50aWw9RGF0ZS5ub3coKSs5MCo2MDAwMDtyZXR1cm4gdHJ1ZTt9CiAgZnVuY3Rpb24gcmV2ZXJ0VmlkZW8oKXtpZihmZWRBY3RpdmUpe2ZlZEFjdGl2ZT1mYWxzZTtwbGF5SWQodmlkRGVmYXVsdCwiWWFob28gRmluYW5jZSAyNC83Iik7fX0KICAvLyDkvJropovnlKjjgavoqJjmhrbvvJrku4rjga7mmKDlg49VUkwvSUTjgpJGT01D6Ieq5YuV5YiH5pu/55So44Gr5L+d5a2YCiAgY29uc3QgdmZlZD0kKCJ2ZmVkIik7CiAgaWYodmZlZCl7aWYoZmVkU3JjKXZmZWQuY2xhc3NMaXN0LmFkZCgib24iKTsKICAgIHZmZWQuYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCgpPT57Y29uc3QgaWQ9eXRJZCgkKCJ2dXJsIikudmFsdWUpfHxjdXJyZW50VmlkO2lmKCFpZCl7JCgidnNyYyIpLnRleHRDb250ZW50PSLoqJjmhrbjgZnjgovmmKDlg4/jgYzjgYLjgorjgb7jgZvjgpMiO3JldHVybjt9ZmVkU3JjPWlkO3N0b3JlLnNldCgiZmVkU3JjIixpZCk7dmZlZC5jbGFzc0xpc3QuYWRkKCJvbiIpOyQoInZzcmMiKS50ZXh0Q29udGVudD0i5Lya6KaL55So44Gr6KiY5oa244GX44G+44GX44GfIjt9KTt9CiAgLy8g5a6a5pyf44OB44Kn44OD44Kv77ya5Lya6KaL44Km44Kj44Oz44OJ44Km44KS6YGO44GO44Gf44KJ5pei5a6a44G45b6p5biwCiAgc2V0SW50ZXJ2YWwoKCk9PntpZihmZWRBY3RpdmUmJkRhdGUubm93KCk+ZmVkVW50aWwpcmV2ZXJ0VmlkZW8oKTt9LDMwMDAwKTsKICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCIudmJ0bltkYXRhLXZpZF0iKS5mb3JFYWNoKGI9PmIuYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCgpPT57CiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCIudmJ0biIpLmZvckVhY2goeD0+eC5jbGFzc0xpc3QucmVtb3ZlKCJvbiIpKTtiLmNsYXNzTGlzdC5hZGQoIm9uIik7CiAgICBwbGF5SWQoYi5kYXRhc2V0LnZpZCxiLmRhdGFzZXQubmFtZSk7fSkpOwogIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIi52YnRuW2RhdGEtbGlua10iKS5mb3JFYWNoKGI9PmIuYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCgpPT57CiAgICB3aW5kb3cub3BlbihiLmRhdGFzZXQubGluaywiX2JsYW5rIiwibm9vcGVuZXIiKTt9KSk7CiAgZnVuY3Rpb24gZ29VcmwoKXtjb25zdCBpZD15dElkKCQoInZ1cmwiKS52YWx1ZSk7aWYoIWlkKXskKCJ2c3JjIikudGV4dENvbnRlbnQ9IlVSTOOCkuiqjeitmOOBp+OBjeOBvuOBm+OCkyI7cmV0dXJuO30KICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIi52YnRuIikuZm9yRWFjaCh4PT54LmNsYXNzTGlzdC5yZW1vdmUoIm9uIikpO3BsYXlJZChpZCwi6LK844KK5LuY44GR44Op44Kk44OWIik7fQogICQoInZnbyIpLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIixnb1VybCk7CiAgJCgidnVybCIpLmFkZEV2ZW50TGlzdGVuZXIoImtleWRvd24iLGU9PntpZihlLmtleT09PSJFbnRlciIpZ29VcmwoKTt9KTsKICBwbGF5SWQoIktRcC1lX1hRbkRFIiwiWWFob28gRmluYW5jZSAyNC83Iik7IC8vIOaXouWumu+8mjI05pmC6ZaT44Op44Kk44OWCgogIC8vIC0tLS0g6Ieq5YuV5YyW77ya6auY44Kk44Oz44OR44Kv44OI5qSc55+lIOKGkiDjg4jjg7zjgrnjg4jvvIvoqq3jgb/kuIrjgZLvvIvpgJrnn6UgLS0tLQogIGNvbnN0IEhJX0tXPVsiZm9tYyIsInBvd2VsbCIsImZlZCAiLCJyYXRlIGN1dCIsInJhdGUgaGlrZSIsImNwaSIsIm5mcCIsInBheXJvbGwiLCJqb2JzIHJlcG9ydCIsCiAgICAiZWNiIiwiYm9qIiwiaW5mbGF0aW9uIiwicmVjZXNzaW9uIiwid2FyIiwi5Yip5LiK44GSIiwi5Yip5LiL44GSIiwi44OR44Km44Ko44OrIiwi5pel6YqAIiwi6ZuH55So57Wx6KiIIiwKICAgICLmlL/nrZbph5HliKkiLCLmtojosrvogIXniankvqEiLCLkuK3lpK7pioDooYwiLCLmnInkuosiXTsKICBsZXQgdHRzT249ZmFsc2UsbnRmT249ZmFsc2U7Y29uc3QgaGlTZWVuPW5ldyBTZXQoKTtsZXQgaGlJbml0PWZhbHNlOwogIGxldCBzcGlrZUtleT1udWxsOwogIC8vICMxIEZPTUMv6KaB5Lq65Lya6KaL44Gn5pig5YOP44KS6Ieq5YuV5YiH5pu/77yI6KiY5oa244GX44GfRmVk5pig5YOP44G477yJCiAgbGV0IGZlZFNyYz1zdG9yZS5nZXQoImZlZFNyYyIsIiIpLHZpZERlZmF1bHQ9IktRcC1lX1hRbkRFIixmZWRBY3RpdmU9ZmFsc2U7CiAgY29uc3QgRkVEX1JFPS9wb3dlbGx8Zm9tY3xwcmVzcyBjb25mZXJlbmNlfHJhdGUgZGVjaXNpb258ZmVkZXJhbCByZXNlcnZlfOODkeOCpuOCqOODq3zkvJropot86KiY6ICF5Lya6KaLfOaUv+etlumHkeWIqS9pOwogIGxldCBmZWRVbnRpbD0wOwogIGZ1bmN0aW9uIGlzSGlnaCh0KXt0PSh0fHwiIikudG9Mb3dlckNhc2UoKTtyZXR1cm4gSElfS1cuc29tZShrPT50LmluY2x1ZGVzKGspKTt9CiAgZnVuY3Rpb24gdG9hc3QodGV4dCl7Y29uc3QgZWw9JCgidG9hc3QiKTtlbC5pbm5lckhUTUw9IjxiPumrmOOCpOODs+ODkeOCr+ODiOODu+ODi+ODpeODvOOCuTwvYj4iK3RleHQ7CiAgICBlbC5jbGFzc0xpc3QuYWRkKCJzaG93Iik7Y2xlYXJUaW1lb3V0KGVsLl90KTtlbC5fdD1zZXRUaW1lb3V0KCgpPT5lbC5jbGFzc0xpc3QucmVtb3ZlKCJzaG93IiksNzAwMCk7fQogIGZ1bmN0aW9uIHNwZWFrKHRleHQpe2lmKCF0dHNPbnx8IXdpbmRvdy5zcGVlY2hTeW50aGVzaXMpcmV0dXJuO3RyeXtjb25zdCB1PW5ldyBTcGVlY2hTeW50aGVzaXNVdHRlcmFuY2UodGV4dCk7CiAgICB1Lmxhbmc9L1vjgYEt44KT5LiALem+oOOCoS3jg7NdLy50ZXN0KHRleHQpPyJqYS1KUCI6ImVuLVVTIjt1LnJhdGU9MS4wNTtzcGVlY2hTeW50aGVzaXMuc3BlYWsodSk7fWNhdGNoKF8pe319CiAgZnVuY3Rpb24gYW5ub3VuY2UoaXRlbXMpewogICAgY29uc3QgaGk9aXRlbXMuZmlsdGVyKGl0PT5pc0hpZ2goaXQudGl0bGUpfHxpc0hpZ2goaXQudGl0bGVfamEpKTsKICAgIGlmKCFoaUluaXQpe2hpLmZvckVhY2goaXQ9PmhpU2Vlbi5hZGQoaXQudXJsKSk7aGlJbml0PXRydWU7cmV0dXJuO30KICAgIC8vICMxIEZPTUMv5Lya6KaL44Gu6KaL5Ye644GX44KS5qSc55+l44GX44Gf44KJRmVk5pig5YOP44G46Ieq5YuV5YiH5pu/CiAgICBpZihpdGVtcy5zbGljZSgwLDgpLnNvbWUoaXQ9PkZFRF9SRS50ZXN0KGl0LnRpdGxlfHwiIil8fEZFRF9SRS50ZXN0KGl0LnRpdGxlX2phfHwiIikpKXsKICAgICAgaWYoZmVkU3JjKXsgaWYoIWZlZEFjdGl2ZSl7IGlmKHN3aXRjaFRvRmVkKCkpIHRvYXN0KCJGT01DL+S8muimi+OCkuaknOefpSDihpIgRmVk5pig5YOP44G46Ieq5YuV5YiH5pu/Iik7IH0gZWxzZSB7IGZlZFVudGlsPURhdGUubm93KCkrOTAqNjAwMDA7IH0gfQogICAgfQogICAgZm9yKGNvbnN0IGl0IG9mIGhpKXtpZihoaVNlZW4uaGFzKGl0LnVybCkpY29udGludWU7aGlTZWVuLmFkZChpdC51cmwpOwogICAgICBjb25zdCBkaXNwPWl0LnRpdGxlX2phfHxpdC50aXRsZTsKICAgICAgdG9hc3QoZGlzcCk7CiAgICAgIGlmKG50Zk9uJiYoIk5vdGlmaWNhdGlvbiJpbiB3aW5kb3cpJiZOb3RpZmljYXRpb24ucGVybWlzc2lvbj09PSJncmFudGVkIil7dHJ5e25ldyBOb3RpZmljYXRpb24oIumrmOOCpOODs+ODkeOCr+ODiOODu+ODi+ODpeODvOOCuSIse2JvZHk6ZGlzcH0pO31jYXRjaChfKXt9fQogICAgICBzcGVhayhkaXNwKTsKICAgICAgYnJlYWs7fQogIH0KICAkKCJ0dHMiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsKCk9Pnt0dHNPbj0hdHRzT247JCgidHRzIikuY2xhc3NMaXN0LnRvZ2dsZSgib24iLHR0c09uKTsKICAgIGlmKHR0c09uKXNwZWFrKCLoh6rli5Xoqq3jgb/kuIrjgZLjgpLplovlp4vjgZfjgb7jgZkiKTt9KTsKICAkKCJudGYiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsKCk9PntpZighKCJOb3RpZmljYXRpb24iaW4gd2luZG93KSl7JCgibnRmIikudGV4dENvbnRlbnQ9IumAmuefpemdnuWvvuW/nCI7cmV0dXJuO30KICAgIE5vdGlmaWNhdGlvbi5yZXF1ZXN0UGVybWlzc2lvbigpLnRoZW4ocD0+e250Zk9uPShwPT09ImdyYW50ZWQiKTskKCJudGYiKS5jbGFzc0xpc3QudG9nZ2xlKCJvbiIsbnRmT24pO30pO30pOwoKICBjb25zdCBmc2I9JCgiZnMiKTsKICBpZihmc2IpIGZzYi5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsKCk9PnsKICAgIGlmKCFkb2N1bWVudC5mdWxsc2NyZWVuRWxlbWVudCl7IGlmKGRvY3VtZW50LmRvY3VtZW50RWxlbWVudC5yZXF1ZXN0RnVsbHNjcmVlbikgZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnJlcXVlc3RGdWxsc2NyZWVuKCk7IGZzYi50ZXh0Q29udGVudD0i4pu2IOino+mZpCI7IH0KICAgIGVsc2V7IGlmKGRvY3VtZW50LmV4aXRGdWxsc2NyZWVuKSBkb2N1bWVudC5leGl0RnVsbHNjcmVlbigpOyBmc2IudGV4dENvbnRlbnQ9IuKbtiDlhajnlLvpnaIiOyB9CiAgfSk7CgogIGNvbm5lY3QoKTsKICAvLyAtLS0tICMyIOe1jOa4iOaMh+aomeOCq+ODrOODs+ODgOODvO+8iOWun+ODh+ODvOOCv++8iSAtLS0tCiAgY29uc3QgY2FsU2Vlbj1uZXcgU2V0KCk7CiAgY29uc3QgQ0NZX0pBPXtVU0Q6IuexsyIsRVVSOiLmrKciLEpQWToi5pelIixHQlA6IuiLsSIsQ05ZOiLkuK0ifTsKICBmdW5jdGlvbiByZW5kZXJDYWxlbmRhcihkKXsKICAgIGNvbnN0IGV2cz0oZCYmZC5ldmVudHMpfHxbXTtjb25zdCBub3c9RGF0ZS5ub3coKTsKICAgIGNvbnN0IHVwPWV2cy5maWx0ZXIoZT0+e2NvbnN0IHQ9RGF0ZS5wYXJzZShlLmRhdGUpO3JldHVybiAhaXNOYU4odCkmJnQ+bm93LTM2MDAwMDA7fSkuc2xpY2UoMCw3KTsKICAgIGNvbnN0IGJveD0kKCJjYWwiKTtib3gudGV4dENvbnRlbnQ9IiI7CiAgICBpZighdXAubGVuZ3RoKXtib3guaW5uZXJIVE1MPSc8ZGl2IGNsYXNzPSJlbXB0eSIgc3R5bGU9InBhZGRpbmc6OHB4IDJweCI+6L+R5pel44Gu6auY44Kk44Oz44OR44Kv44OI5oyH5qiZ44Gv44GC44KK44G+44Gb44KT44CCPC9kaXY+JzsKICAgICAgJCgiY2FsTWV0YSIpLnRleHRDb250ZW50PWQmJmQudXBkYXRlZD8i5pu05pawICIrcmVsVGltZShkLnVwZGF0ZWQpOihkJiZkLnN0YXR1c3x8IuKAkyIpO3JldHVybjt9CiAgICB1cC5mb3JFYWNoKGU9Pntjb25zdCB0PURhdGUucGFyc2UoZS5kYXRlKSx0bT1uZXcgRGF0ZSh0KSxzb29uPSh0LW5vdyk8MzYwMDAwMCYmdD5ub3c7CiAgICAgIGNvbnN0IGhobW09dG0udG9Mb2NhbGVUaW1lU3RyaW5nKCJqYS1KUCIse2hvdXI6IjItZGlnaXQiLG1pbnV0ZToiMi1kaWdpdCIsaG91cjEyOmZhbHNlfSk7CiAgICAgIGNvbnN0IGRheT10bS50b0xvY2FsZURhdGVTdHJpbmcoImphLUpQIix7bW9udGg6Im51bWVyaWMiLGRheToibnVtZXJpYyJ9KTsKICAgICAgbGV0IGZwPSIiO2lmKGUuZm9yZWNhc3R8fGUucHJldmlvdXMpZnA9JyA8c21hbGw+5LqIJysoZS5mb3JlY2FzdHx8IuKAkyIpKyIgLyDliY0iKyhlLnByZXZpb3VzfHwi4oCTIikrIjwvc21hbGw+IjsKICAgICAgY29uc3Qgcm93PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoImRpdiIpO3Jvdy5jbGFzc05hbWU9ImNhbHJvdyIrKHNvb24/IiBzb29uIjoiIik7CiAgICAgIHJvdy5pbm5lckhUTUw9JzxzcGFuIGNsYXNzPSJ0bSI+JytkYXkrIiAiK2hobW0rJzwvc3Bhbj48c3BhbiBjbGFzcz0iY2MiPicrKENDWV9KQVtlLmNvdW50cnldfHxlLmNvdW50cnkpKyc8L3NwYW4+JwogICAgICAgICsnPHNwYW4gY2xhc3M9Im5tIj4nKyhlLnRpdGxlfHwiIikucmVwbGFjZSgvPC9nLCImbHQ7IikrZnArJzwvc3Bhbj48c3BhbiBjbGFzcz0iaW0iPumrmDwvc3Bhbj4nOwogICAgICBib3guYXBwZW5kQ2hpbGQocm93KTsKICAgICAgY29uc3Qga2V5PWUudGl0bGUrZS5kYXRlOwogICAgICBpZihzb29uJiYhY2FsU2Vlbi5oYXMoa2V5KSl7Y2FsU2Vlbi5hZGQoa2V5KTsKICAgICAgICBpZihudGZPbiYmKCJOb3RpZmljYXRpb24iaW4gd2luZG93KSYmTm90aWZpY2F0aW9uLnBlcm1pc3Npb249PT0iZ3JhbnRlZCIpe3RyeXtuZXcgTm90aWZpY2F0aW9uKCLjgb7jgoLjgarjgY/mjIfmqJnnmbrooagiLHtib2R5OihlLnRpdGxlfHwiIikrIiAiK2hobW19KTt9Y2F0Y2goXyl7fX19CiAgICB9KTsKICAgICQoImNhbE1ldGEiKS50ZXh0Q29udGVudD0i5qyhICIrdXAubGVuZ3RoKyLku7YiKyhkLnVwZGF0ZWQ/IiDCtyDmm7TmlrAgIityZWxUaW1lKGQudXBkYXRlZCk6IiIpOwogIH0KICBhc3luYyBmdW5jdGlvbiBsb2FkQ2FsZW5kYXIoKXt0cnl7Y29uc3Qgcj1hd2FpdCBmZXRjaChBUEkrIi9jYWxlbmRhciIse2NhY2hlOiJuby1zdG9yZSJ9KTtpZighci5vayl0aHJvdyAwOwogICAgY29uc3QgZD1hd2FpdCByLmpzb24oKTtjYWxFdmVudHM9ZC5ldmVudHN8fFtdO3JlbmRlckNhbGVuZGFyKGQpO30KICAgIGNhdGNoKF8peyQoImNhbE1ldGEiKS50ZXh0Q29udGVudD1zZXJ2ZWRCeUJyaWRnZT8i5Y+W5b6X5b6F44GhIjoi44Kq44OV44Op44Kk44OzIjt9fQogIC8vICMx6YCj5YuV77ya44Kr44Os44Oz44OA44O844GuRk9NQy9GZWTmmYLliLvjgavlkIjjgo/jgZvjgabmmKDlg4/jgpLoh6rli5XliIfmm78KICBsZXQgY2FsRXZlbnRzPVtdOwogIGNvbnN0IENBTF9GRURfUkU9L2ZvbWN8ZmVkZXJhbCBmdW5kcyByYXRlfGZlZCBjaGFpcnxwb3dlbGx8ZmVkIGludGVyZXN0IHJhdGV8cHJlc3MgY29uZmVyZW5jZS9pOwogIGZ1bmN0aW9uIGNhbEZlZE5vdygpe2NvbnN0IG5vdz1EYXRlLm5vdygpO3JldHVybiBjYWxFdmVudHMuc29tZShlPT57CiAgICBpZihlLmNvdW50cnkhPT0iVVNEIiYmZS5jb3VudHJ5IT09IkVVUiImJmUuY291bnRyeSE9PSJKUFkiKXJldHVybiBmYWxzZTsKICAgIGlmKCFDQUxfRkVEX1JFLnRlc3QoZS50aXRsZXx8IiIpKXJldHVybiBmYWxzZTsKICAgIGNvbnN0IHQ9RGF0ZS5wYXJzZShlLmRhdGUpO3JldHVybiAhaXNOYU4odCkmJm5vdz49dC01KjYwMDAwJiZub3c8PXQrOTAqNjAwMDA7fSk7fQogIHNldEludGVydmFsKCgpPT57aWYoIWZlZFNyYylyZXR1cm47CiAgICBpZihjYWxGZWROb3coKSl7aWYoIWZlZEFjdGl2ZSl7aWYoc3dpdGNoVG9GZWQoKSl0b2FzdCgi44Kr44Os44Oz44OA44O8OiDkvJropovmmYLliLsg4oaSIEZlZOaYoOWDj+OBuOiHquWLleWIh+abvyIpO31lbHNle2ZlZFVudGlsPU1hdGgubWF4KGZlZFVudGlsLERhdGUubm93KCkrMzAqNjAwMDApO319CiAgfSw2MDAwMCk7CgogIC8vIC0tLS0gIzMg44Ot44Kw44Gu44Kw44Op44OV5YyW77yI44Oi44O844OA44Or77yJIC0tLS0KICBsZXQgbG9nRGF5PW51bGwsbG9nTW9kZT0ic2luZ2xlIixuZXdzTWFya3M9W107CiAgY29uc3QgeW1kPWQ9PmQuZ2V0VVRDRnVsbFllYXIoKStTdHJpbmcoZC5nZXRVVENNb250aCgpKzEpLnBhZFN0YXJ0KDIsIjAiKStTdHJpbmcoZC5nZXRVVENEYXRlKCkpLnBhZFN0YXJ0KDIsIjAiKTsKICBmdW5jdGlvbiBvcGVuTG9nKCl7JCgibG9nbW9kYWwiKS5jbGFzc0xpc3QuYWRkKCJzaG93Iik7bG9nRGF5PW5ldyBEYXRlKCk7bG9hZExvZygpO30KICBmdW5jdGlvbiBjbG9zZUxvZygpeyQoImxvZ21vZGFsIikuY2xhc3NMaXN0LnJlbW92ZSgic2hvdyIpO30KICBmdW5jdGlvbiBzaGlmdERheShuKXtsb2dEYXk9bmV3IERhdGUoKGxvZ0RheXx8bmV3IERhdGUoKSkuZ2V0VGltZSgpK24qODY0MDAwMDApO2xvYWRMb2coKTt9CiAgYXN5bmMgZnVuY3Rpb24gbG9hZExvZygpewogICAgaWYobG9nTW9kZT09PSJjb21wYXJlIil7Y29uc3QgbmQ9TWF0aC5tYXgoMixNYXRoLm1pbigzMCxwYXJzZUludCgkKCJsbS1kYXlzIikudmFsdWUpfHw1KSk7CiAgICAgICQoImxtLWRheSIpLnRleHRDb250ZW50PSLnm7Tov5EiK25kKyLml6Ug5q+U6LyDIjskKCJsbS1mdCIpLnRleHRDb250ZW50PSLoqq3jgb/ovrzjgb/kuK3igKYiOwogICAgICBjb25zdCBkYXlzPVtdO2ZvcihsZXQgaT1uZC0xO2k+PTA7aS0tKWRheXMucHVzaCh5bWQobmV3IERhdGUobG9nRGF5LmdldFRpbWUoKS1pKjg2NDAwMDAwKSkpOwogICAgICB0cnl7Y29uc3QgcmVzPWF3YWl0IFByb21pc2UuYWxsKGRheXMubWFwKGQ9PmZldGNoKEFQSSsiL2xvZ2RhdGE/ZGF5PSIrZCx7Y2FjaGU6Im5vLXN0b3JlIn0pLnRoZW4ocj0+ci5qc29uKCkpLmNhdGNoKCgpPT4oe2RheTpkLHBvaW50czpbXX0pKSkpOwogICAgICAgIGRyYXdDb21wYXJlKHJlcyk7fWNhdGNoKF8peyQoImxtLWZ0IikudGV4dENvbnRlbnQ9IuavlOi8g+ODh+ODvOOCv+OCkuWPluW+l+OBp+OBjeOBvuOBm+OCkyI7fQogICAgICByZXR1cm47fQogICAgY29uc3QgZGF5PXltZChsb2dEYXkpOyQoImxtLWRheSIpLnRleHRDb250ZW50PWRheTskKCJsbS1mdCIpLnRleHRDb250ZW50PSLoqq3jgb/ovrzjgb/kuK3igKYiOwogICAgdHJ5e2NvbnN0IHI9YXdhaXQgZmV0Y2goQVBJKyIvbG9nZGF0YT9kYXk9IitkYXkse2NhY2hlOiJuby1zdG9yZSJ9KTtkcmF3U2luZ2xlKGF3YWl0IHIuanNvbigpKTt9CiAgICBjYXRjaChfKXskKCJsbS1mdCIpLnRleHRDb250ZW50PSLjg63jgrDjgpLlj5blvpfjgafjgY3jgb7jgZvjgpPvvIhsb2dz44OV44Kp44Or44OA5pyq55Sf5oiQ44Gu5Y+v6IO95oCn77yJIjtkcmF3U2luZ2xlKHtwb2ludHM6W119KTt9fQogIGZ1bmN0aW9uIF9jdmZpdCgpe2NvbnN0IGN2PSQoImxtLWN2IiksY3R4PWN2LmdldENvbnRleHQoIjJkIiksZHByPU1hdGgubWluKHdpbmRvdy5kZXZpY2VQaXhlbFJhdGlvfHwxLDIpOwogICAgY29uc3Qgcj1jdi5nZXRCb3VuZGluZ0NsaWVudFJlY3QoKTtjdi53aWR0aD1NYXRoLm1heCgxLHIud2lkdGgqZHByKTtjdi5oZWlnaHQ9TWF0aC5tYXgoMSxyLmhlaWdodCpkcHIpO2N0eC5zZXRUcmFuc2Zvcm0oZHByLDAsMCxkcHIsMCwwKTtyZXR1cm4ge2N0eCxXOnIud2lkdGgsSDpyLmhlaWdodH07fQogIGZ1bmN0aW9uIGRyYXdTaW5nbGUoZCl7Y29uc3Qge2N0eCxXLEh9PV9jdmZpdCgpO2NvbnN0IHBsPTgscHI9NTgscHQ9MTAscGI9MjI7Y3R4LmNsZWFyUmVjdCgwLDAsVyxIKTtuZXdzTWFya3M9W107CiAgICBjb25zdCBwdHM9KGQmJmQucG9pbnRzKXx8W107CiAgICBpZihwdHMubGVuZ3RoPDIpeyQoImxtLWZ0IikudGV4dENvbnRlbnQ9IuOBk+OBruaXpeOBruODh+ODvOOCv+OBjOOBguOCiuOBvuOBm+OCk+OAgiI7Y3R4LmZpbGxTdHlsZT0iIzg2OEM5OSI7Y3R4LmZvbnQ9IjEzcHggc2Fucy1zZXJpZiI7Y3R4LnRleHRBbGlnbj0iY2VudGVyIjtjdHguZmlsbFRleHQoIuODh+ODvOOCv+OBquOBlyIsVy8yLEgvMik7cmV0dXJuO30KICAgIGxldCBtbj1JbmZpbml0eSxteD0tSW5maW5pdHk7Y29uc3QgdDA9cHRzWzBdWzBdLHQxPXB0c1twdHMubGVuZ3RoLTFdWzBdOwogICAgZm9yKGNvbnN0IHAgb2YgcHRzKXtpZihwWzFdPG1uKW1uPXBbMV07aWYocFsxXT5teClteD1wWzFdO30KICAgIGNvbnN0IHBhZD0obXgtbW4pKjAuMDh8fDE7bW4tPXBhZDtteCs9cGFkOwogICAgY29uc3QgWD10PT57Y29uc3QgeD1wbCsoVy1wbC1wcikqKCh0LXQwKS8oKHQxLXQwKXx8MSkpO3JldHVybiBNYXRoLm1heChwbCxNYXRoLm1pbihXLXByLHgpKTt9LFk9dj0+cHQrKEgtcHQtcGIpKigxLSh2LW1uKS8obXgtbW4pKTsKICAgIGN0eC5zdHJva2VTdHlsZT0icmdiYSgzOCw0Miw1MSwuOCkiO2N0eC5maWxsU3R5bGU9IiM4NjhDOTkiO2N0eC5mb250PSIxMHB4IG1vbm9zcGFjZSI7Y3R4LnRleHRBbGlnbj0ibGVmdCI7Y3R4LmxpbmVXaWR0aD0xOwogICAgZm9yKGxldCBnPTA7Zzw9NDtnKyspe2NvbnN0IHY9bW4rKG14LW1uKSpnLzQseT1ZKHYpO2N0eC5iZWdpblBhdGgoKTtjdHgubW92ZVRvKHBsLHkpO2N0eC5saW5lVG8oVy1wcix5KTtjdHguc3Ryb2tlKCk7Y3R4LmZpbGxUZXh0KHYudG9GaXhlZCgyKSxXLXByKzUseSszKTt9CiAgICAvLyDms6jnm67luqYoR0RFTFTlh7rmnaXpq5gp44KS5LiL6YOo44OQ44Oz44OJ44Gr6YeN44Gt5o+P44GN77yL44K544OR44Kk44KvCiAgICBjb25zdCBhdHRuPShkLmF0dG58fFtdKTsKICAgIGlmKGF0dG4ubGVuZ3RoPj0yKXtjb25zdCBhbXg9TWF0aC5tYXgoLi4uYXR0bi5tYXAoYT0+YVsxXSksMWUtNiksYmFuZFRvcD1ILXBiLShILXB0LXBiKSowLjI4LEFZPXY9PkgtcGItKChILXBiKS1iYW5kVG9wKSoodi9hbXgpOwogICAgICBjdHguYmVnaW5QYXRoKCk7Y3R4Lm1vdmVUbyhYKGF0dG5bMF1bMF0pLEgtcGIpO2Zvcihjb25zdCBhIG9mIGF0dG4pY3R4LmxpbmVUbyhYKGFbMF0pLEFZKGFbMV0pKTtjdHgubGluZVRvKFgoYXR0blthdHRuLmxlbmd0aC0xXVswXSksSC1wYik7Y3R4LmNsb3NlUGF0aCgpO2N0eC5maWxsU3R5bGU9InJnYmEoMTIyLDE2MiwyMjQsLjEzKSI7Y3R4LmZpbGwoKTsKICAgICAgY3R4LmJlZ2luUGF0aCgpO2F0dG4uZm9yRWFjaCgoYSxpKT0+e2NvbnN0IHg9WChhWzBdKSx5PUFZKGFbMV0pO2k/Y3R4LmxpbmVUbyh4LHkpOmN0eC5tb3ZlVG8oeCx5KTt9KTtjdHguc3Ryb2tlU3R5bGU9InJnYmEoMTIyLDE2MiwyMjQsLjUpIjtjdHgubGluZVdpZHRoPTE7Y3R4LnN0cm9rZSgpOwogICAgICBmb3IobGV0IGk9MTtpPGF0dG4ubGVuZ3RoO2krKyl7Y29uc3QgYj1hdHRuLnNsaWNlKE1hdGgubWF4KDAsaS0xMiksaSkubWFwKHo9PnpbMV0pLGF2Zz1iLnJlZHVjZSgocyx2KT0+cyt2LDApLyhiLmxlbmd0aHx8MSk7CiAgICAgICAgaWYoYXZnPjAmJmF0dG5baV1bMV0+PWF2ZyoxLjgpe2NvbnN0IHg9WChhdHRuW2ldWzBdKSx5PUFZKGF0dG5baV1bMV0pO2N0eC5iZWdpblBhdGgoKTtjdHgubW92ZVRvKHgseS03KTtjdHgubGluZVRvKHgtNCx5KTtjdHgubGluZVRvKHgrNCx5KTtjdHguY2xvc2VQYXRoKCk7Y3R4LmZpbGxTdHlsZT0iIzdhYTJlMCI7Y3R4LmZpbGwoKTt9fQogICAgfQogICAgY29uc3QgZ3JhZD1jdHguY3JlYXRlTGluZWFyR3JhZGllbnQoMCxwdCwwLEgtcGIpO2dyYWQuYWRkQ29sb3JTdG9wKDAsInJnYmEoMjMwLDE4MCw5MCwuMikiKTtncmFkLmFkZENvbG9yU3RvcCgxLCJyZ2JhKDIzMCwxODAsOTAsMCkiKTsKICAgIGN0eC5iZWdpblBhdGgoKTtjdHgubW92ZVRvKFgodDApLFkocHRzWzBdWzFdKSk7Zm9yKGNvbnN0IHAgb2YgcHRzKWN0eC5saW5lVG8oWChwWzBdKSxZKHBbMV0pKTtjdHgubGluZVRvKFgodDEpLEgtcGIpO2N0eC5saW5lVG8oWCh0MCksSC1wYik7Y3R4LmNsb3NlUGF0aCgpO2N0eC5maWxsU3R5bGU9Z3JhZDtjdHguZmlsbCgpOwogICAgY3R4LmJlZ2luUGF0aCgpO2N0eC5tb3ZlVG8oWCh0MCksWShwdHNbMF1bMV0pKTtmb3IoY29uc3QgcCBvZiBwdHMpY3R4LmxpbmVUbyhYKHBbMF0pLFkocFsxXSkpO2N0eC5saW5lV2lkdGg9MS44O2N0eC5zdHJva2VTdHlsZT0iI0U2QjQ1QSI7Y3R4LmxpbmVKb2luPSJyb3VuZCI7Y3R4LnN0cm9rZSgpOwogICAgLy8g44OL44Ol44O844K5w5fkvqHmoLzjga7ph43jga3mj4/jgY0KICAgIGNvbnN0IEhLPS9mb21jfHBvd2VsbHxmZWR8cmF0ZXxjcGl8bmZwfHBheXJvbGx8ZWNifGJvanxpbmZsYXRpb2585Yip5LiK44GSfOWIqeS4i+OBknzjg5Hjgqbjgqjjg6t85pel6YqAfOmbh+eUqHzmlL/nrZbph5HliKkvaTsKICAgIGNvbnN0IHlBdD10PT57bGV0IGxvPTAsaGk9cHRzLmxlbmd0aC0xO3doaWxlKGxvPGhpKXtjb25zdCBtPShsbytoaSk+PjE7aWYocHRzW21dWzBdPHQpbG89bSsxO2Vsc2UgaGk9bTt9cmV0dXJuIFkocHRzW01hdGgubWF4KDAsTWF0aC5taW4ocHRzLmxlbmd0aC0xLGxvKSldWzFdKTt9OwogICAgKGQubmV3c3x8W10pLmZvckVhY2gobj0+e2lmKG4udDx0MC02MDAwMHx8bi50PnQxKzYwMDAwKXJldHVybjtjb25zdCB4PVgobi50KSx5PXlBdChuLnQpLGhpPUhLLnRlc3Qobi50aXRsZXx8IiIpOwogICAgICBjdHguc3Ryb2tlU3R5bGU9aGk/InJnYmEoMjMwLDE4MCw5MCwuNSkiOiJyZ2JhKDEzNCwxNDAsMTUzLC4yNSkiO2N0eC5saW5lV2lkdGg9MTtjdHguYmVnaW5QYXRoKCk7Y3R4Lm1vdmVUbyh4LHB0KTtjdHgubGluZVRvKHgsSC1wYik7Y3R4LnN0cm9rZSgpOwogICAgICBjdHguYmVnaW5QYXRoKCk7Y3R4LmFyYyh4LHksaGk/NDoyLjUsMCxNYXRoLlBJKjIpO2N0eC5maWxsU3R5bGU9aGk/IiNFNkI0NUEiOiIjODY4Qzk5IjtjdHguZmlsbCgpOwogICAgICBuZXdzTWFya3MucHVzaCh7eCx5LHRpdGxlOm4udGl0bGUsdXJsOm4udXJsLGhpfSk7fSk7CiAgICBjdHguZmlsbFN0eWxlPSIjODY4Qzk5IjtjdHgudGV4dEFsaWduPSJsZWZ0IjtjdHguZmlsbFRleHQobmV3IERhdGUodDApLnRvTG9jYWxlVGltZVN0cmluZygiamEtSlAiLHtob3VyOiIyLWRpZ2l0IixtaW51dGU6IjItZGlnaXQiLGhvdXIxMjpmYWxzZX0pLHBsLEgtNik7CiAgICBjdHgudGV4dEFsaWduPSJyaWdodCI7Y3R4LmZpbGxUZXh0KG5ldyBEYXRlKHQxKS50b0xvY2FsZVRpbWVTdHJpbmcoImphLUpQIix7aG91cjoiMi1kaWdpdCIsbWludXRlOiIyLWRpZ2l0Iixob3VyMTI6ZmFsc2V9KSxXLXByLEgtNik7CiAgICBjb25zdCBoaXY9TWF0aC5tYXgoLi4ucHRzLm1hcChwPT5wWzFdKSksbG92PU1hdGgubWluKC4uLnB0cy5tYXAocD0+cFsxXSkpLGxhc3Q9cHRzW3B0cy5sZW5ndGgtMV1bMV07CiAgICAkKCJsbS1mdCIpLnRleHRDb250ZW50PWQuY291bnQrIueCuSDCtyDpq5jlgKQgIitoaXYudG9GaXhlZCgyKSsiIC8g5a6J5YCkICIrbG92LnRvRml4ZWQoMikrIiAvIOe1guWApCAiK2xhc3QudG9GaXhlZCgyKSsiIMK3IOODi+ODpeODvOOCuSIrKChkLm5ld3N8fFtdKS5sZW5ndGgpKyLku7bvvIjkuLg955m655SfL+mHkT3pq5jjgqTjg7Pjg5Hjgq/jg4jjg7vjgq/jg6rjg4Pjgq/jgafoqJjkuovvvInCtyDpnZI95rOo55uu5bqmIjsKICB9CiAgZnVuY3Rpb24gZHJhd0NvbXBhcmUocmVzKXtjb25zdCB7Y3R4LFcsSH09X2N2Zml0KCk7Y29uc3QgcGw9OCxwcj00OCxwdD0xMCxwYj0yMjtjdHguY2xlYXJSZWN0KDAsMCxXLEgpO25ld3NNYXJrcz1bXTsKICAgIGNvbnN0IGNvbHM9WyIjRTZCNDVBIiwiIzQ5RTBBMCIsIiM3YWEyZTAiLCIjRkY2QjZCIiwiI2I5OGJkNiJdOwogICAgY29uc3Qgc2VyaWVzPXJlcy5tYXAoZD0+e2NvbnN0IHA9KGQucG9pbnRzfHxbXSk7aWYocC5sZW5ndGg8MilyZXR1cm4gbnVsbDtjb25zdCBiYXNlPXBbMF1bMV07CiAgICAgIHJldHVybiB7ZGF5OmQuZGF5LHB0czpwLm1hcCh4PT5bKCh4WzBdJTg2NDAwMDAwKS84NjQwMDAwMCksKHhbMV0vYmFzZS0xKSoxMDBdKX07fSkuZmlsdGVyKEJvb2xlYW4pOwogICAgaWYoIXNlcmllcy5sZW5ndGgpeyQoImxtLWZ0IikudGV4dENvbnRlbnQ9IuavlOi8g+OBp+OBjeOCi+ODh+ODvOOCv+OBjOOBguOCiuOBvuOBm+OCk+OAgiI7Y3R4LmZpbGxTdHlsZT0iIzg2OEM5OSI7Y3R4LmZvbnQ9IjEzcHggc2Fucy1zZXJpZiI7Y3R4LnRleHRBbGlnbj0iY2VudGVyIjtjdHguZmlsbFRleHQoIuODh+ODvOOCv+OBquOBlyIsVy8yLEgvMik7cmV0dXJuO30KICAgIGxldCBtbj1JbmZpbml0eSxteD0tSW5maW5pdHk7c2VyaWVzLmZvckVhY2gocz0+cy5wdHMuZm9yRWFjaChwPT57aWYocFsxXTxtbiltbj1wWzFdO2lmKHBbMV0+bXgpbXg9cFsxXTt9KSk7CiAgICBjb25zdCBwYWQ9KG14LW1uKSowLjF8fDAuMjttbi09cGFkO214Kz1wYWQ7CiAgICBjb25zdCBYPWY9PnBsKyhXLXBsLXByKSpmLFk9dj0+cHQrKEgtcHQtcGIpKigxLSh2LW1uKS8obXgtbW4pKTsKICAgIGN0eC5zdHJva2VTdHlsZT0icmdiYSgzOCw0Miw1MSwuOCkiO2N0eC5maWxsU3R5bGU9IiM4NjhDOTkiO2N0eC5mb250PSIxMHB4IG1vbm9zcGFjZSI7Y3R4LnRleHRBbGlnbj0ibGVmdCI7Y3R4LmxpbmVXaWR0aD0xOwogICAgZm9yKGxldCBnPTA7Zzw9NDtnKyspe2NvbnN0IHY9bW4rKG14LW1uKSpnLzQseT1ZKHYpO2N0eC5iZWdpblBhdGgoKTtjdHgubW92ZVRvKHBsLHkpO2N0eC5saW5lVG8oVy1wcix5KTtjdHguc3Ryb2tlKCk7Y3R4LmZpbGxUZXh0KHYudG9GaXhlZCgyKSsiJSIsVy1wcis1LHkrMyk7fQogICAgZm9yKGxldCBoaD0wO2hoPD0yNDtoaCs9Nil7Y29uc3QgeD1YKGhoLzI0KTtjdHguZmlsbFRleHQoaGgrImgiLHgsSC02KTt9CiAgICBzZXJpZXMuZm9yRWFjaCgocyxpKT0+e2N0eC5iZWdpblBhdGgoKTtzLnB0cy5mb3JFYWNoKChwLGopPT57Y29uc3QgeD1YKHBbMF0pLHk9WShwWzFdKTtqP2N0eC5saW5lVG8oeCx5KTpjdHgubW92ZVRvKHgseSk7fSk7CiAgICAgIGN0eC5saW5lV2lkdGg9MS42O2N0eC5zdHJva2VTdHlsZT1jb2xzW2klY29scy5sZW5ndGhdO2N0eC5zdHJva2UoKTt9KTsKICAgIC8vIOWHoeS+iwogICAgbGV0IGx4PXBsKzQ7c2VyaWVzLmZvckVhY2goKHMsaSk9PntjdHguZmlsbFN0eWxlPWNvbHNbaSVjb2xzLmxlbmd0aF07Y3R4LmZpbGxSZWN0KGx4LHB0KzIsOSwzKTtjdHguZmlsbFN0eWxlPSIjODY4Qzk5IjtjdHgudGV4dEFsaWduPSJsZWZ0IjsKICAgICAgY29uc3QgbGJsPXMuZGF5LnNsaWNlKDQsNikrIi8iK3MuZGF5LnNsaWNlKDYsOCk7Y3R4LmZpbGxUZXh0KGxibCxseCsxMixwdCs2KTtseCs9NTI7fSk7CiAgICAkKCJsbS1mdCIpLnRleHRDb250ZW50PSLnm7Tov5E15pel44KS44CO5aeL5YCk5q+UJeODu1VUQ+aZguWIu+OAj+OBp+mHjeOBreaPj+OBje+8iOW9ouOBruavlOi8g+eUqO+8iSI7CiAgfQogIC8vIOWNmOaXpeODouODvOODieOBruODm+ODkOODvOOBp+ODi+ODpeODvOOCueimi+WHuuOBl+OCkuihqOekuu+8i+OCr+ODquODg+OCr+OBp+iomOS6iwogIGZ1bmN0aW9uIG5lYXJlc3RNYXJrKGUpe2NvbnN0IHI9JCgibG0tY3YiKS5nZXRCb3VuZGluZ0NsaWVudFJlY3QoKSxteD1lLmNsaWVudFgtci5sZWZ0LG15PWUuY2xpZW50WS1yLnRvcDsKICAgIGxldCBiZXN0PW51bGwsYmQ9MTQ7Zm9yKGNvbnN0IG0gb2YgbmV3c01hcmtzKXtjb25zdCBkPU1hdGguaHlwb3QobS54LW14LG0ueS1teSk7aWYoZDxiZCl7YmQ9ZDtiZXN0PW07fX1yZXR1cm4gYmVzdDt9CiAgJCgibG0tY3YiKS5hZGRFdmVudExpc3RlbmVyKCJtb3VzZW1vdmUiLGU9PntpZihsb2dNb2RlIT09InNpbmdsZSJ8fCFuZXdzTWFya3MubGVuZ3RoKXskKCJsbS1jdiIpLnN0eWxlLmN1cnNvcj0iZGVmYXVsdCI7cmV0dXJuO30KICAgIGNvbnN0IGJlc3Q9bmVhcmVzdE1hcmsoZSk7JCgibG0tY3YiKS5zdHlsZS5jdXJzb3I9YmVzdD8icG9pbnRlciI6ImRlZmF1bHQiO2lmKGJlc3QpJCgibG0tZnQiKS50ZXh0Q29udGVudD0i44OL44Ol44O844K5OiAiK2Jlc3QudGl0bGU7fSk7CiAgJCgibG0tY3YiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsZT0+e2lmKGxvZ01vZGUhPT0ic2luZ2xlIilyZXR1cm47Y29uc3QgYmVzdD1uZWFyZXN0TWFyayhlKTtpZihiZXN0JiZiZXN0LnVybCl3aW5kb3cub3BlbihiZXN0LnVybCwiX2JsYW5rIiwibm9vcGVuZXIiKTt9KTsKICAkKCJsb2didG4iKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsb3BlbkxvZyk7CiAgJCgibG0tbW9kZSIpLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwoKT0+e2xvZ01vZGU9bG9nTW9kZT09PSJzaW5nbGUiPyJjb21wYXJlIjoic2luZ2xlIjsKICAgICQoImxtLW1vZGUiKS50ZXh0Q29udGVudD1sb2dNb2RlPT09InNpbmdsZSI/Iuikh+aVsOaXpeavlOi8gyI6IuWNmOaXpeOBq+aIu+OBmSI7JCgibG0tbW9kZSIpLmNsYXNzTGlzdC50b2dnbGUoIm9uIixsb2dNb2RlPT09ImNvbXBhcmUiKTtsb2FkTG9nKCk7fSk7CiAgJCgibG0tY2xvc2UiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsY2xvc2VMb2cpOwogICQoImxtLXByZXYiKS5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsKCk9PnNoaWZ0RGF5KC0xKSk7CiAgJCgibG0tbmV4dCIpLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwoKT0+c2hpZnREYXkoMSkpOwogICQoImxvZ21vZGFsIikuYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLGU9PntpZihlLnRhcmdldC5pZD09PSJsb2dtb2RhbCIpY2xvc2VMb2coKTt9KTsKCiAgbG9hZE5ld3MoKTtzZXRJbnRlcnZhbChsb2FkTmV3cyw0NTAwMCk7CiAgbG9hZEdlbygpO3NldEludGVydmFsKGxvYWRHZW8sMTIwMDAwKTsKICBsb2FkUHVsc2UoKTtzZXRJbnRlcnZhbChsb2FkUHVsc2UsMTIwMDAwKTsKICBsb2FkQ2FsZW5kYXIoKTtzZXRJbnRlcnZhbChsb2FkQ2FsZW5kYXIsNjAwMDAwKTsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigicmVzaXplIiwoKT0+e2ZpdFNwYXJrKCk7fSk7Cn0pKCk7Cjwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4K"
+
+# ---- 履歴バッファ（チャート用） ----------------------------
+HISTORY_MAXLEN = 3600       # 保持する最大点数
+HISTORY_MIN_GAP_MS = 250    # 記録間隔（間引き。0.25秒に1点＝約15分保持）
+
+# ---- ニュース設定 -----------------------------------------
+NEWS_ENABLED = True
+NEWS_MAX_ITEMS = 40
+NEWS_TIMEOUT = 8                 # 1回の取得のタイムアウト秒
+NEWS_GOOGLE_INTERVAL = 60        # Google News 取得間隔（速い経路＝短め）
+NEWS_GDELT_INTERVAL = 180        # GDELT 取得間隔（重い経路＝長め）
+NEWS_GDELT_START_DELAY = 3       # 起動直後はGoogleを先に出すため少し遅らせる
+NEWS_UA = "Mozilla/5.0 (compatible; XAUUSD-Bridge/1.0)"
+# Google News RSS クエリ（言語/地域, 検索語）
+GOOGLE_NEWS_QUERIES = [
+    ("ja", "JP", "金 価格 OR 金相場 OR ゴールド OR XAUUSD"),
+    ("en", "US", "gold price OR XAUUSD OR gold futures"),
+]
+# GDELT DOC 2.0 クエリ
+GDELT_QUERY = '(XAUUSD OR "gold price" OR "gold futures")'
+GDELT_TIMESPAN = "2d"
+
+# ---- 自動ログ / 翻訳 --------------------------------------
+LOG_ENABLED = True
+LOG_INTERVAL = 60                 # 価格・ニュースをCSVに記録する間隔(秒)
+LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+TRANSLATE_ENABLED = True           # 海外見出しを日本語へ自動翻訳（キー不要のgtx経路）
+TRANSLATE_PER_CYCLE = 8
+DEEPL_API_KEY = ""                 # DeepLキーを入れると高品質翻訳。空ならgtx経路
+# ---- 経済指標カレンダー（実データ） -----------------------
+CALENDAR_ENABLED = True
+CALENDAR_INTERVAL = 3600
+CALENDAR_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+CALENDAR_IMPACT = {"High"}
+CALENDAR_CCY = {"USD", "EUR", "JPY", "GBP", "CNY"}
+
+# ---- 地図用ジオ（GDELT GEO: 世界中の金関連ニュースを発生地つきで） ----
+GEO_INTERVAL = 300               # 地図データ更新間隔（秒）
+GEO_TIMESPAN = "3d"
+GEO_MAXPOINTS = 80
+GEO_QUERY = '(gold price OR XAUUSD OR "central bank gold" OR bullion OR "gold reserves")'
+
+# ---- 共有状態 ---------------------------------------------
+_state_lock = threading.Lock()
+_history = deque(maxlen=HISTORY_MAXLEN)   # 各要素: [t_ms, mid]
+_hist_last_ms = 0
+_latest = {
+    "symbol": None,
+    "bid": None,
+    "ask": None,
+    "mid": None,
+    "spread": None,
+    "time": None,       # ISO文字列(UTC)
+    "source": "init",   # "mt5" | "demo" | "init"
+    "seq": 0,           # 更新のたびに増える連番
 }
-function renderSessionMarkers(){
-sessionMarkers.forEach(m=>map.removeLayer(m));sessionMarkers=[];
-marketSessions.forEach(s=>{
-const cls=s.id==="sessionUS"?"usSession":"";
-const html=`<div class="marketSession ${cls}" id="${s.id}"><div class="sessionName"><span class="sessionDot"></span>${s.name}</div><div class="sessionTime">${s.time}</div><div class="sessionState" id="${s.stateId}">OFF</div></div>`;
-const marker=L.marker([s.lat,s.lng],{icon:L.divIcon({className:"",html,iconSize:[132,56],iconAnchor:[66,28]})}).addTo(map);
-sessionMarkers.push(marker);
-});
+
+
+def _set_latest(symbol, bid, ask, source):
+    """最新値を更新（seqをインクリメント）。履歴も間引いて記録。"""
+    global _hist_last_ms
+    with _state_lock:
+        mid = (bid + ask) / 2.0 if (bid is not None and ask is not None) else None
+        spread = (ask - bid) if (bid is not None and ask is not None) else None
+        _latest.update({
+            "symbol": symbol,
+            "bid": bid,
+            "ask": ask,
+            "mid": round(mid, 3) if mid is not None else None,
+            "spread": round(spread, 3) if spread is not None else None,
+            "time": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
+            "source": source,
+            "seq": _latest["seq"] + 1,
+        })
+        if mid is not None:
+            now_ms = int(time.time() * 1000)
+            if now_ms - _hist_last_ms >= HISTORY_MIN_GAP_MS:
+                _hist_last_ms = now_ms
+                _history.append([now_ms, round(mid, 3)])
+
+
+def history_payload():
+    with _state_lock:
+        pts = list(_history)
+    return {"points": pts, "count": len(pts)}
+
+
+def _snapshot():
+    with _state_lock:
+        return dict(_latest)
+
+
+# ============================================================
+#  ニュース（サーバー側で取得 → /news で配信。CORS問題を回避）
+# ============================================================
+_news_lock = threading.Lock()
+_news = {
+    "google": [],           # Google News の記事
+    "gdelt": [],            # GDELT の記事
+    "merged": [],           # 重複除去・新着順にまとめた配信用
+    "updated": None,        # 最終更新(UTC ISO)
+    "status": {"google": "init", "gdelt": "init"},
 }
-function buildLayers(){
-document.getElementById("mapLegend").innerHTML=layerDefs.map(l=>`<button class="mapLayerBtn active" data-layer="${l.id}" onclick="toggleLayer('${l.id}',this)"><span style="color:${l.color}">●</span><span>${l.label}</span><b>ON</b></button>`).join("");
-}
-function updateLayerButtons(){
-document.querySelectorAll(".mapLayerBtn").forEach(btn=>{
-const id=btn.dataset.layer;
-const count=headlines.filter(h=>h.layer.id===id).length;
-const badge=btn.querySelector("b");
-if(!badge)return;
-badge.textContent=activeLayers.has(id)?`ON ${count}`:"OFF";
-});
-}
-function toggleLayer(id,btn){
-if(activeLayers.has(id)){activeLayers.delete(id);btn.classList.remove("active");btn.querySelector("b").textContent="OFF"}
-else{activeLayers.add(id);btn.classList.add("active");btn.querySelector("b").textContent="ON"}
-renderMarkers();renderHeadlines();
-}
-function classify(text){
-const t=(text||"").toLowerCase();
-const matched=layerDefs.filter(l=>l.keywords.some(k=>t.includes(k)));
-const primary=matched[0]||layerDefs.find(l=>l.id==="gold");
-let region="US";
-for(const l of matched){const r=l.regions.find(x=>t.includes(x.toLowerCase().replace("middle east","middle east"))||["US","FED","GLOBAL"].includes(x));if(r){region=r;break}}
-if(t.includes("iran"))region="IRAN";else if(t.includes("israel")||t.includes("gaza")||t.includes("houthi")||t.includes("red sea"))region="MIDDLE EAST";else if(t.includes("ukraine"))region="UKRAINE";else if(t.includes("russia"))region="RUSSIA";else if(t.includes("china"))region="CHINA";else if(t.includes("taiwan"))region="TAIWAN";else if(t.includes("oil")||t.includes("opec")||t.includes("energy"))region="ENERGY";else if(t.includes("fed")||t.includes("powell")||t.includes("fomc"))region="FED";
-if(t.includes("hormuz"))region="HORMUZ";else if(t.includes("suez"))region="SUEZ";else if(t.includes("panama"))region="PANAMA";else if(t.includes("red sea"))region="RED SEA";
-const impact=matched.some(l=>l.type==="high")?"HIGH":matched.some(l=>l.type==="macro")?"MACRO":"WATCH";
-return{layer:primary,matched,region,impact};
-}
-function impactText(item){
-if(item.layer.id==="fed")return"見る判断: 米金利とDXYが上なら金は売られやすいです。米金利低下、利下げ期待、弱い米指標なら金は買われやすいです。";
-if(item.layer.id==="dollar")return"見る判断: DXY上昇はXAUUSDに下押し、DXY低下はXAUUSDに追い風です。米10年金利も同時に確認してください。";
-if(item.layer.id==="middleEast")return"見る判断: 中東リスク拡大は安全資産買いで金にプラスです。ただしドルも買われるため、DXYが強すぎる時は上値が重くなります。";
-if(item.layer.id==="energy")return"見る判断: 原油高はインフレ警戒で金にプラスになりやすいです。ただし米金利が急上昇すると金には逆風です。";
-if(item.layer.id==="waterway")return"見る判断: ホルムズ、紅海、スエズなどの海上リスクは原油高とリスクオフにつながり、金買い材料になりやすいです。";
-if(item.layer.id==="risk")return"見る判断: 戦争・テロ・制裁はリスクオフで金買い材料です。初動は金買い、その後はDXYと米金利で継続性を確認します。";
-return"見る判断: 金関連ニュースです。DXY、米10年金利、原油、地政学リスクが同じ方向ならXAUUSDの動きが強くなります。";
-}
-function impactLabel(item){
-if(item.layer.id==="fed"||item.layer.id==="dollar")return"米金利/DXY次第";
-if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"金買い材料";
-if(item.layer.id==="energy")return"インフレ材料";
-return item.impact==="HIGH"?"急変注意":item.impact==="MACRO"?"マクロ材料":"監視";
-}
-function xauBias(item){
-const t=(item.title||"").toLowerCase();
-if(item.layer.id==="middleEast"||item.layer.id==="risk"||item.layer.id==="waterway")return"買い";
-if(item.layer.id==="energy")return"買い";
-if(t.includes("cut")||t.includes("weaker")||t.includes("falls")||t.includes("drop")||t.includes("lower yield")||t.includes("dovish"))return"買い";
-if(t.includes("higher yield")||t.includes("hawkish")||t.includes("strong dollar")||t.includes("hot inflation")||t.includes("rate hike"))return"売り注意";
-return"待ち";
-}
-function checkPoint(item){
-if(item.layer.id==="fed")return"米10年金利";
-if(item.layer.id==="dollar")return"DXY";
-if(item.layer.id==="middleEast"||item.layer.id==="risk")return"有事リスク";
-if(item.layer.id==="energy")return"原油/WTI";
-if(item.layer.id==="waterway")return"海上輸送";
-return"金ニュース";
-}
-function decisionReason(item){
-if(item.layer.id==="middleEast")return"理由: 中東リスクは安全資産の金が買われやすい材料です。ドルが強すぎる時だけ注意です。";
-if(item.layer.id==="risk")return"理由: 戦争・制裁・軍事ニュースはリスク回避で金が買われやすい材料です。";
-if(item.layer.id==="waterway")return"理由: 海上リスクは原油高とインフレ警戒につながり、金が買われやすい材料です。";
-if(item.layer.id==="energy")return"理由: 原油高はインフレ警戒につながり、金が買われやすい材料です。";
-if(item.layer.id==="fed")return"理由: FRB・米指標だけでは方向が決まりません。米10年金利が下がれば買い、上がれば売り注意です。";
-if(item.layer.id==="dollar")return"理由: ドルと米金利で決まります。DXY上昇は売り注意、DXY低下は買いです。";
-return"理由: 金ニュースだけではまだ判断不足です。DXYと米10年金利が同じ方向に動くまで待ちです。";
-}
-function decisionTitle(item){
-const bias=xauBias(item);
-if(bias==="買い")return"買い優勢";
-if(bias==="売り注意")return"売り注意";
-return"待ち";
-}
-function formatFullTime(ts){
-const d=new Date(ts||Date.now());
-return d.toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});
-}
-function ageText(ts){
-const diff=Math.max(0,Date.now()-(ts||Date.now()));
-const min=Math.floor(diff/60000);
-if(min<1)return"いま更新";
-if(min<60)return`${min}分前`;
-return`${Math.floor(min/60)}時間前`;
-}
-function headlineMeta(item){
-return `${formatFullTime(item.timestamp)} / ${ageText(item.timestamp)} / ${item.source}`;
-}
-function biasClass(item){
-const b=xauBias(item);
-if(b==="売り注意")return"sell";
-if(b==="待ち")return"wait";
-return"buy";
-}
-async function fetchGDELT(){
-const url="https://api.gdeltproject.org/api/v2/doc/doc?query="+encodeURIComponent(gdeltQuery)+"&mode=ArtList&format=json&maxrecords=30&sort=HybridRel&timespan=12h";
-const res=await fetchWithTimeout(url,1800);
-if(!res.ok)return[];
-const data=await res.json();
-return(data.articles||[]).map(article=>{
-const raw=article.seendate||article.datetime||"";
-const d=raw?new Date(raw.replace(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/,"$1-$2-$3T$4:$5:$6Z")):new Date();
-const title=article.title||"No title";
-const c=classify(title+" "+(article.domain||""));
-return{id:article.url||title,source:article.domain||"GDELT",title,link:article.url||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
-});
-}
-async function fetchGoogleNews(feedUrl){
-try{
-const url="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(feedUrl)+"&_="+Date.now();
-const res=await fetchWithTimeout(url,7000);
-if(!res.ok)throw new Error("rss2json failed");
-const data=await res.json();
-return(data.items||[]).slice(0,40).map(article=>{
-const title=article.title||"No title";
-const d=article.pubDate?new Date(article.pubDate):new Date();
-const source=article.author||"Google News";
-const c=classify(title+" "+source);
-return{id:article.link||title,source,title,link:article.link||"",time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
-});
-}catch(e){
-const url="https://api.allorigins.win/raw?url="+encodeURIComponent(feedUrl)+"&_="+Date.now();
-const res=await fetchWithTimeout(url,3500);
-if(!res.ok)throw new Error("Google News RSS backup failed");
-const xml=await res.text();
-const doc=new DOMParser().parseFromString(xml,"text/xml");
-return Array.from(doc.querySelectorAll("item")).slice(0,40).map(item=>{
-const title=item.querySelector("title")?.textContent||"No title";
-const link=item.querySelector("link")?.textContent||"";
-const pub=item.querySelector("pubDate")?.textContent||"";
-const source=item.querySelector("source")?.textContent||"Google News";
-const d=pub?new Date(pub):new Date();
-const c=classify(title+" "+source);
-return{id:link||title,source,title,link,time:d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",hour12:false}),date:d.toLocaleDateString("ja-JP"),timestamp:d.getTime()||Date.now(),isRecent:Date.now()-(d.getTime()||Date.now())<=7200000,...c};
-});
-}
-}
-async function loadNews(){
-if(newsLoading)return;
-newsLoading=true;
-const shouldRefreshGoogle=!lastGoogleNewsAt||Date.now()-lastGoogleNewsAt>=GOOGLE_NEWS_REFRESH_MS;
-const status=document.getElementById("statusText");
-if(status)status.textContent=headlines.length?`${headlines.length} LIVE / 更新中`:"速報取得中";
-try{
-let all=[];
-const jobs=[fetchGDELT(),...(shouldRefreshGoogle?googleNewsFeeds.map(feed=>fetchGoogleNews(feed)):[])];
-const results=await Promise.allSettled(jobs);
-let googleFresh=[];
-results.forEach((result,index)=>{
-if(result.status==="fulfilled"){
-if(index===0)all=all.concat(result.value);
-else googleFresh=googleFresh.concat(result.value);
-}
-else console.log(index===0?"GDELT":"Google News",result.reason);
-});
-if(shouldRefreshGoogle){
-if(googleFresh.length)cachedGoogleNews=googleFresh;
-lastGoogleNewsAt=Date.now();
-}
-all=all.concat(cachedGoogleNews);
-headlines=all.filter(isXauRelevant).filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i).sort((a,b)=>b.timestamp-a.timestamp).slice(0,160);
-renderAll();
-}finally{
-newsLoading=false;
-}
-}
-function isXauRelevant(item){
-const t=((item.title||"")+" "+(item.source||"")).toLowerCase();
-if(item.layer.id==="gold")return true;
-if(t.includes("gold")||t.includes("xauusd")||t.includes("bullion")||t.includes("precious metal")||t.includes("金価格")||t.includes("金相場")||t.includes("ゴールド"))return true;
-if(t.includes("dxy")||t.includes("dollar index")||t.includes("treasury")||t.includes("yield")||t.includes("fed")||t.includes("fomc")||t.includes("powell")||t.includes("inflation")||t.includes("cpi")||t.includes("pce")||t.includes("payroll")||t.includes("米金利")||t.includes("ドル指数")||t.includes("インフレ"))return true;
-if(t.includes("ecb")||t.includes("boj")||t.includes("boe")||t.includes("pboc")||t.includes("central bank")||t.includes("china")||t.includes("yuan")||t.includes("yen"))return true;
-if(t.includes("iran")||t.includes("israel")||t.includes("gaza")||t.includes("houthi")||t.includes("red sea")||t.includes("hormuz")||t.includes("ukraine")||t.includes("oil")||t.includes("opec")||t.includes("sanction")||t.includes("tariff")||t.includes("原油")||t.includes("中東")||t.includes("地政学"))return true;
-return false;
-}
-function renderAll(){updateLayerButtons();renderMarkers();renderHeadlines();renderRisk();showItem(headlines[0],false);document.getElementById("statusText").textContent=headlines.length?`${headlines.length} LIVE`:"取得待ち"}
-function renderMarkers(){
-markers.forEach(m=>map.removeLayer(m));markers=[];
-layerDefs.filter(l=>activeLayers.has(l.id)).forEach((l,i)=>{
-const r=regionMap[l.regions[0]]||regionMap.GLOBAL;
-const marker=L.marker([r.lat,r.lng],{icon:L.divIcon({className:"",html:`<div class="marker ${l.type}"></div>`,iconSize:[24,24]})}).addTo(map);
-const count=headlines.filter(h=>h.layer.id===l.id).length;
-marker.bindPopup(`<div class="popup"><b>${l.label}</b><br><small>レイヤーON / ニュース ${count}件</small><br>このレイヤーをOFFにすると地図上から消えます。</div>`);
-markers.push(marker);
-});
-headlines.filter(h=>activeLayers.has(h.layer.id)).slice(0,30).forEach((h,i)=>{
-const r=regionMap[h.region]||regionMap.US;
-const jitter=(i%5-2)*.45;
-const marker=L.marker([r.lat+jitter,r.lng-jitter],{icon:L.divIcon({className:"",html:`<div class="marker ${h.layer.type}"></div>`,iconSize:[24,24]})}).addTo(map);
-marker.bindPopup(`<div class="popup"><b>${h.layer.label}</b><br><small>${h.source} / ${h.time}</small><br>${escapeHtml(h.title)}</div>`);
-marker.on("click",()=>selectItem(h));
-markers.push(marker);
-});
-}
-function renderHeadlines(){
-const visible=headlines.filter(h=>activeLayers.has(h.layer.id));
-const empty=headlines.length?"選択中レイヤーに一致するライブニュースはありません。":"XAUUSD関連ニュースを取得中です。API制限時は次の更新で再取得します。";
-document.getElementById("headlineList").innerHTML=visible.map((h,i)=>`<div class="headline" onclick="selectItemById('${cssSafe(h.id)}')"><div class="headlineTop"><span class="headlineSrc">${h.layer.label}</span><span class="headlineImpact ${biasClass(h)}">${xauBias(h)}</span><span class="headlineTime">${headlineMeta(h)}</span></div><div class="headlineText">${escapeHtml(h.title)}</div></div>`).join("")||`<div class="headlineText">${empty}</div>`;
-}
-function renderMiniSummary(visible){
-const buy=visible.filter(h=>xauBias(h)==="買い").length;
-const sell=visible.filter(h=>xauBias(h)==="売り注意").length;
-const wait=visible.filter(h=>xauBias(h)==="待ち").length;
-const high=visible.filter(h=>h.impact==="HIGH").length;
-const rows=layerDefs.map(l=>{
-const count=visible.filter(h=>h.layer.id===l.id).length;
-return`<div class="miniItem"><div class="summaryGrid"><span class="miniLabel">${l.label}</span><span class="summaryCount">${count}</span></div><div class="summaryMeta">地図レイヤー ${activeLayers.has(l.id)?"ON":"OFF"}</div></div>`;
-}).join("");
-document.getElementById("miniFeed").innerHTML=`<div class="miniItem"><span class="miniWhen">${formatFullTime(Date.now())}</span><span class="miniBias buy">買い ${buy}</span> <span class="miniBias sell">売り注意 ${sell}</span> <span class="miniBias wait">待ち ${wait}</span><span class="miniTitle">危険材料 ${high}件 / 表示中ニュース ${visible.length}件</span></div>${rows}`;
-}
-function renderRisk(){
-const recent=headlines.filter(h=>h.isRecent);
-const score=headlines.length?Math.min(99,Math.round(10+recent.length*4+recent.filter(h=>h.impact==="HIGH").length*9+recent.filter(h=>h.impact==="MACRO").length*5)):0;
-document.getElementById("riskScore").textContent=score;
-const badge=document.getElementById("riskBadge");
-badge.textContent=headlines.length?(score>=70?"急変":score>=45?"警戒":"通常"):"取得待ち";
-badge.style.background=score>=70?"var(--red)":score>=45?"var(--amber)":"var(--blue)";
-badge.style.color=score>=70?"#fff":"#06100c";
-document.getElementById("riskText").textContent=!headlines.length?"ニュース取得中。API制限時は次の更新で再取得します。":score>=70?"危険。金が飛びやすい材料が複数あります。DXY・米10年金利・中東を確認。":score>=45?"警戒。リアルタイム材料あり。FRB・米指標・地政学に注意。":"通常。直近ニュースだけでは大きな急変材料は少なめ。";
-document.getElementById("riskUpdated").textContent=`最終更新 ${new Date().toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})}`;
-}
-function selectItemById(id){const item=headlines.find(h=>cssSafe(h.id)===id);if(item)showItem(item,true)}
-function selectItem(item){showItem(item,true)}
-function showItem(item,moveMap){
-if(!item){showEmptyIntel();return}
-document.getElementById("intelTag").textContent=item.layer.label;
-document.getElementById("intelTitle").textContent=decisionTitle(item);
-document.getElementById("intelTitle").style.color=xauBias(item)==="買い"?"var(--blue)":xauBias(item)==="売り注意"?"var(--red)":"var(--gold)";
-document.getElementById("intelBody").textContent=decisionReason(item);
-document.getElementById("intelSource").textContent=item.source;
-document.getElementById("intelRegion").textContent=checkPoint(item);
-document.getElementById("intelImpact").textContent=xauBias(item);
-document.getElementById("intelTime").textContent=headlineMeta(item);
-document.getElementById("intelScenario").textContent=`元ニュース: ${item.title}`;
-const r=regionMap[item.region]||regionMap.US;
-if(moveMap)map.flyTo([r.lat,r.lng],Math.min(5,Math.max(3,r.zoom-1)),{duration:.8});
-}
-function showEmptyIntel(){
-document.getElementById("intelTag").textContent="XAUUSDライブニュース";
-document.getElementById("intelTitle").textContent="取得中";
-document.getElementById("intelTitle").style.color="var(--gold)";
-document.getElementById("intelBody").textContent="ニュースAPIを再取得中です。GDELTが制限中でもGoogle News RSSから取得します。固定の買い材料・売り材料は表示しません。";
-document.getElementById("intelSource").textContent="GDELT / Google News";
-document.getElementById("intelRegion").textContent="XAUUSD / DXY / 米金利";
-document.getElementById("intelImpact").textContent="待ち";
-document.getElementById("intelTime").textContent=formatFullTime(Date.now());
-document.getElementById("intelScenario").textContent="取得できたニュースが入り次第、ここに買い・売り注意・待ちを表示します。";
-}
-function focusRegion(name){
-const r=regionMap[name]||regionMap.GLOBAL;
-document.getElementById("mapMode").textContent=name==="MIDDLE EAST"?"中東":"全体";
-map.flyTo([r.lat,r.lng],Math.min(5,r.zoom),{duration:.8});
-}
-function updateClock(){
-const now=new Date().toLocaleTimeString("ja-JP",{hour12:false});
-document.getElementById("clock").textContent=now;
-const book=document.getElementById("bookClock");
-if(book)book.textContent=now;
-updateMarketSessions();
-}
-function getJstMinutes(){
-const parts=new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date());
-const hour=Number(parts.find(p=>p.type==="hour")?.value||0);
-const minute=Number(parts.find(p=>p.type==="minute")?.value||0);
-return hour*60+minute;
-}
-function isJstWeekend(){
-const dayText=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Tokyo",weekday:"short"}).format(new Date());
-return dayText==="Sat"||dayText==="Sun";
-}
-function isSessionOpen(now,start,end){
-return start<end?now>=start&&now<end:now>=start||now<end;
-}
-function setSessionState(id,stateId,isOpen,isClosed){
-const box=document.getElementById(id);
-const state=document.getElementById(stateId);
-if(!box||!state)return;
-box.classList.toggle("closed",isClosed);
-box.classList.toggle("active",!isClosed&&isOpen);
-state.textContent=isClosed?"WEEKEND CLOSE":isOpen?"SESSION ON":"OFF";
-}
-function updateMarketSessions(){
-const now=getJstMinutes();
-const closed=isJstWeekend();
-marketSessions.forEach(s=>setSessionState(s.id,s.stateId,isSessionOpen(now,s.start,s.end),closed));
-}
-function updateOandaMonitor(){
-const el=document.getElementById("oandaClock");
-if(!el)return;
-el.textContent="外部参照 " + new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
-}
-function setBookDisconnected(){
-document.getElementById("bookSource").textContent="MT5待機";
-document.getElementById("bookSpread").textContent="Spread --";
-document.getElementById("bookNote").textContent="MT5ブリッジ待機中です。外部フローはCME/OANDA/CFTC/WGC/TradingViewのボタンから確認できます。";
-for(let i=1;i<=3;i++){setBookRow("ask",i,null);setBookRow("bid",i,null)}
-}
-function setBookRow(side,index,level){
-const price=document.getElementById(`${side}Price${index}`);
-const qty=document.getElementById(`${side}Qty${index}`);
-const row=price?.closest(".bookRow");
-if(!price)return;
-if(!level){
-if(row)row.style.display=index===1?"grid":"none";
-price.textContent=index===1?"待機":"--";
-if(qty)qty.textContent="--";
-return;
-}
-if(row)row.style.display="grid";
-const size=Number(level.size||level.volume||0);
-price.textContent=Number(level.price).toFixed(3);
-if(qty)qty.textContent=size.toFixed(1);
-}
-async function updateOrderBook(){
-try{
-const res=await fetchWithTimeout("http://127.0.0.1:8787/book",800);
-if(!res.ok)throw new Error("book bridge unavailable");
-const data=await res.json();
-const asks=(data.asks||[]).slice(0,3);
-const bids=(data.bids||[]).slice(0,3);
-document.getElementById("bookSource").textContent=data.source||data.symbol||"LOCAL BRIDGE";
-const bestAsk=Number(asks[0]?.price||data.ask||0),bestBid=Number(bids[0]?.price||data.bid||0);
-document.getElementById("bookSpread").textContent=bestAsk&&bestBid?`Spread ${(bestAsk-bestBid).toFixed(3)}`:"Spread --";
-for(let i=1;i<=3;i++){
-setBookRow("ask",i,asks[i-1]||(i===1&&data.ask?{price:data.ask,size:data.askSize}:null));
-setBookRow("bid",i,bids[i-1]||(i===1&&data.bid?{price:data.bid,size:data.bidSize}:null));
-}
-const askDepth=asks.length||(data.ask?1:0);
-const bidDepth=bids.length||(data.bid?1:0);
-document.getElementById("bookNote").textContent=(askDepth>1||bidDepth>1)
-?`MT5ブリッジから売り板${askDepth}段・買い板${bidDepth}段を表示中です。`
-:"MT5は最良ASK/BIDの1段のみ取得中。CME/OANDA/CFTC/WGC/TradingViewも外部フローとして併用してください。";
-}catch(e){setBookDisconnected()}
-}
-function selectTechnicalTf(interval,btn){
-document.querySelectorAll(".techTfBtn").forEach(b=>b.classList.toggle("active",b===btn));
-renderTechnicalWidget(interval);
-}
-function renderTechnicalWidget(interval){
-const box=document.getElementById("technicalWidget");
-if(!box)return;
-box.innerHTML='<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
-const container=box.querySelector(".tradingview-widget-container");
-const script=document.createElement("script");
-script.src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
-script.async=true;
-script.text=JSON.stringify({
-interval,
-width:"100%",
-height:"100%",
-isTransparent:true,
-symbol:"OANDA:XAUUSD",
-showIntervalTabs:false,
-displayMode:"single",
-locale:"ja",
-colorTheme:"dark"
-});
-container.appendChild(script);
-}
-function escapeHtml(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function cssSafe(s){return String(s||"").replace(/[^a-zA-Z0-9_-]/g,"_").slice(0,80)}
-function fetchWithTimeout(url,ms){
-const controller=new AbortController();
-const timer=setTimeout(()=>controller.abort(),ms);
-return fetch(url,{cache:"no-store",signal:controller.signal}).finally(()=>clearTimeout(timer));
-}
-initMap();buildLayers();renderTechnicalWidget("15m");updateOandaMonitor();updateClock();loadNews();
-setInterval(updateClock,1000);
-setInterval(loadNews,NEWS_REFRESH_MS);
-setInterval(updateOrderBook,1000);
-setInterval(updateOandaMonitor,60000);
-updateOrderBook();
-</script>
-</body>
-</html>
+
+
+def _to_utc_iso(dt):
+    """datetime → UTCのISO文字列。失敗時None。"""
+    try:
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc).isoformat(timespec="seconds")
+    except Exception:
+        return None
+
+
+def _http_get(url, timeout):
+    req = urllib.request.Request(url, headers={"User-Agent": NEWS_UA})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read()
+
+
+def fetch_google_news():
+    """Google News RSS を取得して記事リストを返す（速い経路）。"""
+    out = []
+    for hl, gl, q in GOOGLE_NEWS_QUERIES:
+        params = urllib.parse.urlencode({
+            "q": q, "hl": hl, "gl": gl, "ceid": f"{gl}:{hl}",
+        })
+        url = f"https://news.google.com/rss/search?{params}"
+        raw = _http_get(url, NEWS_TIMEOUT)
+        out.extend(_parse_rss(raw))
+    return out
+
+
+def _parse_rss(raw):
+    """RSSバイト列 → 記事リスト。"""
+    items = []
+    root = ET.fromstring(raw)
+    for it in root.iter("item"):
+        title = (it.findtext("title") or "").strip()
+        link = (it.findtext("link") or "").strip()
+        if not title or not link:
+            continue
+        pub = it.findtext("pubDate")
+        published = None
+        if pub:
+            try:
+                published = _to_utc_iso(parsedate_to_datetime(pub))
+            except Exception:
+                published = None
+        # 発行元: <source> があれば優先。Google Newsはタイトル末尾に " - 媒体名" が付くので落とす
+        src_el = it.find("source")
+        source = (src_el.text.strip() if (src_el is not None and src_el.text) else "")
+        if " - " in title:
+            head, tail = title.rsplit(" - ", 1)
+            if head.strip():
+                if not source:
+                    source = tail.strip()
+                title = head.strip()
+        items.append({
+            "title": title, "url": link, "source": source or "Google News",
+            "published": published, "origin": "google",
+        })
+    return items
+
+
+def fetch_gdelt():
+    """GDELT DOC 2.0 を取得（重い経路。制限時は例外→呼び出し側で握りつぶす）。"""
+    params = urllib.parse.urlencode({
+        "query": GDELT_QUERY, "mode": "ArtList", "format": "json",
+        "maxrecords": "25", "sort": "DateDesc", "timespan": GDELT_TIMESPAN,
+    })
+    url = f"https://api.gdeltproject.org/api/v2/doc/doc?{params}"
+    raw = _http_get(url, NEWS_TIMEOUT + 4)
+    data = json.loads(raw.decode("utf-8", "replace"))  # 制限時はHTMLが返り例外になる
+    out = []
+    for a in data.get("articles", []):
+        title = (a.get("title") or "").strip()
+        link = (a.get("url") or "").strip()
+        if not title or not link:
+            continue
+        published = None
+        sd = a.get("seendate")
+        if sd:
+            try:
+                published = _to_utc_iso(datetime.strptime(sd, "%Y%m%dT%H%M%SZ"))
+            except Exception:
+                published = None
+        out.append({
+            "title": title, "url": link,
+            "source": a.get("domain") or "GDELT",
+            "published": published, "origin": "gdelt",
+        })
+    return out
+
+
+def _rebuild_merged():
+    """google+gdelt をURLで重複除去し、新着順に並べて配信用listを作る。要 _news_lock。"""
+    seen = {}
+    for it in (_news["google"] + _news["gdelt"]):
+        u = it.get("url")
+        if not u:
+            continue
+        if u not in seen or (it.get("published") or "") > (seen[u].get("published") or ""):
+            seen[u] = it
+    merged = sorted(seen.values(),
+                    key=lambda x: x.get("published") or "", reverse=True)
+    _news["merged"] = merged[:NEWS_MAX_ITEMS]
+    _news["updated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def news_google_worker():
+    """速い経路。短い間隔で単独スレッド稼働（他ソースと重ならない）。"""
+    time.sleep(0.5)
+    while True:
+        try:
+            items = fetch_google_news()
+            with _news_lock:
+                _news["google"] = items
+                _news["status"]["google"] = f"ok({len(items)})"
+                _rebuild_merged()
+        except Exception as e:
+            with _news_lock:
+                _news["status"]["google"] = f"err:{e.__class__.__name__}"
+            print(f"[news] Google取得エラー(継続): {e}")
+        time.sleep(NEWS_GOOGLE_INTERVAL)
+
+
+def news_gdelt_worker():
+    """重い経路。長い間隔＋起動遅延。制限を返しても止めずに継続。"""
+    time.sleep(NEWS_GDELT_START_DELAY)
+    while True:
+        try:
+            items = fetch_gdelt()
+            with _news_lock:
+                _news["gdelt"] = items
+                _news["status"]["gdelt"] = f"ok({len(items)})"
+                _rebuild_merged()
+        except Exception as e:
+            with _news_lock:
+                _news["status"]["gdelt"] = f"err:{e.__class__.__name__}"
+            print(f"[news] GDELT取得エラー(継続): {e}")
+        time.sleep(NEWS_GDELT_INTERVAL)
+
+
+def news_payload():
+    with _news_lock:
+        items = [dict(x) for x in _news["merged"]]
+        meta = {"updated": _news["updated"], "status": dict(_news["status"])}
+    for it in items:
+        ja = _trans.get(it.get("url"))
+        if ja:
+            it["title_ja"] = ja
+    return {"updated": meta["updated"], "count": len(items),
+            "items": items, "status": meta["status"]}
+
+
+# ============================================================
+#  地図用ジオ情報（GDELT GEO API）
+# ============================================================
+_geo_lock = threading.Lock()
+_geo = {"points": [], "updated": None, "status": "init"}
+
+
+def fetch_gdelt_geo():
+    params = urllib.parse.urlencode({
+        "query": GEO_QUERY, "format": "GeoJSON", "mode": "PointData",
+        "timespan": GEO_TIMESPAN,
+    })
+    url = f"https://api.gdeltproject.org/api/v2/geo/geo?{params}"
+    raw = _http_get(url, NEWS_TIMEOUT + 6)
+    data = json.loads(raw.decode("utf-8", "replace"))
+    pts = []
+    for f in data.get("features", []):
+        geom = f.get("geometry") or {}
+        coords = geom.get("coordinates") or []
+        if len(coords) < 2:
+            continue
+        pr = f.get("properties") or {}
+        html = pr.get("html") or ""
+        m = re.search(r'href=[\'"]([^\'"]+)[\'"][^>]*>([^<]+)<', html)
+        url1 = m.group(1) if m else None
+        title1 = (m.group(2).strip() if m else (pr.get("name") or ""))
+        try:
+            cnt = int(pr.get("count") or 1)
+        except Exception:
+            cnt = 1
+        pts.append({
+            "lng": coords[0], "lat": coords[1],
+            "name": pr.get("name") or "", "count": cnt,
+            "title": title1, "url": url1,
+        })
+    pts.sort(key=lambda x: x["count"], reverse=True)
+    return pts[:GEO_MAXPOINTS]
+
+
+def geo_worker():
+    time.sleep(5)
+    while True:
+        try:
+            pts = fetch_gdelt_geo()
+            with _geo_lock:
+                _geo["points"] = pts
+                _geo["updated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+                _geo["status"] = f"ok({len(pts)})"
+        except Exception as e:
+            with _geo_lock:
+                _geo["status"] = f"err:{e.__class__.__name__}"
+            print(f"[geo] 取得エラー(継続): {e}")
+        time.sleep(GEO_INTERVAL)
+
+
+def geo_payload():
+    with _geo_lock:
+        return {"points": list(_geo["points"]), "updated": _geo["updated"], "status": _geo["status"]}
+
+
+# ============================================================
+#  地理座標つきニュース（GDELT GEO 2.0 → 世界地図にプロット）
+# ============================================================
+_geo_lock = threading.Lock()
+_geo = {"points": [], "updated": None, "status": "init"}
+GDELT_GEO_INTERVAL = 240
+
+
+def fetch_gdelt_geo():
+    """GDELT GEO 2.0 を取得し、[{lat,lon,name,count}] を返す。"""
+    params = urllib.parse.urlencode({
+        "query": GDELT_QUERY, "format": "GeoJSON",
+        "mode": "PointData", "timespan": "1d",
+    })
+    url = f"https://api.gdeltproject.org/api/v2/geo/geo?{params}"
+    raw = _http_get(url, NEWS_TIMEOUT + 4)
+    data = json.loads(raw.decode("utf-8", "replace"))
+    out = []
+    for f in data.get("features", []):
+        try:
+            lon, lat = f["geometry"]["coordinates"][:2]
+        except Exception:
+            continue
+        props = f.get("properties", {}) or {}
+        cnt = props.get("count") or props.get("Count") or 1
+        try:
+            cnt = int(cnt)
+        except Exception:
+            cnt = 1
+        out.append({
+            "lat": float(lat), "lon": float(lon),
+            "name": (props.get("name") or props.get("Name") or "").strip(),
+            "count": cnt,
+        })
+    out.sort(key=lambda x: x["count"], reverse=True)
+    return out[:120]
+
+
+def news_gdelt_geo_worker():
+    time.sleep(6)  # 起動直後は他を優先
+    while True:
+        try:
+            pts = fetch_gdelt_geo()
+            with _geo_lock:
+                _geo["points"] = pts
+                _geo["status"] = f"ok({len(pts)})"
+                _geo["updated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        except Exception as e:
+            with _geo_lock:
+                _geo["status"] = f"err:{e.__class__.__name__}"
+            print(f"[geo] GDELT-GEO取得エラー(継続): {e}")
+        time.sleep(GDELT_GEO_INTERVAL)
+
+
+def geo_payload():
+    with _geo_lock:
+        return {"updated": _geo["updated"], "count": len(_geo["points"]),
+                "points": _geo["points"], "status": _geo["status"]}
+
+
+# ============================================================
+#  注目度・トーンの時系列（GDELT DOC timeline → 情勢ゲージ）
+# ============================================================
+_pulse_lock = threading.Lock()
+_pulse = {"timeline": [], "avg_tone": None, "latest_vol": None,
+          "updated": None, "status": "init"}
+PULSE_INTERVAL = 300
+
+
+def _parse_gdelt_date(s):
+    s = str(s)
+    for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y%m%dT%H%M%SZ", "%Y%m%d%H%M%S"):
+        try:
+            return int(datetime.strptime(s, fmt).replace(tzinfo=timezone.utc).timestamp() * 1000)
+        except Exception:
+            continue
+    return None
+
+
+def _fetch_gdelt_timeline(mode):
+    params = urllib.parse.urlencode({
+        "query": GDELT_QUERY, "mode": mode, "format": "json", "timespan": "1d",
+    })
+    url = f"https://api.gdeltproject.org/api/v2/doc/doc?{params}"
+    raw = _http_get(url, NEWS_TIMEOUT + 4)
+    data = json.loads(raw.decode("utf-8", "replace"))
+    series = (data.get("timeline") or [])
+    if not series:
+        return []
+    out = []
+    for pt in series[0].get("data", []):
+        t = _parse_gdelt_date(pt.get("date"))
+        v = pt.get("value")
+        if t is not None and v is not None:
+            out.append((t, float(v)))
+    return out
+
+
+def fetch_gdelt_pulse():
+    vol = _fetch_gdelt_timeline("timelinevol")
+    tone = _fetch_gdelt_timeline("timelinetone")
+    tmap = {t: v for t, v in tone}
+    timeline = [{"t": t, "vol": v, "tone": tmap.get(t)} for t, v in vol]
+    tone_vals = [v for _, v in tone]
+    avg_tone = (sum(tone_vals) / len(tone_vals)) if tone_vals else None
+    latest_vol = vol[-1][1] if vol else None
+    return {"timeline": timeline[-96:], "avg_tone": avg_tone, "latest_vol": latest_vol}
+
+
+def news_pulse_worker():
+    time.sleep(9)
+    while True:
+        try:
+            p = fetch_gdelt_pulse()
+            with _pulse_lock:
+                _pulse.update(p)
+                _pulse["status"] = f"ok({len(p['timeline'])})"
+                _pulse["updated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        except Exception as e:
+            with _pulse_lock:
+                _pulse["status"] = f"err:{e.__class__.__name__}"
+            print(f"[pulse] GDELT-timeline取得エラー(継続): {e}")
+        time.sleep(PULSE_INTERVAL)
+
+
+def pulse_payload():
+    with _pulse_lock:
+        return dict(_pulse)
+
+
+# ============================================================
+#  経済指標カレンダー（ForexFactory系 公開JSON・キー不要）
+# ============================================================
+_cal_lock = threading.Lock()
+_cal = {"events": [], "updated": None, "status": "init"}
+
+
+def fetch_calendar():
+    raw = _http_get(CALENDAR_URL, NEWS_TIMEOUT + 4)
+    data = json.loads(raw.decode("utf-8", "replace"))
+    out = []
+    for e in data:
+        imp = e.get("impact", "")
+        cty = e.get("country", "")
+        if CALENDAR_IMPACT and imp not in CALENDAR_IMPACT:
+            continue
+        if CALENDAR_CCY and cty not in CALENDAR_CCY:
+            continue
+        out.append({
+            "title": e.get("title", ""), "country": cty, "date": e.get("date", ""),
+            "impact": imp, "forecast": e.get("forecast", ""), "previous": e.get("previous", ""),
+        })
+    out.sort(key=lambda x: x.get("date") or "")
+    return out
+
+
+def calendar_worker():
+    if not CALENDAR_ENABLED:
+        return
+    time.sleep(4)
+    while True:
+        try:
+            evs = fetch_calendar()
+            with _cal_lock:
+                _cal["events"] = evs
+                _cal["status"] = f"ok({len(evs)})"
+                _cal["updated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        except Exception as e:
+            with _cal_lock:
+                _cal["status"] = f"err:{e.__class__.__name__}"
+            print(f"[cal] カレンダー取得エラー(継続): {e}")
+        time.sleep(CALENDAR_INTERVAL)
+
+
+def calendar_payload():
+    with _cal_lock:
+        return {"updated": _cal["updated"], "count": len(_cal["events"]),
+                "events": _cal["events"], "status": _cal["status"]}
+
+
+def _read_news_day(day):
+    path = os.path.join(LOG_DIR, f"news_{day}.csv")
+    out, seen = [], set()
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8", newline="") as f:
+                r = csv.reader(f)
+                next(r, None)
+                for row in r:
+                    if len(row) < 7:
+                        continue
+                    logged, _pub, origin, _src, title, title_ja, url = row[:7]
+                    disp = title_ja or title
+                    if not disp or disp in seen:
+                        continue
+                    try:
+                        t = int(datetime.fromisoformat(
+                            logged.replace("Z", "+00:00")).timestamp() * 1000)
+                    except Exception:
+                        continue
+                    seen.add(disp)
+                    out.append({"t": t, "title": disp, "origin": origin, "url": url})
+        except Exception:
+            pass
+    return out[:300]
+
+
+def _read_attn_day(day):
+    path = os.path.join(LOG_DIR, f"attn_{day}.csv")
+    out = []
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                next(f, None)
+                for line in f:
+                    p = line.strip().split(",")
+                    if len(p) >= 2:
+                        try:
+                            t = int(datetime.fromisoformat(
+                                p[0].replace("Z", "+00:00")).timestamp() * 1000)
+                            out.append([t, float(p[1])])
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+    if len(out) > 1500:
+        step = len(out) // 1500
+        out = out[::step]
+    return out
+
+
+def logdata_payload(day):
+    path = os.path.join(LOG_DIR, f"price_{day}.csv")
+    pts = []
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                next(f, None)
+                for line in f:
+                    p = line.strip().split(",")
+                    if len(p) >= 5:
+                        try:
+                            t = int(datetime.fromisoformat(
+                                p[0].replace("Z", "+00:00")).timestamp() * 1000)
+                            pts.append([t, float(p[4])])
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+    if len(pts) > 1500:
+        step = len(pts) // 1500
+        pts = pts[::step]
+    return {"day": day, "count": len(pts), "points": pts,
+            "news": _read_news_day(day), "attn": _read_attn_day(day)}
+
+
+# ============================================================
+#  海外見出しの自動日本語化（キー不要のgtx経路）
+# ============================================================
+_trans = {}  # url -> 日本語タイトル
+
+
+def _has_ja(s):
+    return any(('\u3040' <= c <= '\u30ff') or ('\u4e00' <= c <= '\u9fff') for c in (s or ""))
+
+
+def _translate_ja(text):
+    if DEEPL_API_KEY.strip():
+        try:
+            return _translate_deepl(text)
+        except Exception:
+            pass  # 失敗時はgtxへフォールバック
+    q = urllib.parse.quote(text)
+    url = ("https://translate.googleapis.com/translate_a/single"
+           f"?client=gtx&sl=auto&tl=ja&dt=t&q={q}")
+    raw = _http_get(url, 6)
+    data = json.loads(raw.decode("utf-8", "replace"))
+    return "".join(seg[0] for seg in data[0] if seg and seg[0])
+
+
+def _translate_deepl(text):
+    key = DEEPL_API_KEY.strip()
+    host = "api-free.deepl.com" if key.endswith(":fx") else "api.deepl.com"
+    body = urllib.parse.urlencode({"auth_key": key, "text": text, "target_lang": "JA"}).encode()
+    req = urllib.request.Request(f"https://{host}/v2/translate", data=body,
+                                 headers={"User-Agent": NEWS_UA})
+    with urllib.request.urlopen(req, timeout=8) as r:
+        j = json.loads(r.read().decode("utf-8", "replace"))
+    return j["translations"][0]["text"]
+
+
+def translate_worker():
+    if not TRANSLATE_ENABLED:
+        return
+    time.sleep(12)
+    while True:
+        try:
+            with _news_lock:
+                items = list(_news["merged"])
+            done = 0
+            for it in items:
+                u, t = it.get("url"), (it.get("title") or "")
+                if not u or not t or u in _trans or _has_ja(t):
+                    continue
+                try:
+                    _trans[u] = _translate_ja(t)
+                    done += 1
+                except Exception:
+                    pass
+                if done >= TRANSLATE_PER_CYCLE:
+                    break
+                time.sleep(0.3)
+            if len(_trans) > 2000:
+                for k in list(_trans)[:500]:
+                    _trans.pop(k, None)
+        except Exception as e:
+            print(f"[trans] 翻訳エラー(継続): {e}")
+        time.sleep(30)
+
+
+# ============================================================
+#  自動ログ保存（価格・ニュースをCSVへ）
+# ============================================================
+def log_worker():
+    if not LOG_ENABLED:
+        return
+    try:
+        os.makedirs(LOG_DIR, exist_ok=True)
+    except Exception as e:
+        print(f"[log] フォルダ作成失敗: {e}")
+        return
+    seen = set()
+    print(f"[log] CSV記録先: {LOG_DIR}")
+    while True:
+        try:
+            day = datetime.now(timezone.utc).strftime("%Y%m%d")
+            snap = _snapshot()
+            if snap["bid"] is not None:
+                pf = os.path.join(LOG_DIR, f"price_{day}.csv")
+                new = not os.path.exists(pf)
+                with open(pf, "a", encoding="utf-8") as f:
+                    if new:
+                        f.write("time_utc,symbol,bid,ask,mid,spread,source\n")
+                    f.write(f'{snap["time"]},{snap["symbol"]},{snap["bid"]},'
+                            f'{snap["ask"]},{snap["mid"]},{snap["spread"]},{snap["source"]}\n')
+            with _news_lock:
+                items = list(_news["merged"])
+            if items:
+                nf = os.path.join(LOG_DIR, f"news_{day}.csv")
+                new = not os.path.exists(nf)
+                with open(nf, "a", encoding="utf-8") as f:
+                    if new:
+                        f.write("logged_utc,published,origin,source,title,title_ja,url\n")
+                    for it in items:
+                        u = it.get("url")
+                        if not u or u in seen:
+                            continue
+                        seen.add(u)
+                        ti = (it.get("title") or "").replace('"', '""')
+                        ja = (_trans.get(u, "") or "").replace('"', '""')
+                        src = (it.get("source") or "").replace('"', '""')
+                        f.write(f'{datetime.now(timezone.utc).isoformat(timespec="seconds")},'
+                                f'{it.get("published")},{it.get("origin")},"{src}","{ti}","{ja}",{u}\n')
+            # 注目度(GDELT出来高)・トーンも記録
+            try:
+                with _pulse_lock:
+                    lv = _pulse.get("latest_vol")
+                    tone = _pulse.get("avg_tone")
+                if lv is not None:
+                    af = os.path.join(LOG_DIR, f"attn_{day}.csv")
+                    anew = not os.path.exists(af)
+                    with open(af, "a", encoding="utf-8") as f:
+                        if anew:
+                            f.write("time_utc,vol,tone\n")
+                        f.write(f'{datetime.now(timezone.utc).isoformat(timespec="seconds")},{lv},{tone}\n')
+            except Exception:
+                pass
+        except Exception as e:
+            print(f"[log] 記録エラー(継続): {e}")
+        time.sleep(LOG_INTERVAL)
+
+
+# ---- MT5取得スレッド --------------------------------------
+def mt5_worker():
+    """
+    MT5から値を取り続ける。使えない間はデモ値を流し続ける。
+    ネットワーク/端末が復帰したら自動でMT5へ切替。
+    """
+    try:
+        import MetaTrader5 as mt5  # ここでImportErrorでもデモに落ちるだけ
+        has_mt5 = True
+    except Exception as e:
+        print(f"[bridge] MetaTrader5 未インストール/不可 → デモモードで継続: {e}")
+        has_mt5 = False
+
+    active_symbol = None
+    connected = False
+    demo_price = 2650.0  # デモ用の初期値
+
+    def try_connect():
+        nonlocal connected, active_symbol
+        if not has_mt5:
+            return False
+        try:
+            if not mt5.initialize():
+                connected = False
+                return False
+            # シンボル自動検出
+            found = None
+            for name in SYMBOL_CANDIDATES:
+                info = mt5.symbol_info(name)
+                if info is not None:
+                    if not info.visible:
+                        mt5.symbol_select(name, True)
+                    found = name
+                    break
+            if found is None:
+                # 候補が無ければ、名前にXAU/GOLDを含む最初のものを探す
+                for s in (mt5.symbols_get() or []):
+                    up = s.name.upper()
+                    if "XAU" in up or "GOLD" in up:
+                        mt5.symbol_select(s.name, True)
+                        found = s.name
+                        break
+            active_symbol = found
+            connected = active_symbol is not None
+            if connected:
+                print(f"[bridge] MT5接続OK / シンボル={active_symbol}")
+            else:
+                print("[bridge] MT5接続はできたが金シンボルが見つからない")
+            return connected
+        except Exception as e:
+            print(f"[bridge] MT5接続エラー: {e}")
+            connected = False
+            return False
+
+    last_reconnect = 0.0
+    while True:
+        now = time.time()
+
+        if has_mt5 and connected and active_symbol:
+            try:
+                tick = mt5.symbol_info_tick(active_symbol)
+                if tick and tick.bid and tick.ask:
+                    _set_latest(active_symbol, float(tick.bid), float(tick.ask), "mt5")
+                else:
+                    connected = False  # 取れなくなったら再接続へ
+            except Exception as e:
+                print(f"[bridge] tick取得エラー→再接続: {e}")
+                connected = False
+
+        elif has_mt5 and not connected:
+            # 3秒に1回だけ再接続を試みる
+            if now - last_reconnect > 3.0:
+                last_reconnect = now
+                try_connect()
+            # 再接続待ちの間もデモ値で画面を生かす
+            demo_price = _demo_step(demo_price)
+
+        else:
+            # MT5そのものが無い → デモ値
+            demo_price = _demo_step(demo_price)
+
+        time.sleep(POLL_INTERVAL_SEC)
+
+
+def _demo_step(price):
+    """デモ用の擬似ティック（軽いランダムウォーク）。"""
+    price += random.uniform(-0.15, 0.15)
+    price = max(1000.0, price)
+    spread = round(random.uniform(0.10, 0.35), 2)
+    bid = round(price - spread / 2, 2)
+    ask = round(price + spread / 2, 2)
+    _set_latest("DEMO-XAUUSD", bid, ask, "demo")
+    return price
+
+
+# ---- HTTPハンドラ -----------------------------------------
+class Handler(http.server.BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
+    def log_message(self, *args):
+        pass  # アクセスログを黙らせる（必要なら消す）
+
+    def _cors(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self._cors()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_GET(self):
+        path = self.path.split("?", 1)[0]
+
+        if path == "/" or path == "/index.html":
+            return self._serve_index()
+        if path == "/book":
+            return self._serve_json(_snapshot())
+        if path == "/health":
+            snap = _snapshot()
+            return self._serve_json({
+                "ok": snap["bid"] is not None,
+                "source": snap["source"],
+                "symbol": snap["symbol"],
+                "seq": snap["seq"],
+                "server_time": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            })
+        if path == "/history":
+            return self._serve_json(history_payload())
+        if path == "/calendar":
+            return self._serve_json(calendar_payload())
+        if path == "/logdata":
+            q = urllib.parse.parse_qs(self.path.split("?", 1)[1]) if "?" in self.path else {}
+            day = (q.get("day", [None])[0]) or datetime.now(timezone.utc).strftime("%Y%m%d")
+            return self._serve_json(logdata_payload(day))
+        if path == "/pulse":
+            return self._serve_json(pulse_payload())
+        if path == "/geonews":
+            return self._serve_json(geo_payload())
+        if path == "/geo":
+            return self._serve_json(geo_payload())
+        if path == "/news":
+            return self._serve_json(news_payload())
+        if path == "/stream":
+            return self._serve_sse()
+
+        self.send_response(404)
+        self._cors()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def _serve_json(self, obj):
+        body = json.dumps(obj, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self._cors()
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _serve_index(self):
+        if os.path.exists(INDEX_HTML):
+            with open(INDEX_HTML, "rb") as f:
+                body = f.read()
+        elif INDEX_HTML_B64:
+            body = base64.b64decode(INDEX_HTML_B64)
+        else:
+            body = ("<!doctype html><meta charset=utf-8>"
+                    "<h1>index.html \u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093</h1>"
+                    "<p>\u3053\u306e\u30b9\u30af\u30ea\u30d7\u30c8\u3068\u540c\u3058\u30d5\u30a9\u30eb\u30c0\u306b "
+                    "index.html \u3092\u7f6e\u3044\u3066\u304f\u3060\u3055\u3044\u3002</p>").encode("utf-8")
+        self.send_response(200)
+        self._cors()
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _serve_sse(self):
+        self.send_response(200)
+        self._cors()
+        self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Connection", "keep-alive")
+        self.end_headers()
+        last_seq = -1
+        last_sent = 0.0
+        try:
+            while True:
+                snap = _snapshot()
+                now = time.time()
+                changed = snap["seq"] != last_seq
+                if changed and (now - last_sent) >= SSE_MIN_PUSH_INTERVAL_SEC:
+                    last_seq = snap["seq"]
+                    last_sent = now
+                    payload = json.dumps(snap, ensure_ascii=False)
+                    self.wfile.write(f"data: {payload}\n\n".encode("utf-8"))
+                    self.wfile.flush()
+                elif (now - last_sent) >= SSE_HEARTBEAT_SEC:
+                    last_sent = now
+                    self.wfile.write(b": ping\n\n")  # コメント行=生存確認
+                    self.wfile.flush()
+                time.sleep(SSE_MIN_PUSH_INTERVAL_SEC)
+        except (BrokenPipeError, ConnectionResetError):
+            return  # クライアント切断は正常終了扱い
+        except Exception:
+            return
+
+
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+def ensure_mt5():
+    """MetaTrader5 が無ければ自動導入を試みる（失敗してもデモ表示で継続）。"""
+    if not AUTO_INSTALL_MT5:
+        return
+    try:
+        import MetaTrader5  # noqa: F401
+        return
+    except Exception:
+        pass
+    if platform.system() != "Windows":
+        return  # MT5パッケージはWindows専用
+    try:
+        print("[bridge] MetaTrader5 が無いため自動導入を試みます…")
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "--quiet",
+             "--disable-pip-version-check", "MetaTrader5"],
+            timeout=120, check=False,
+        )
+    except Exception as e:
+        print(f"[bridge] 自動導入スキップ（デモで継続）: {e}")
+
+
+def _open_browser_later(url):
+    def _go():
+        time.sleep(1.2)
+        try:
+            webbrowser.open(url)
+        except Exception:
+            pass
+    threading.Thread(target=_go, daemon=True).start()
+
+
+def main():
+    ensure_mt5()
+    threading.Thread(target=mt5_worker, daemon=True).start()
+    if NEWS_ENABLED:
+        threading.Thread(target=news_google_worker, daemon=True).start()
+        threading.Thread(target=news_gdelt_worker, daemon=True).start()
+        threading.Thread(target=geo_worker, daemon=True).start()
+        threading.Thread(target=news_gdelt_geo_worker, daemon=True).start()
+        threading.Thread(target=news_pulse_worker, daemon=True).start()
+        threading.Thread(target=translate_worker, daemon=True).start()
+        threading.Thread(target=calendar_worker, daemon=True).start()
+    threading.Thread(target=log_worker, daemon=True).start()
+
+    server = ThreadingHTTPServer((HOST, PORT), Handler)
+    url = f"http://{HOST}:{PORT}/"
+    if AUTO_OPEN_BROWSER:
+        _open_browser_later(url)
+    print("=" * 52)
+    print(" XAUUSD 金相場モニター（単一ファイル・自動起動版）")
+    print(f"   ダッシュボード : {url}  ← 自動で開きます")
+    print(f"   スナップショット: {url}book")
+    print(f"   ストリーム(SSE): {url}stream")
+    print(f"   履歴           : {url}history")
+    print(f"   ニュース       : {url}news")
+    print(f"   地図ジオ       : {url}geo")
+    print(f"   ヘルス         : {url}health")
+    print("   停止は Ctrl+C（またはこのウィンドウを閉じる）")
+    print("=" * 52)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\n[bridge] 停止します")
+    finally:
+        server.shutdown()
+
+
+if __name__ == "__main__":
+    main()
